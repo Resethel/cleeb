@@ -1,0 +1,60 @@
+{% load static %}
+<!-- themes_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Themes List - Cartographie Militante</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/themes_list.css' %}">
+    <!-- Add any additional meta tags, stylesheets, or scripts -->
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1>Cartographie Militante</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'themes_list' %}">Themes</a></li>
+                    <!-- Add more navigation links here -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <section class="themes-section">
+            <div class="container">
+                <h2>Explore Themes</h2>
+                <div class="themes-container">
+                    <!-- Render a list of themes with cards linking to individual theme pages -->
+                    {% for theme in themes %}
+                        <div class="theme-card">
+                            <img src="{{ theme.image.url }}" alt="{{ theme.name }}">
+                            <h3>{{ theme.name }}</h3>
+                            <p>{{ theme.description }}</p>
+                            <a href="{% url 'theme_detail' theme.id %}">Explore {{ theme.name }}</a>
+                        </div>
+                        {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                            </div><div class="themes-container">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 Cartographie Militante. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
