@@ -1,0 +1,86 @@
+<!-- organizations_list.html -->
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Organismes Partenaires</title>
+    
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/organizations_list.css' %}">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1>Cartographie Militante</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'themes_list' %}">Themes</a></li>
+                    <li><a href="{% url 'organizations_list' %}">Organizations</a></li>
+                    <!-- Add more navigation links here -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <section class="organizations-section">
+            <div class="container">
+                <h2>Our Partner Organizations</h2>
+                <p>Description about partnering with organizations...</p>
+                <div class="organizations-container">
+                    <!-- Render a list of organizations with cards -->
+                    {% for organization in organizations %}
+                        <div class="organization-card">
+                            <div class="org-logo">
+                                <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
+                            </div>
+                            <h3>{{ organization.name }}</h3>
+                            <p>{{ organization.description }}</p>
+                            <p>Contact: {{ organization.contact }}</p>
+                            
+                            <!-- Social Media Icons -->
+                            <div class="social-media-icons">
+                                {% if organization.facebook %}
+                                    <a href="{{ organization.facebook }}" target="_blank">
+                                        <img src="{% static 'images/facebook_logo.png' %}" alt="Facebook">
+                                    </a>
+                                {% endif %}
+                                {% if organization.instagram %}
+                                    <a href="{{ organization.instagram }}" target="_blank">
+                                        <img src="{% static 'images/instagram_logo.png' %}" alt="Instagram">
+                                    </a>
+                                {% endif %}
+                                {% if organization.twitter %}
+                                    <a href="{{ organization.twitter }}" target="_blank">
+                                        <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter">
+                                    </a>
+                                {% endif %}
+                                {% if organization.website %}
+                                    <a href="{{ organization.website }}" target="_blank">
+                                        <img src="{% static 'images/website_logo.png' %}" alt="Website">
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 Cartographie Militante. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
