@@ -20,7 +20,6 @@
 
     <!-- Main Content Section -->
     <main class="main">
-                <div class="themes-container">
         <section class="section-block">
             <div class="text-block">
                 <h1>Thématiques de la Cartographie: pluralité des luttes</h1>
@@ -38,19 +37,31 @@
 
         <section class="section-block">
             <div class="card-list-container">
+                <div class="card-row-container">
                     <!-- Render a list of themes with cards linking to individual theme pages -->
                     {% for theme in themes %}
-                        <div class="theme-card">
-                            <img src="{{ theme.image.url }}" alt="{{ theme.name }}">
-                            <h3>{{ theme.name }}</h3>
-                            <p>{{ theme.description }}</p>
-                            <a href="{% url 'theme_detail' theme.id %}">Explore {{ theme.name }}</a>
+                        <div class="card-col-container">
+                            <div class="card-item">
+                                <div class="card-item-thumbnail">
+                                    <img src="{{ theme.image.url }}" alt="{{ theme.name }}" width="1700" height="1080">
+                                </div>
+                                <div class="card-item-content">
+                                    <h5 class="thematic-item-title">
+                                        {{ theme.name }}
+                                    </h5>
+                                    <p class="card-item-content-description">
+                                        {{ theme.description }}
+                                    </p>
+                                    <a href="{% url 'theme_detail' theme.id %}">En savoir plus {{ theme.name }}</a>
+                                </div>
+                            </div>
                         </div>
                         {% if forloop.counter|divisibleby:3 and not forloop.last %}
-                            </div><div class="themes-container">
+                            </div>
+                            <div class="card-row-container">
                         {% endif %}
                     {% endfor %}
-                </div>
+                    </div>
             </div>
         </section>
     </main>

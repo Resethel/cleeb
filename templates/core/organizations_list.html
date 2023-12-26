@@ -22,7 +22,6 @@
 
     <!-- Main Content Section -->
     <main class="main">
-                <div class="organizations-container">
         <!-- Section block with the introduction to the organizations list -->
         <section class="section-block">
             <div class="text-block">
@@ -43,40 +42,62 @@
 
         <!-- Section block with a list of organizations -->
         <section class="section-block">
+            <div class="org-card-container">
+                <div class="org-card-row">
                     <!-- Render a list of organizations with cards -->
                     {% for organization in organizations %}
-                        <div class="organization-card">
-                            <div class="org-logo">
-                                <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
-                            </div>
-                            <h3>{{ organization.name }}</h3>
-                            <p>{{ organization.description }}</p>
-                            <p>Contact: {{ organization.contact }}</p>
-                            
-                            <!-- Social Media Icons -->
-                            <div class="social-media-icons">
-                                {% if organization.facebook %}
-                                    <a href="{{ organization.facebook }}" target="_blank">
-                                        <img src="{% static 'images/facebook_logo.png' %}" alt="Facebook">
-                                    </a>
-                                {% endif %}
-                                {% if organization.instagram %}
-                                    <a href="{{ organization.instagram }}" target="_blank">
-                                        <img src="{% static 'images/instagram_logo.png' %}" alt="Instagram">
-                                    </a>
-                                {% endif %}
-                                {% if organization.twitter %}
-                                    <a href="{{ organization.twitter }}" target="_blank">
-                                        <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter">
-                                    </a>
-                                {% endif %}
-                                {% if organization.website %}
-                                    <a href="{{ organization.website }}" target="_blank">
-                                        <img src="{% static 'images/website_logo.png' %}" alt="Website">
-                                    </a>
-                                {% endif %}
+                        <div class="org-card-col">
+                            <div class="org-card-item">
+                                <div class="org-card-item-title">
+                                    <h5>{{ organization.name }}</h5>
+                                </div>
+
+                                <div class="org-card-item-socials">
+                                    {% if organization.contact %}
+                                        <div class="org-card-item-social-link">
+                                            <a href="mailto:{{ organization.contact }}" target="_blank">
+                                                <img src="{% static 'images/email_logo.png' %}" alt="Email">
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    {% if organization.website %}
+                                        <div class="org-card-item-social-link">
+                                            <a href="{{ organization.website }}" target="_blank">
+                                                <img src="{% static 'images/website_logo.png' %}" alt="Website">
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    {% if organization.facebook %}
+                                        <div class="org-card-item-social-link">
+                                            <a href="{{ organization.facebook }}" target="_blank">
+                                                <img id="org-card-item-social-facebook" src="{% static 'images/icons/temp.svg' %}" alt="Facebook">
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    {% if organization.instagram %}
+                                        <div class="org-card-item-social-link">
+                                            <a href="{{ organization.instagram }}" target="_blank">
+                                                <img src="{% static 'images/instagram_logo.png' %}" alt="Instagram">
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    {% if organization.twitter %}
+                                        <div class="org-card-item-social-link">
+                                            <a href="{{ organization.twitter }}" target="_blank">
+                                                <img src="{% static 'images/twitter_logo.png' %}" alt="Twitter">
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="org-card-item-thumbnail">
+                                    <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
+                                </div>
                             </div>
                         </div>
+                        {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                            </div><div class="org-card-row">
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

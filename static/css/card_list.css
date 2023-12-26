@@ -1,0 +1,88 @@
+/* card_list.css
+A CSS file for the card list template.
+A card list is a list of cards, each of which contains an image, a title, and a description.
+They are typically used display a list of items to select, such as a list of organizations or a list of themes.
+The card are arranged in a grid, with each row containing a maximum of X cards, where X is the number of cards that can fit in a row.
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+.card-list-container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+}
+
+/* Container for the thematic items on a row */
+.card-row-container {
+    display: flex;
+}
+.card-col-container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+@media (min-width: 1280px) {
+    .card-col-container {
+        flex: 0 0 33.3333333%;
+        max-width: 33.3333333%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+
+/* Individual Theme Item */
+.card-item {
+    position: relative;
+    margin: 0 0 40px;
+    border-radius: 20px;
+    background: #4bb166;
+    color: #ffffff;
+    transition: all .8s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
+}
+@media (min-width:1280px) {
+    .card-item {
+        height: calc(100% - 40px);
+    }
+}
+
+/* Responsive adjustment for smaller screens */
+@media screen and (max-width: 768px) {
+    .card-item {
+        width: calc(50% - 20px); /* Adjust card width for smaller screens */
+    }
+}
+
+.card-item-thumbnail {
+    border-radius: 20px 20px 0 0; /* Matches the border radius of the item */
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.card-item-thumbnail img {
+    max-width: 100%;
+    height: auto;
+}
+
+.card-item-content {
+}
+
+.card-item-content-title {
+
+}
+
+.card-item-content-description {
+
+}
+
+
+
+
+
+
