@@ -6,23 +6,17 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ theme.name }} - Theme Detail - Cartographie Militante</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}"> <!-- Link your CSS file here -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <!-- Add any additional meta tags, stylesheets, or scripts -->
 </head>
-<body>
+<body class="page">
 
     <!-- Header Section -->
     <header class="header">
-        <div class="container">
-            <h1>Cartographie Militante</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'themes_list' %}">Themes</a></li>
-                    <!-- Add more navigation links here -->
-                </ul>
-            </nav>
-        </div>
+        <!-- Navigation Bar -->
+        {% include 'core/navbar.html' %}
     </header>
 
     <!-- Main Content Section -->
@@ -39,12 +33,8 @@
         </section>
     </main>
 
-    <!-- Footer Section -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2023 Cartographie Militante. All rights reserved.</p>
-        </div>
-    </footer>
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
 
 </body>
 </html>

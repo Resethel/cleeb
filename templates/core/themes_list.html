@@ -6,32 +6,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Themes List - Cartographie Militante</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/themes_list.css' %}">
-    <!-- Add any additional meta tags, stylesheets, or scripts -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
 </head>
-<body>
-
+<body class="page">
     <!-- Header Section -->
     <header class="header">
-        <div class="container">
-            <h1>Cartographie Militante</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'themes_list' %}">Themes</a></li>
-                    <!-- Add more navigation links here -->
-                </ul>
-            </nav>
-        </div>
+        <!-- Navigation Bar -->
+        {% include 'core/navbar.html' %}
     </header>
 
     <!-- Main Content Section -->
     <main class="main">
-        <section class="themes-section">
-            <div class="container">
-                <h2>Explore Themes</h2>
                 <div class="themes-container">
+        <section class="section-block">
+            <div class="text-block">
+                <h1>Thématiques de la Cartographie: pluralité des luttes</h1>
+                <p>
+                    La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
+                    qui ont lieu sur le territoire de la Métropole de Metz.
+                    Ces luttes sont nombreuses et variées, et nous avons choisie les organiser en thématiques afin de
+                    faciliter la navigation sur la carte. Chaque thématique regroupe des luttes qui ont des points
+                    communs, mais qui sont aussi très différentes les unes des autres. Nous avons choisi de ne pas
+                    hiérarchiser les thématiques, car nous considérons que toutes les luttes sont importantes et
+                    qu’elles méritent d’être mises en avant.
+                </p>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <div class="card-list-container">
                     <!-- Render a list of themes with cards linking to individual theme pages -->
                     {% for theme in themes %}
                         <div class="theme-card">
@@ -49,12 +55,7 @@
         </section>
     </main>
 
-    <!-- Footer Section -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2023 Cartographie Militante. All rights reserved.</p>
-        </div>
-    </footer>
-
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
 </body>
 </html>
