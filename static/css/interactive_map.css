@@ -1,0 +1,248 @@
+/* interactive_map.css */
+/* CSS for an interactive map article */
+
+.map-hero {
+    width: 100%;
+    background-color: #4bb166;
+    padding-top: 2%;
+    overflow-y: clip;
+}
+
+.map-hero-content {
+    max-width: 100%;
+    margin-top: 2%;
+    margin-left: max(15%, 10px);
+    margin-right: max(15%, 10px);
+    display: flex;
+    flex-direction: column;
+}
+
+.map-hero-themes {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    max-width: 100%;
+    margin-bottom: 10px;
+
+}
+
+.map-hero-theme {
+    border-radius: 14px;
+    background-color: #ffffff;
+    padding: 0.5em 15px;
+    margin-right: 10px;
+    text-align: center;
+    color: #166a5d;
+
+    /* Font adjustment */
+    font-family: sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+
+    text-decoration: none;
+    transition: all .3s;
+
+}
+
+.map-hero-theme:hover {
+    color: #ffffff;
+    background-color: #166a5d;
+}
+
+.map-hero-title {
+    background-color: #ffffff;
+    padding: 2% 40px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    flex-direction: column;
+    /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
+    box-shadow: 0 6px 12px -2px rgba(50, 50, 93, 0.25), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
+}
+
+.map-title {
+    font-family: sans-serif;
+    font-size: 76px;
+    font-weight: 600;
+    text-align: left;
+    padding-bottom: 0.3em;
+
+}
+
+.map-metadata {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+.map-metadata-date {
+    display: flex;
+    color: #166a5d;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.map-metadata-date span {
+    margin-right: 10px;
+}
+
+.map-metadata-authors {
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    margin-left: 5px;
+    margin-right: unset;
+}
+.map-metadata-authors a {
+    color: #166a5d;
+    background-color: #e8f0ef;
+    text-decoration: none;
+    margin-left: 5px;
+    padding-left: 5px;
+    border-radius: 4px 14px 14px 4px;
+    transition: all .3s;
+}
+
+.map-metadata-authors a:hover {
+    color: #e8f0ef;
+    background-color: #166a5d;
+}
+
+.map-metadata-authors img {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    margin-bottom: 1px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.map-main {
+    min-height: 600px;
+    background-color: #ffffff;
+    margin-left: max(15%, 10px);
+    margin-right: max(15%, 10px);
+    margin-bottom: 150px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 0 0 15px 15px;
+    /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
+    box-shadow: 0 6px 12px -2px rgba(50, 50, 93, 0.25), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
+}
+
+/* ================================================================================================================== */
+/* Style for the Introduction Section                                                                                 */
+/* ================================================================================================================== */
+
+.map-intro {
+    padding-top: 2%;
+    padding-bottom: 5%;
+    text-transform: uppercase;
+}
+
+.map-intro-content {
+    margin-bottom: 1em;
+
+    /* Adjust the fonts */
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: justify; /* Align the text */
+    line-height: 1.5; /* Adjust line height */
+    letter-spacing: 1px; /* Adjust space between letters */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+    border-bottom: 1px solid grey;
+}
+
+.map-intro-content p {
+    margin-bottom: 10px;
+}
+
+/* ================================================================================================================== */
+/* Style for the Interactive Map Display                                                                              */
+/* ================================================================================================================== */
+
+.map-display {
+    height: 80%;
+    width: 100%;
+}
+
+/* Used for the placeholder image */
+.map-display img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+.map-fullscreen-button {
+    padding: 0;
+    border: none;
+    background: none;
+
+    display: flex;
+
+    /* Adjust the fonts */
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: justify; /* Align the text */
+    line-height: 1.5; /* Adjust line height */
+    letter-spacing: 1px; /* Adjust space between letters */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+}
+
+.map-fullscreen-button:hover {
+    color: #166a5d;
+}
+
+
+/* ================================================================================================================== */
+/* Styling for the text of the interactive map                                                                        */
+/* ================================================================================================================== */
+
+.map-text {
+    margin-top: 5%;
+    padding-bottom: 10px;
+}
+
+.map-text-section {
+    border-bottom: 1px solid grey;
+    padding-bottom: 1em;
+}
+
+.map-text-section-title {
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #166a5d;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-top: 1em;
+}
+
+.map-text-section-content {
+    margin-bottom: 1em;
+    padding-left : 2%;
+    padding-right: 2%;
+
+    /* Adjust the fonts */
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: justify; /* Align the text */
+    line-height: 1.5; /* Adjust line height */
+    letter-spacing: 1px; /* Adjust space between letters */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+}
+
+.map-text-content p {
+    margin-bottom: 10px;
+}

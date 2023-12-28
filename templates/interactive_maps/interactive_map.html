@@ -1,0 +1,102 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ thematic_map.title }}</title>
+    <!-- Add your CSS and JavaScript links or CDN references here -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/interactive_map.css' %}">
+
+</head>
+<body class="page">
+    <!-- Header Section -->
+    <header class="header">
+        {% include 'core/navbar.html' %}
+    </header>
+
+    <!-- Splash Section (displayed at the top of the page) -->
+    <section class="map-hero">
+        <div class="map-hero-content">
+            <div class="map-hero-themes">
+                {% for theme in themes %}
+                    <a class="map-hero-theme" href="{% url 'theme_detail' theme.id %}">
+                        {{ theme.name }}
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="map-hero-title">
+                <div class="map-title">{{ title }}</div>
+                <div class="map-metadata">
+                    <div class="map-metadata-date">
+                        <span>Publié le 20 Décembre 2023</span>
+                        <span>Dernière modification: 20 Décembre 2023</span>
+                    </div>
+                    <div class="map-metadata-authors">
+                        {% for author in authors %}
+                        <a class="" href="{{ author.url }}">
+                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                            {% if author.picture %}
+                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                            {% else %}
+                            <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="map-main">
+        <!-- Introductory Section -->
+        <section class="map-intro">
+            <div class="map-intro-content">
+                <p>
+                    Ceci est une introduction.
+                </p>
+                <p>
+                    Une introduction est une section qui s'affiche avant la carte interactive. Elle est obligatoire et
+                    a pour but de rapidement présenter l'intérêt et quelques informations générales sur la carte
+                    afin de donner envie à l'utilisateur de l'explorer.
+                </p>
+                <p>
+                    Il est possible d'y ajouter des images, des vidéos, des liens, etc.
+                    Il sera possible de modifier le contenu de cette section dans l'interface d'administration.
+                    Pour l'instant, ce texte est un "placeholder".
+                </p>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-display">
+            <img src="https://placehold.jp/2560x1440.png" alt="Placeholder" class="place-holder">
+            <button type="button" class="map-fullscreen-button">
+                Ouvrir la carte en plein écran &gt;
+            </button>
+        </section>
+
+        <!-- Detail Section -->
+        <section class="map-text">
+        {% for section in sections %}
+            <div class="map-text-section">
+                <div class="map-text-section-title">{{ section.title }}</div>
+                <div class="map-text-section-content">{{ section.content | safe }}</div>
+            </div>
+        {% endfor %}
+        </section>
+
+        <section class="map-credits">
+
+        </section>
+    </div>
+
+    <!-- Footer Section -->
+    {% include 'core/footer.html' %}
+
+</body>
+</html>
