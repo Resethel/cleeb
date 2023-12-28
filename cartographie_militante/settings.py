@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Local apps
-    'core',  # Add the core app to the list of installed apps
+    'core.apps.CoreConfig',
+    'interactive_maps.apps.InteractiveMapsConfig',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
-            BASE_DIR / 'core/../templates',
         ]
         ,
         'APP_DIRS': True,
