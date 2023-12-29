@@ -122,3 +122,41 @@ class City(models.Model):
     def __str__(self):
         return self.name
 # End class City
+
+class MapLayer(models.Model):
+    """
+    This class represents a map layer.
+    """
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(
+        primary_key=True,
+        verbose_name="ID",
+        help_text="L'ID de la couche de carte.",
+    )
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Nom",
+        help_text="Le nom de la couche de carte.",
+    )
+
+    shape = GenericRelation(Shape)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Couche de carte"
+        verbose_name_plural = "Couches de carte"
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return self.name
