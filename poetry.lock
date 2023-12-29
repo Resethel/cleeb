@@ -218,17 +218,17 @@ files = [
 
 [[package]]
 name = "django"
-version = "4.2.8"
+version = "5.0"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 files = [
-    {file = "Django-4.2.8-py3-none-any.whl", hash = "sha256:6cb5dcea9e3d12c47834d32156b8841f533a4493c688e2718cafd51aa430ba6d"},
-    {file = "Django-4.2.8.tar.gz", hash = "sha256:d69d5e36cc5d9f4eb4872be36c622878afcdce94062716cf3e25bcedcb168b62"},
+    {file = "Django-5.0-py3-none-any.whl", hash = "sha256:3a9fd52b8dbeae335ddf4a9dfa6c6a0853a1122f1fb071a8d5eca979f73a05c8"},
+    {file = "Django-5.0.tar.gz", hash = "sha256:7d29e14dfbc19cb6a95a4bd669edbde11f5d4c6a71fdaa42c2d40b6846e807f7"},
 ]
 
 [package.dependencies]
-asgiref = ">=3.6.0,<4"
+asgiref = ">=3.7.0"
 sqlparse = ">=0.3.1"
 tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
@@ -238,13 +238,13 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "folium"
-version = "0.14.0"
+version = "0.15.1"
 description = "Make beautiful maps with Leaflet.js & Python"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.7"
 files = [
-    {file = "folium-0.14.0-py2.py3-none-any.whl", hash = "sha256:c894e2c029a8ca40e043a311978a895cefe32d746a94263f807dd7b6b2e9c679"},
-    {file = "folium-0.14.0.tar.gz", hash = "sha256:8ec44697d18f5932e0fdaee8b19da98625de4d0e72cb30ef56f9479f18e11b9f"},
+    {file = "folium-0.15.1-py2.py3-none-any.whl", hash = "sha256:480f217b80d27530eef22e0535030f1696d61a2d55e6cc17acc36750cca89463"},
+    {file = "folium-0.15.1.tar.gz", hash = "sha256:cb792d11e8049a455d3dc6416cdd8e7a1623d6b949f6e42c45a5d8fa4d1e24f4"},
 ]
 
 [package.dependencies]
@@ -252,6 +252,7 @@ branca = ">=0.6.0"
 jinja2 = ">=2.9"
 numpy = "*"
 requests = "*"
+xyzservices = "*"
 
 [package.extras]
 testing = ["pytest"]
@@ -517,6 +518,17 @@ files = [
 certifi = "*"
 
 [[package]]
+name = "pyshp"
+version = "2.3.1"
+description = "Pure Python read/write support for ESRI Shapefile format"
+optional = false
+python-versions = ">=2.7"
+files = [
+    {file = "pyshp-2.3.1-py2.py3-none-any.whl", hash = "sha256:67024c0ccdc352ba5db777c4e968483782dfa78f8e200672a90d2d30fd8b7b49"},
+    {file = "pyshp-2.3.1.tar.gz", hash = "sha256:4caec82fd8dd096feba8217858068bacb2a3b5950f43c048c6dc32a3489d5af1"},
+]
+
+[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -747,7 +759,18 @@ brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
+[[package]]
+name = "xyzservices"
+version = "2023.10.1"
+description = "Source of XYZ tiles providers"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "xyzservices-2023.10.1-py3-none-any.whl", hash = "sha256:6a4c38d3a9f89d3e77153eff9414b36a8ee0850c9e8b85796fd1b2a85b8dfd68"},
+    {file = "xyzservices-2023.10.1.tar.gz", hash = "sha256:091229269043bc8258042edbedad4fcb44684b0473ede027b5672ad40dc9fa02"},
+]
+
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.11"
-content-hash = "f2401b43c05a1020a4c493679f8fed092a9ad9cefe0ae755d3a62f0735b63b5d"
+python-versions = "^3.11.6"
+content-hash = "38f73bfe4d13bfff80dd38e59c00534cb552058b224d6f112f1b37965b69cdc6"
