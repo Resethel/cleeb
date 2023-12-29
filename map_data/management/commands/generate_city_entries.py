@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
+
 from map_data.core.processing import cities
 from map_data.models import City
 
@@ -8,17 +9,27 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # First, delete all the entries in the database.
+        self.stdout.write(self.style.SUCCESS("Deleting all entries in the database..."))
         City.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS("Done."))
 
         # Then, regenerate the data.
-        cities = towns.generate_database_entries()
-        for city in cities:
-            City.objects.create(
-                name=city["name"],
-                feature_type=city["type"],
-                geometry_type=city["geometry_type"],
-                geometry_coordinates=city["geometry_coordinates"],
-                properties=city["properties"],
+        city_entries = cities.generate_database_entries()
+        self.stdout.write(self.style.SUCCESS(f"Creating {len(city_entries)} entries in the database..."))
+        for city_entry in city_entries:
+            # Create the shape entry
+            city_instance = City.objects.create(
+                name=city_entry["name"],
             )
-        self.stdout.write(self.style.SUCCESS("Successfully regenerated the cities data."))
+            city_instance.save()
+            city_instance.shape.create(
+                feature_type=city_entry["feature_type"],
+                geometry_type=city_entry["geometry_type"],
+                geometry_coordinates=city_entry["geometry_coordinates"],
+                properties=city_entry["properties"],
+            )
+
+            print(city_instance.shape.all())
+
+        self.stdout.write(self.style.SUCCESS("Done."))
 # End class RegenerateCities
