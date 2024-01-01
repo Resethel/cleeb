@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     # Local apps
     'core.apps.CoreConfig',
     'interactive_maps.apps.InteractiveMapsConfig',
-    "map_data.apps.MapDataConfig"
+    "map_data.apps.MapDataConfig",
+    "map_thematics.apps.MapThematicsConfig"
 ]
 
 MIDDLEWARE = [
