@@ -74,10 +74,12 @@
 
         <!-- Map Section -->
         <section class="map-display">
-            <img src="https://placehold.jp/2560x1440.png" alt="Placeholder" class="place-holder">
-            <button type="button" class="map-fullscreen-button">
-                Ouvrir la carte en plein écran &gt;
-            </button>
+            {% if map_embed_html %}
+                <div class="map-display-render">{{ map_embed_html | safe }}</div>
+                <a class="map-display-fs-link" href="{{ map_fs_url }}">Ouvrir la carte en plein écran &gt</a>
+            {% else %}
+                <img src="https://placehold.jp/2560x1440.png" alt="Placeholder" class="place-holder">
+            {%  endif %}
         </section>
 
         <!-- Detail Section -->

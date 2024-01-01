@@ -103,14 +103,13 @@ class Map(models.Model):
         blank=True,
     )
 
-    # TODO: The 'map' filed choices will be populated dynamically from the map backend
-    map_choices = [
-        *((f'test_{i}', f'Map Test {i}') for i in range(1, 4))
-    ]
-    map = models.CharField(
-        max_length=100,
-        choices=map_choices,
-        default='town_limits'
+    map_render = models.ForeignKey(
+        'map_data.MapRender',
+        verbose_name="Rendu de carte",
+        help_text="Le rendu de carte généré par le serveur.",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
     )
 
     def __str__(self):

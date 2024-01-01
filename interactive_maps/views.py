@@ -19,20 +19,30 @@ class InteractiveMapDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        self.object : Map
         # Get the ThematicMapText related to the ThematicMap
-        text    : Text        = self.object.text
-        themes  : set[Theme]  = self.object.themes.all()
-        authors : set[Author] = self.object.authors.all()
-        title   : str         = self.object.title
+        text           : Text        = self.object.text
+        themes         : set[Theme]  = self.object.themes.all()
+        authors        : set[Author] = self.object.authors.all()
+        title          : str         = self.object.title
+        try:
+            map_embed_html : str | None = self.object.map_render.embed_html.read().decode('utf-8')
+            map_fs_url     : str | None = self.object.map_render.full_html.url
+        except AttributeError:
+            # If the map_render is None, then the map has not been generated yet
+            map_embed_html = None
+            map_fs_url     = None
 
         # Filter the sections related to the ThematicMapText and order them by 'order'
         sections = text.section_set.all().order_by('order')
 
         # Add the text and sections to the context
-        context['title']    = title
-        context['themes']   = themes
-        context['sections'] = sections
-        context['authors']  = authors
+        context['title']           = title
+        context['themes']          = themes
+        context['sections']        = sections
+        context['authors']         = authors
+        context['map_embed_html']  = map_embed_html
+        context['map_fs_url']      = map_fs_url
 
         return context
 # End class InteractiveMapDetailView

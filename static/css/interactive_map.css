@@ -182,24 +182,31 @@
     overflow: hidden;
 }
 
-.map-fullscreen-button {
-    padding: 0;
+.map-display-render {
+    height: 100%;
+    width: 100%;
+}
+
+.map-display-fs-link {
+    margin-top:0.66em;
     border: none;
     background: none;
 
     display: flex;
+    text-decoration: none;
 
     /* Adjust the fonts */
     font-family: sans-serif;
     font-size: 16px;
     font-weight: 400;
+    color: #000000;
     text-align: justify; /* Align the text */
     line-height: 1.5; /* Adjust line height */
     letter-spacing: 1px; /* Adjust space between letters */
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
 }
 
-.map-fullscreen-button:hover {
+.map-display-fs-link:hover {
     color: #166a5d;
 }
 
