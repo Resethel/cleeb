@@ -1,0 +1,92 @@
+{% load static %}
+<!-- themes_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Themes List - Cartographie Militante</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
+</head>
+<body class="page">
+
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+
+        <div class="hero">
+            <div class="hero-content">
+                <div class="hero-title">
+                    <div class="hero-title-text">Thématiques de la Cartographie: pluralité des luttes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <section class="section">
+                <div class="text-block">
+                    <p>
+                        La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
+                        qui ont lieu sur le territoire de la Métropole de Metz.
+                    </p>
+                    <br>
+                    <p>
+                        Ces luttes sont nombreuses et variées, et nous avons choisie les organiser en thématiques afin de
+                        faciliter la navigation sur la carte. Chaque thématique regroupe des luttes qui ont des points
+                        communs, mais qui sont aussi très différentes les unes des autres. Nous avons choisi de ne pas
+                        hiérarchiser les thématiques, car nous considérons que toutes les luttes sont importantes et
+                        qu’elles méritent d’être mises en avant.
+                    </p>
+                    <br>
+                    <p>
+                        Ci-dessous, vous trouverez la liste des thématiques que nous avons choisies de mettre en avant.
+                        Pour chaque thématique, vous trouverez une description, ainsi que les luttes qui y sont associées
+                        en cliquant sur la carte de la thématique.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-title">Ensemble des thématiques</div>
+                <div class="card-list-container">
+                    <div class="card-row-container">
+                        <!-- Render a list of themes with cards linking to individual theme pages -->
+                        {% for thematic in thematics %}
+                            <div class="card-col-container">
+                                <a href="{% url 'thematic_detail' thematic.id %}">
+                                    <div class="card-item">
+                                        <div class="card-item-thumbnail">
+                                            <img src="{{ thematic.splash_img.url }}" alt="{{ thematic.name }}" width="1700" height="1080">
+                                        </div>
+
+                                            <div class="card-item-content">
+                                                <h5 class="thematic-item-title">
+                                                    {{ thematic.name }}
+                                                </h5>
+                                                <p class="card-item-content-description">
+                                                    {{ theme.description }}
+                                                </p>
+                                            </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                </div>
+                                <div class="card-row-container">
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!-- theme_detail.html -->
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ theme.name }} - Theme Detail - Cartographie Militante</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
+
+</head>
+<body class="page">
+
+    <!-- Header Topbar -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+
+        <!-- Hero part of the page -->
+        <div class="hero">
+            <div class="hero-content">
+                <div class="hero-title">
+                    <div class="hero-title-text">{{ thematic_name }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content of the page -->
+        <div class="container">
+            <!-- Description of the theme -->
+            <section class="section" id="description">
+                <div class="text-block">
+                    {{ thematic_desc | safe }}
+                </div>
+            </section>
+
+            <section class="section" id="map_list">
+                <div class="section-title">
+                    Cartes de la thématique
+                </div>
+                <div class="card-list-container">
+                    <div class="card-row-container">
+                        {% for map in maps %}
+                            <div class="card-col-container">
+                                <a href="{% url 'interactive_map_detail' map.id %}">
+                                    <div class="card-item">
+                                        <div class="card-item-thumbnail">
+                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
+                                        </div>
+                                        <div class="card-item-metadata">
+                                            {% for author in map.authors.all %}
+                                                <a href="#{{ author.lastname }}-{{ author.firstname }}">
+                                                    <div class="card-item-metadata-author">
+                                                        <img src="{{ author.avatar.url }}" alt="{{ author.name }}">
+                                                        <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                                    </div>
+                                                </a>
+                                            {% endfor %}
+                                            <div class="card-item-metadata-date">{{ map.date }}</div>
+                                        </div>
+                                        <div class="card-item-text">{{ map.name }}</div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                </div>
+                                <div class="card-row-container">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+
+</body>
+</html>

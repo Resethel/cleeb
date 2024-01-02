@@ -1,0 +1,29 @@
+{% load static %}
+
+<header class="topbar">
+
+    <div class="topbar-logo">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
+        </a>
+    </div>
+
+    <nav class="topbar-nav">
+        <ul>
+            <li><a href="#index-des-cartes" class="nav-link">Cartographie Militante</a></li>
+            <li><a href="{% url 'thematic_list' %}" class="nav-link">Thématiques de la cartographie</a></li>
+            <li><a href="{% url 'organizations_list' %}" class="nav-link">Organisations participantes</a></li>
+            <li><a href="#actus" class="nav-link">Actus</a></li>
+        </ul>
+    </nav>
+
+    <div class="topbar-tools">
+        <div class="topbar-tools-item">
+            <a href="#search" class="nav-tools-link">Placehold</a>
+        </div>
+        <div class="topbar-tools-item">
+            <a href="#map-index" class="nav-tools-link">Placehold</a>
+        </div>
+    </div>
+
+</header>
