@@ -114,6 +114,56 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 }
 
 /* ================================================================================================================== */
+/* Style for the Organization cards
+/* ================================================================================================================== */
+
+.org-card {
+    overflow: hidden;
+    max-height: 300px;
+    /* Fonts & colors */
+    font-family: sans-serif;
+    text-align: left;
+    color: #ffffff;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    padding-bottom: 20px;
+}
+
+.org-card h1 {
+    display: block;
+    margin: 20px;
+    text-align: center;
+    color: #ffff;
+}
+
+.org-card > img {
+    height: 50%;
+    width: 100%;
+    object-fit: contain;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #ffff;
+}
+
+.org-card-socials {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.org-card-social-link {
+    margin: auto;
+    width: 25px;
+    height: 25px;
+    filter: invert(1); /* SVG to white */
+    transitions: all .3s
+}
+
+
+/* ================================================================================================================== */
 /* Style for the Map Cards
 /* ================================================================================================================== */
 
