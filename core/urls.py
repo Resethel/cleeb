@@ -4,5 +4,5 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),  # Maps the root URL to the home view in views.py
     path('organizations/', views.organizations_list, name='organizations_list'),
-    path('organizations/<int:organization_id>/', views.organization_detail, name='organization_detail'),
+    path('organizations/<slug:slug>/', views.OrganizationDetailView.as_view(), name='organization_detail'),
 ]

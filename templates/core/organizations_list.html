@@ -57,7 +57,7 @@
                         <!-- Render a list of organizations with cards -->
                         {% for organization in organizations %}
                             <div class="card-col">
-                                <a class="org-card-link" href="{% url 'organization_detail' organization.id %}">
+                                <a class="org-card-link" href="{% url 'organization_detail' organization.slug %}">
                                     <div class="card org-card">
                                         <h1 class="org-card-title">{{ organization.name }}</h1>
                                         <div class="org-card-socials">
