@@ -83,14 +83,13 @@
         </section>
 
         <!-- Detail Section -->
-        <section class="map-text">
+        <article class="map-text">
         {% for section in sections %}
-            <div class="map-text-section">
-                <div class="map-text-section-title">{{ section.title }}</div>
-                <div class="map-text-section-content">{{ section.content | safe }}</div>
-            </div>
+            <section>
+                {{ section | safe }}
+            </section>
         {% endfor %}
-        </section>
+        </article>
 
         <section class="map-credits">
 
