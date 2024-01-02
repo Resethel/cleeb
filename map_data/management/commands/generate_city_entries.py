@@ -23,13 +23,11 @@ class Command(BaseCommand):
             )
             city_instance.save()
             city_instance.shape.create(
-                feature_type=city_entry["feature_type"],
+                feature_type=city_entry["type"],
                 geometry_type=city_entry["geometry_type"],
                 geometry_coordinates=city_entry["geometry_coordinates"],
                 properties=city_entry["properties"],
             )
-
-            print(city_instance.shape.all())
 
         self.stdout.write(self.style.SUCCESS("Done."))
 # End class RegenerateCities

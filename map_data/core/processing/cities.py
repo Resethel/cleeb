@@ -15,8 +15,8 @@ from pyproj import Transformer
 # ======================================================================================================================
 
 # Input files
-PATH = Path(__file__).parent.parent.parent / "static/datasets/communes_emm"
-SHAPEFILE = "communes_emm.shp"
+PATH = Path(__file__).parent.parent.parent / "static/datasets/communes_emm.zip"
+SHAPEFILE = "Communes_emm.shp"
 INPUT_EPSG_PROJECTION = "2154"  # EPSG:2154 (Lambert 93)
 OUTPUT_EPSG_PROJECTION = "4326" # EPSG:4326 (WGS84)
 
