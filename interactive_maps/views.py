@@ -3,11 +3,12 @@ Views for the interactive maps application.
 """
 from __future__ import annotations
 
+from bs4 import BeautifulSoup
 from django.views.generic import DetailView
 
-from map_thematics.models import Thematic
 from interactive_maps.models import Author, Map
-from bs4 import BeautifulSoup
+from map_thematics.models import Thematic
+
 
 # ======================================================================================================================
 # Vue pour les cartes interactives
@@ -24,6 +25,7 @@ class InteractiveMapDetailView(DetailView):
 
         self.object : Map
         # Get the ThematicMapText related to the ThematicMap
+        introduction   : str           = self.object.introduction
         text           : str           = self.object.text
         thematics      : set[Thematic] = self.object.thematics.all()
         authors        : set[Author]   = self.object.authors.all()
@@ -41,12 +43,41 @@ class InteractiveMapDetailView(DetailView):
         # Add the text and sections to the context
         context['title']           = title
         context['thematics']       = thematics
-        context['sections']        = None if text is None else self.__split_text_sections(text)
+        context['created_at']      = self.object.created_at
+        context['last_modified']   = self.object.last_modified
         context['authors']         = authors
+
+        context['introduction']    = None if introduction is None else self.__format_introduction(introduction)
+        context['sections']        = None if text is None else self.__split_text_sections(text)
+
         context['map_embed_html']  = map_embed_html
         context['map_fs_url']      = map_fs_url
 
         return context
+    # End def get_context_data
+
+    # ==================================================================================================================
+    # Private methods
+    # ==================================================================================================================
+
+    @staticmethod
+    def __format_introduction(introduction: str) -> str | None:
+        """Format the introduction."""
+        soup = BeautifulSoup(introduction, 'html.parser')
+
+        # Remove unwrap unnecessary tags (<article>, <section>, <h1>, <h2>, <h3>, <h4>, <h5>, <h6>)
+        for tag in soup.find_all(['article', 'section', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']):
+            tag.unwrap()
+
+        # Check if the introduction is empty
+        if soup.text == '':
+            return None
+
+        # Wrap the introduction in a <p> tag if it is not already wrapped
+        if soup.p is None:
+            soup.wrap(soup.new_tag('p'))
+
+        return soup.decode_contents()
 
     @staticmethod
     def __split_text_sections(text: str) -> list | None:
@@ -62,8 +93,6 @@ class InteractiveMapDetailView(DetailView):
             sections.append(section_content)
 
         return sections
-
-
     # End def __split_text_sections
 # End class InteractiveMapDetailView
 

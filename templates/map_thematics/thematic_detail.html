@@ -46,7 +46,7 @@
                     <div class="card-row">
                         {% for map in maps %}
                             <div class="card-col">
-                                <a href="{% url 'interactive_map_detail' map.id %}">
+                                <a href="{% url 'interactive_map_detail' map.slug %}">
                                     <div class="card map-card">
                                         {% if map.thumbnail %}
                                             <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">

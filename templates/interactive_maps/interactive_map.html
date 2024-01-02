@@ -32,8 +32,8 @@
                 <div class="map-title">{{ title }}</div>
                 <div class="map-metadata">
                     <div class="map-metadata-date">
-                        <span>Publié le 20 Décembre 2023</span>
-                        <span>Dernière modification: 20 Décembre 2023</span>
+                        <span>Créer le: {{ created_at }}</span>
+                        <span>Dernière modification: {{ last_modified }}</span>
                     </div>
                     <div class="map-metadata-authors">
                         {% for author in authors %}
@@ -55,21 +55,7 @@
     <div class="map-main">
         <!-- Introductory Section -->
         <section class="map-intro">
-            <div class="map-intro-content">
-                <p>
-                    Ceci est une introduction.
-                </p>
-                <p>
-                    Une introduction est une section qui s'affiche avant la carte interactive. Elle est obligatoire et
-                    a pour but de rapidement présenter l'intérêt et quelques informations générales sur la carte
-                    afin de donner envie à l'utilisateur de l'explorer.
-                </p>
-                <p>
-                    Il est possible d'y ajouter des images, des vidéos, des liens, etc.
-                    Il sera possible de modifier le contenu de cette section dans l'interface d'administration.
-                    Pour l'instant, ce texte est un "placeholder".
-                </p>
-            </div>
+            {{ introduction | safe }}
         </section>
 
         <!-- Map Section -->

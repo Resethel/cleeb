@@ -143,12 +143,8 @@
 
 .map-intro {
     padding-top: 2%;
-    padding-bottom: 5%;
+    padding-bottom: 1em;
     text-transform: uppercase;
-}
-
-.map-intro-content {
-    margin-bottom: 1em;
 
     /* Adjust the fonts */
     font-family: sans-serif;
@@ -158,10 +154,13 @@
     line-height: 1.5; /* Adjust line height */
     letter-spacing: 1px; /* Adjust space between letters */
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+
+    /* Bottom margin and border */
     border-bottom: 1px solid grey;
+    margin-bottom: 50px;
 }
 
-.map-intro-content p {
+.map-intro > p {
     margin-bottom: 10px;
 }
 
