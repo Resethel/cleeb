@@ -22,7 +22,7 @@ class InteractiveMapDetailView(DetailView):
         self.object : Map
         # Get the ThematicMapText related to the ThematicMap
         text           : Text          = self.object.text
-        themes         : set[Thematic] = self.object.thematics.all()
+        thematics      : set[Thematic] = self.object.thematics.all()
         authors        : set[Author]   = self.object.authors.all()
         title          : str           = self.object.title
         try:
@@ -38,7 +38,7 @@ class InteractiveMapDetailView(DetailView):
 
         # Add the text and sections to the context
         context['title']           = title
-        context['thematics']       = themes
+        context['thematics']       = thematics
         context['sections']        = sections
         context['authors']         = authors
         context['map_embed_html']  = map_embed_html

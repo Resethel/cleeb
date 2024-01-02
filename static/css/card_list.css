@@ -113,4 +113,66 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     font-weight: 400;
 }
 
+/* ================================================================================================================== */
+/* Style for the Map Cards
+/* ================================================================================================================== */
 
+.map-card {
+    overflow: hidden;
+
+    /* Fonts & colors */
+    font-family: sans-serif;
+    text-align: left;
+    color: #ffffff;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+.map-card img {
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+}
+
+.map-card-content {
+    padding: 15px 25px 33px;
+    display:flex;
+    flex-direction: column;
+}
+
+
+.map-card-metadata {
+    font-size: 12px;
+    display:flex;
+    width: 100%;
+    padding-bottom: 1em;
+}
+
+.map-card-metadata-divider {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.map-card-metadata-author
+{
+    display: flex;
+    align-items: center;
+}
+
+.map-card-metadata-author a {
+    text-decoration: none;
+    color:#fff;
+}
+
+.map-card-metadata-author img {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    margin-bottom: 1px;
+    vertical-align: middle;
+}
+
+
+.map-card-metadata a:hover{
+    text-decoration: underline;
+}

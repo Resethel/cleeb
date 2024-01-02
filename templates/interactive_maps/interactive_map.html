@@ -22,9 +22,9 @@
     <section class="map-hero">
         <div class="map-hero-content">
             <div class="map-hero-themes">
-                {% for theme in themes %}
-                    <a class="map-hero-theme" href="{% url 'theme_detail' theme.id %}">
-                        {{ theme.name }}
+                {% for thematic in thematics %}
+                    <a class="map-hero-theme" href="{% url 'thematic_detail' thematic.id %}">
+                        {{ thematic.short_name }}
                     </a>
                 {% endfor %}
             </div>

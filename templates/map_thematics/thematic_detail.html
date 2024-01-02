@@ -48,24 +48,38 @@
                             <div class="card-col">
                                 <a href="{% url 'interactive_map_detail' map.id %}">
                                     <div class="card map-card">
-                                        <h1 class="map-card-title">{{ map.name }}</h1>
-                                        <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
-                                        <div class="map-card-metadata">
-                                            {% for author in map.authors.all %}
-                                                <a href="#{{ author.lastname }}-{{ author.firstname }}">
+                                        {% if map.thumbnail %}
+                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
+                                        {% else %}
+                                            <img src="{% static 'images/map_placeholder.png' %}" alt="{{ map.name }}">
+                                        {% endif %}
+                                        <div class="map-card-content">
+                                            <div class="map-card-metadata">
+                                                {% for author in map.authors.all %}
                                                     <div class="map-card-metadata-author">
-                                                        <img src="{{ author.avatar.url }}" alt="{{ author.name }}">
-                                                        <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                                        {% if author.picture %}
+                                                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                                                        {% else %}
+                                                            <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                                                        {% endif %}
+                                                        <a href="#{{ author.lastname }}-{{ author.firstname }}">
+                                                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                                        </a>
                                                     </div>
-                                                </a>
-                                            {% endfor %}
-                                            <div class="map-card-metadata-date">{{ map.date }}</div>
+                                                    {% if not forloop.last %}
+                                                        <span class="map-card-metadata-divider">·</span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {%  if map.published_at %}
+                                                    <span class="map-card-metadata-divider">·</span>
+                                                    <div class="map-card-metadata-date">{{ map.published_at }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <h1 class="map-card-title">{{ map.title }}</h1>
                                         </div>
-                                        <div class="map-card-text">{{ map.name }}</div>
                                     </div>
                                 </a>
                             </div>
-
                             {% if forloop.counter|divisibleby:3 and not forloop.last %}
                                 </div>
                                 <div class="card-row">
