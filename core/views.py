@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from core.models import Organization, Theme
+from core.models import Organization
+from map_thematics.models import Thematic
 
 
 # ======================================================================================================================
@@ -9,18 +10,6 @@ from core.models import Organization, Theme
 
 def home(request):
     return render(request, 'core/home.html')
-
-# ======================================================================================================================
-# Vues des thèmatiques de la cartographie
-# ======================================================================================================================
-
-def themes_list(request):
-    themes = Theme.objects.all()
-    return render(request, 'core/themes_list.html', {'themes': themes})
-
-def theme_detail(request, theme_id):
-    theme = Theme.objects.get(id=theme_id)
-    return render(request, 'core/theme_detail.html', {'theme': theme})
 
 # ======================================================================================================================
 # Vues des acteurs de la cartographie

@@ -1,6 +1,7 @@
 from django.db import models
 
-from core.models import Organization, Theme
+from core.models import Organization
+from map_thematics.models import Thematic
 
 
 class Text(models.Model):
@@ -98,8 +99,8 @@ class Map(models.Model):
     )
 
     # Themes of the thematic map
-    themes = models.ManyToManyField(
-        'core.Theme',
+    thematics = models.ManyToManyField(
+        'map_thematics.Thematic',
         blank=True,
     )
 

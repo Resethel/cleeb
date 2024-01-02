@@ -3,7 +3,7 @@ Views for the interactive maps application.
 """
 from django.views.generic import DetailView
 
-from core.models import Theme
+from map_thematics.models import Thematic
 from interactive_maps.models import Author, Map, Text
 
 # ======================================================================================================================
@@ -21,10 +21,10 @@ class InteractiveMapDetailView(DetailView):
 
         self.object : Map
         # Get the ThematicMapText related to the ThematicMap
-        text           : Text        = self.object.text
-        themes         : set[Theme]  = self.object.themes.all()
-        authors        : set[Author] = self.object.authors.all()
-        title          : str         = self.object.title
+        text           : Text          = self.object.text
+        themes         : set[Thematic] = self.object.thematics.all()
+        authors        : set[Author]   = self.object.authors.all()
+        title          : str           = self.object.title
         try:
             map_embed_html : str | None = self.object.map_render.embed_html.read().decode('utf-8')
             map_fs_url     : str | None = self.object.map_render.full_html.url
@@ -38,7 +38,7 @@ class InteractiveMapDetailView(DetailView):
 
         # Add the text and sections to the context
         context['title']           = title
-        context['themes']          = themes
+        context['thematics']       = themes
         context['sections']        = sections
         context['authors']         = authors
         context['map_embed_html']  = map_embed_html
