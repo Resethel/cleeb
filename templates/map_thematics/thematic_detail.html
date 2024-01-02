@@ -40,36 +40,35 @@
 
             <section class="section" id="map_list">
                 <div class="section-title">
-                    Cartes de la thématique
+                    Cartes interactives sur cette thématique:
                 </div>
-                <div class="card-list-container">
-                    <div class="card-row-container">
+                <div class="card-container">
+                    <div class="card-row">
                         {% for map in maps %}
-                            <div class="card-col-container">
+                            <div class="card-col">
                                 <a href="{% url 'interactive_map_detail' map.id %}">
-                                    <div class="card-item">
-                                        <div class="card-item-thumbnail">
-                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
-                                        </div>
-                                        <div class="card-item-metadata">
+                                    <div class="card map-card">
+                                        <h1 class="map-card-title">{{ map.name }}</h1>
+                                        <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
+                                        <div class="map-card-metadata">
                                             {% for author in map.authors.all %}
                                                 <a href="#{{ author.lastname }}-{{ author.firstname }}">
-                                                    <div class="card-item-metadata-author">
+                                                    <div class="map-card-metadata-author">
                                                         <img src="{{ author.avatar.url }}" alt="{{ author.name }}">
                                                         <span>{{ author.firstname }} {{ author.lastname }}</span>
                                                     </div>
                                                 </a>
                                             {% endfor %}
-                                            <div class="card-item-metadata-date">{{ map.date }}</div>
+                                            <div class="map-card-metadata-date">{{ map.date }}</div>
                                         </div>
-                                        <div class="card-item-text">{{ map.name }}</div>
+                                        <div class="map-card-text">{{ map.name }}</div>
                                     </div>
                                 </a>
                             </div>
 
                             {% if forloop.counter|divisibleby:3 and not forloop.last %}
                                 </div>
-                                <div class="card-row-container">
+                                <div class="card-row">
                             {% endif %}
                         {% endfor %}
                     </div>

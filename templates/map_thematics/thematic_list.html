@@ -28,7 +28,7 @@
         </div>
 
         <div class="container">
-            <section class="section">
+            <section class="section" id="introduction">
                 <div class="text-block">
                     <p>
                         La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
@@ -51,33 +51,23 @@
                 </div>
             </section>
 
-            <section class="section">
+            <section class="section" id="thematic-cards-list">
                 <div class="section-title">Ensemble des thématiques</div>
-                <div class="card-list-container">
-                    <div class="card-row-container">
+                <div class="card-container">
+                    <div class="card-row">
                         <!-- Render a list of themes with cards linking to individual theme pages -->
                         {% for thematic in thematics %}
-                            <div class="card-col-container">
+                            <div class="card-col">
                                 <a href="{% url 'thematic_detail' thematic.id %}">
-                                    <div class="card-item">
-                                        <div class="card-item-thumbnail">
-                                            <img src="{{ thematic.splash_img.url }}" alt="{{ thematic.name }}" width="1700" height="1080">
-                                        </div>
-
-                                            <div class="card-item-content">
-                                                <h5 class="thematic-item-title">
-                                                    {{ thematic.name }}
-                                                </h5>
-                                                <p class="card-item-content-description">
-                                                    {{ theme.description }}
-                                                </p>
-                                            </div>
+                                    <div class="card thematic-card" style="background-image: url('{{ thematic.splash_img.url }}');">
+                                        <h5>{{ thematic.name }}</h5>
+                                        <p>{{ thematic.short_desc }}</p>
                                     </div>
                                 </a>
                             </div>
                             {% if forloop.counter|divisibleby:3 and not forloop.last %}
                                 </div>
-                                <div class="card-row-container">
+                                <div class="card-row">
                             {% endif %}
                         {% endfor %}
                         </div>
