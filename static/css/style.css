@@ -1,0 +1,85 @@
+/* font-import */
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+:root{
+    --deep-sea-blue: #0F292F;
+    --teal-shadow: #0E4344;
+    --verdant-green: #166A5D;
+    --eco-emerald: #4BB166;
+    --meadow-glow: #BFEF56;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Headings */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Paragraphs */
+p {
+    font-size: 1rem;
+}
+
+/* Links */
+a {
+    color: var(--eco-emerald);
+    text-decoration: none;
+    transition-property: color, text-decoration;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+a:hover {
+    color: var(--meadow-glow);
+    text-decoration: underline;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+
+/* ================================================================================================================== */
+/* Anchor links button styles                                                                                         */
+/* ================================================================================================================== */
+
+a.btn-white-large {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--verdant-green);
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    padding: 0.5rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+a.btn-white-large:hover {
+    background-color: var(--verdant-green);
+    color: #fff;
+}

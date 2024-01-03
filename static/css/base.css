@@ -37,6 +37,7 @@
     position: relative;
     top: 60px; /* Height of header */
     width: 100%;
+    min-height: calc(100vh + 70px); /* Height of page + height of footer. Ensures footer is always pushed of page */
 }
 
 /* ================================================================================================================== */
