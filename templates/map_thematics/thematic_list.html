@@ -63,7 +63,7 @@
                         {% for thematic in thematics %}
                             <div class="card-col">
                                 <a href="{% url 'thematic_detail' thematic.id %}">
-                                    <div class="card thematic-card" style="background-image: url('{{ thematic.splash_img.url }}');">
+                                    <div class="card thematic-card" style="--back-img: url('{{ thematic.splash_img.url }}')">
                                         <h5>{{ thematic.name }}</h5>
                                         <p>{{ thematic.short_desc }}</p>
                                     </div>
