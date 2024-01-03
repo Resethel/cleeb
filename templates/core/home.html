@@ -12,43 +12,37 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
 </head>
-<body>
-<div class="page">
-    <!-- Header Section -->
-    <header class="header">
-        <!-- Navigation Bar -->
-        {% include 'core/topbar.html' %}
-    </header>
+<body class="page">
+
+    {% include 'core/topbar.html' %}
 
     <!-- Main Content Section -->
-    <main class="body-text">
-        <section id="about" class="section">
-            <div class="container">
-                <h2>About Us</h2>
-                <p>Information about your ecologist group...</p>
+    <main class="main">
+        <section id="hero">
+            <div class="hero-container">
+                <div class="info">
+                    <h1>Cartographie Militante</h1>
+                    <h2>Une cartographie des luttes environnementales et sociales sur l'eurométropole de Metz</h2>
+                    <p>
+                        Cette cartographie militante est un projet de cartographie des luttes environnementales et
+                        sociales sur l'eurométropole de Metz. Elle a pour but de mettre en avant les luttes et les
+                        alternatives qui se développent sur le territoire.
+                    </p>
+                    <a class="btn-white-large" href="#">Voir les cartes</a>
+                </div>
+            </div>
+            <div class="hero-attributions">
+                <span>
+                    Photo by <a href="https://unsplash.com/@davidgrdm?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">David Grandmougin</a> on <a href="https://unsplash.com/photos/brown-concrete-building-near-body-of-water-during-daytime-36ZFw7HoVVE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+                </span>
             </div>
         </section>
-
-        <section id="maps" class="section">
-            <div class="container">
-                <h2>Interactive Maps</h2>
-                <p>Explore our maps and their impact...</p>
-                <!-- You can embed your interactive maps or links here -->
-            </div>
-        </section>
-
-        <section id="contact" class="section">
-            <div class="container">
-                <h2>Contact Us</h2>
-                <!-- Add contact form, details, or social media links here -->
-            </div>
-        </section>
-        <!-- Add more sections as needed -->
     </main>
 
     <!-- Footer -->
     {% include 'core/footer.html' %}
-</div>
 </body>
 </html>
