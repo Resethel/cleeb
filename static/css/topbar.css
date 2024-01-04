@@ -21,36 +21,39 @@
     align-items: center;
 }
 
-.topbar-nav ul {
+.topbar-nav > ul {
+    margin-bottom: 0;
     list-style: none;
     height: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-.topbar-nav ul li {
+.topbar-nav > ul > li {
     display: flex;
-    height: 100%;
     align-items: center;
-    margin: 0 30px 0 30px;
+    height: 100%;
+    margin: 0 30px;
     padding-top: 5px; /* padding to offset the bottom border */
     border-bottom: 5px solid transparent;
     transition: all 0.1s ease-in-out;
 }
 
-.topbar-nav ul li:hover {
+.topbar-nav > ul > li:hover {
     border-bottom: 5px solid #166a5d;
     transform: translateY(2px);
 }
 
-.topbar-nav ul li a {
-    color: #166a5d;
-    font-family: sans-serif;
-    font-size: 20px;
-    font-weight: 600;
+.topbar-nav > ul > li > a {
+    color: var(--verdant-green);
     text-decoration: none;
 }
 
+.topbar-nav > ul > li > a > h4 {
+    font-weight: 700;
+    margin: 0; /* Cancel the margin from the basic style */
+}
 
 .topbar-tools {
     display:inline-block;

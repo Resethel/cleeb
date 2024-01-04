@@ -10,20 +10,27 @@
 
     <nav class="topbar-nav">
         <ul>
-            <li><a href="#index-des-cartes" class="nav-link">Cartographie Militante</a></li>
-            <li><a href="{% url 'thematic_list' %}" class="nav-link">Thématiques de la cartographie</a></li>
-            <li><a href="{% url 'organizations_list' %}" class="nav-link">Organisations participantes</a></li>
-            <li><a href="#actus" class="nav-link">Actus</a></li>
+            <li>
+                <a href="#index-des-cartes" class="nav-link">
+                    <h4>Index des cartes</h4>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'thematic_list' %}" class="nav-link">
+                    <h4>Thématiques de la cartographie</h4>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'organizations_list' %}" class="nav-link">
+                    <h4>Organisations participantes</h4>
+                </a>
+            </li>
         </ul>
     </nav>
 
     <div class="topbar-tools">
-        <div class="topbar-tools-item">
-            <a href="#search" class="nav-tools-link">Placehold</a>
-        </div>
-        <div class="topbar-tools-item">
-            <a href="#map-index" class="nav-tools-link">Placehold</a>
-        </div>
+        <a href="#search">Placehold</a>
+        <a href="#map-index">Placehold</a>
     </div>
 
 </header>
