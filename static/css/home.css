@@ -19,26 +19,27 @@
     align-items: center;
     justify-content: center;
     width: 90%;
-    height: 140%;
+    height: 100%;
 
-    max-width: 1200px;
+    max-width: var(--max-text-width);
     margin: 0 auto;
 }
 
 .hero-container .info h1 {
     font-size: 3rem;
-    padding-bottom: 1.2rem;
 }
 
 .hero-container .info h2 {
     font-size: 1.5rem;
-    padding-bottom: 1.2rem;
-    max-width: 80%;
+    max-width: 60%;
+    line-height: 1.618rem;
+    text-align: justify;
 }
 
 .hero-container .info p {
     font-size: 1.2rem;
     max-width: 60%;
+    text-align: justify;
 }
 
 .hero-container .info > a {
