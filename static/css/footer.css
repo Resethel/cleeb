@@ -10,12 +10,12 @@
 /* Global styles */
 
 footer {
-    width: 100%;
     display: inline-block;
-    height: VAR(--footer-height);
+    position: relative;
+    height: var(--footer-height);
+    width: 100%;
     background-color: #999;
-    position:absolute;
-    bottom: 0;
+    overflow: clip;
 }
 
 footer .copyright {
@@ -56,7 +56,7 @@ footer .social {
 
 footer .social a {
     float: left;
-    line-height: 70px;
+    line-height: var(--footer-height);
     text-decoration: none;
     color: white;
     text-align: center;
