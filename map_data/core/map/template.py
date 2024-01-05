@@ -7,13 +7,15 @@ import operator
 from enum import Enum
 from typing import Callable, Collection, Iterable, Literal
 
+from folium.plugins import CirclePattern, StripePattern
+
 from map_data.core.utils import snake_case_to_camel_case
 
 # ======================================================================================================================
 # Constants for the map template
 # ======================================================================================================================
 
-MIN_ZOOM = 0
+MIN_ZOOM = 5
 MAX_ZOOM = 18
 
 # ======================================================================================================================
@@ -54,6 +56,7 @@ class Style:
         "fill_color"   : "#3388ff",
         "fill_opacity" : 0.2,
         "fill_rule"    : 'evenodd',
+        "fill_pattern" : None
     }
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -75,10 +78,9 @@ class Style:
         self.fill_color   : str | None         = kwargs.get("fill_color", None)
         self.fill_opacity : int | float | None = kwargs.get("fill_opacity", None)
         self.fill_rule    : str | None         = kwargs.get("fill_rule", None)
-
+        self.fill_pattern : StripePattern | CirclePattern | None     = kwargs.get("fill_pattern", None)
 
         self._properties_styles : list[tuple[str, str, Style]] = list()
-
 
         if kwargs.get("fill_with_default") is True:
             self.__fill_defaults()
@@ -120,7 +122,7 @@ class Style:
         attributes = [
             "stroke", "color", "weight", "opacity", "line_cap",
             "dash_array", "dash_offset", "fill", "fill_color",
-            "fill_opacity", "fill_rule"
+            "fill_opacity", "fill_rule", "fill_pattern"
         ]
 
         rstyle = {}

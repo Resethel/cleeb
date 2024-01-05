@@ -158,12 +158,15 @@ class MapBuilder:
                 name=fg.name,
                 show=fg.show_on_startup
             )
+            print(f"Adding feature group '{fg.name}' to the map...")
 
             # 2.2 Add the layers
             for layer in fg.get_layers():
+                print(f"Adding layer '{layer.name}' to the feature group '{fg.name}'...")
 
                 # 2.2.1 Fetch the data from the MapLayer model and add it to the feature group
                 geojson = self.__fetch_layer_geojson(layer.map_layer)
+                print(f"Layer '{layer.name}' contains {len(geojson['features'])} features.")
 
                 if layer.filters is not None and len(layer.filters) > 0:
                     geojson = self.__filter_geojson(geojson, *layer.filters)
@@ -184,10 +187,12 @@ class MapBuilder:
 
 
         # 3. Enable the layer control if needed
+        print(f"Setting the layer control to {self.template.enable_layer_control}...")
         if self.template.enable_layer_control:
             folium.LayerControl().add_to(map_)
 
         # 4. Return the folium map object
+        print(f"Map '{self.template.name}' generated successfully.")
         return map_
     # End def build_map
 
@@ -352,6 +357,4 @@ class MapBuilder:
 
         print(f"Filtering: kept {len(filtered_features)}/{initial_length} features")
         return {"type": "FeatureCollection", "features": filtered_features}
-
-
 # End class MapBuilder
