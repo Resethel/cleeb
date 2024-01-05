@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -11,14 +13,46 @@ def convert_shapefile_to_geojson(
         encoding : str = 'utf-8',
         input_crs: str = "2154",
         output_crs: str = "4326",
-        max_polygon_points: int = 1000,
-        max_multipolygons: int = 2500,
-        max_multipolygon_points: int = 100,
+        max_polygon_points: int | None = 1000,
+        max_multipolygons: int | None = 2500,
+        max_multipolygon_points: int | None = 100,
 ) -> dict:
     """Read a shapefile and return the data as a GeoJSON-like dict.
 
     Args:
-        file_path (str | Path): The path to the shapefile to read.
+        file_path (str | Path):
+            The path where the shapefile is located.
+        shapefile_name (str | None, optional):
+            The name of the shapefile.
+            When set to None, the name of the shapefile is the same as the name of the folder.
+            Defaults to None.
+        encoding (str, optional):
+            The encoding of the shapefile.
+            Defaults to 'utf-8'.
+        input_crs (str, optional):
+            The CRS of the shapefile.
+            Defaults to "2154".
+        output_crs (str, optional):
+            The CRS of the output GeoJSON.
+            Defaults to "4326".
+        max_polygon_points (int | None, optional):
+            The maximum number of points in a polygon.
+            If the number of points in a polygon is greater than this value,
+            only keep 1 point every len(polygon) // `max_polygon_points` points.
+            If set to None, no down-sampling is performed.
+            Defaults to 1000.
+        max_multipolygons (int | None, optional):
+            The maximum number of polygons in a multi-polygon.
+            If the number of polygons in a multi-polygon is greater than this value,
+            reject the multi-polygon.
+            If set to None, no rejection is performed.
+            Defaults to 2500.
+        max_multipolygon_points (int | None, optional):
+            The maximum number of points in a sub-polygon of a multi-polygon.
+            If the number of points in a sub-polygon of a multi-polygon is greater than this value,
+            only keep 1 point every len(polygon) // `max_multipolygon_points` points.
+            If set to None, no down-sampling is performed.
+            Defaults to 100.
 
     Returns:
         dict: The data of the shapefile as a GeoJSON-like dict.
@@ -50,32 +84,41 @@ def convert_shapefile_to_geojson(
         coordinates = []
 
         if geometry['type'] == "MultiPolygon":
-            # Reject multi-polygons with more than 2500 polygons
-            n_polys = len(geometry['coordinates'])
-            if n_polys > max_multipolygons:
-                print(f"Rejecting {shape_record.record} with {n_polys} polygons (limit: 2500)")
-                continue
+
+            # Reject multi-polygons with more than `max_multipolygons` polygons if `max_multipolygons` is not None
+            if max_multipolygons is not None:
+                n_polys = len(geometry['coordinates'])
+                if n_polys > max_multipolygons:
+                    print(f"Rejecting {shape_record.record} with {n_polys} polygons (limit: {max_multipolygons})")
+                    continue
 
             for polygon in geometry['coordinates']:
                 sub_coordinates = []
                 for sub_polygon in polygon:
-                    # Limit the number of points in the sub-polygon to 100.
+                    # Limit the number of points in the sub-polygon to `max_multipolygon_points`
+                    # if `max_multipolygon_points` is not None.
                     # This is to reduce the size of the GeoJSON file.
-                    # If the sub_polygon has more than `max_multipolygon_points` points, only keep 1 point every len(polygon) // 100 points.
-                    # In this case of multi-polygons, it's important to be more restrictive on the number of points
-
-                    if len(sub_polygon) > max_multipolygon_points:
-                        sub_polygon = sub_polygon[::len(sub_polygon) // max_multipolygon_points]
+                    # If the sub_polygon has more than `max_multipolygon_points` points,
+                    # only keep 1 point every len(polygon) // `max_multipolygon_points` points.
+                    # In this case of multi-polygons,
+                    # it's important to be more restrictive on the number of points
+                    if max_multipolygon_points is not None:
+                        if len(sub_polygon) > max_multipolygon_points:
+                            print(f"Down-sampling sub-polygon of {len(sub_polygon)} points to {max_multipolygon_points} points")
+                            sub_polygon = sub_polygon[::len(sub_polygon) // max_multipolygon_points]
 
                     sub_coordinates.append(_convert_polygon_to_geojson(sub_polygon, transformer))
                 coordinates.append(sub_coordinates)
 
         for polygon in geometry['coordinates']:
-            # Limit the number of points in the polygon to 1000.
+            # Limit the number of points in the polygon to `max_polygon_points` if `max_polygon_points` is not None.
             # This is to reduce the size of the GeoJSON file.
-            # If the polygon has more than `max_polygon_points` points, only keep 1 point every len(polygon) // 1000 points.
-            if len(polygon) > max_polygon_points:
-                polygon = polygon[::len(polygon) // max_polygon_points]
+            # If the polygon has more than `max_polygon_points` points,
+            # only keep 1 point every len(polygon) // `max_polygon_points` points.
+            if max_polygon_points is not None:
+                if len(polygon) > max_polygon_points:
+                    print(f"Down-sampling polygon of {len(polygon)} points to {max_polygon_points} points")
+                    polygon = polygon[::len(polygon) // max_polygon_points]
             coordinates.append(_convert_polygon_to_geojson(polygon, transformer))
 
         # Create the GeoJSON entry with the correct interface
