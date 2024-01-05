@@ -35,6 +35,7 @@ def impact_znieff_template() -> MapTemplate:
     template.add_feature_group(
         FeatureGroup(
             name="ZNIEFF de type 1",
+            show_on_startup=True,
             layers=[
                 Layer(
                     name="ZNIEFF de type 1",

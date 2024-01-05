@@ -6,8 +6,8 @@ from __future__ import annotations
 import folium
 from django.db.models import QuerySet
 
-from map_data.core.map.template import MapTemplate
-from map_data.models import MapLayer, Shape
+from map_data.core.map.template import CityLimits, MapTemplate
+from map_data.models import City, MapLayer, Shape
 
 # ======================================================================================================================
 # Constants
@@ -106,7 +106,51 @@ class MapBuilder:
                 control=True,
             ).add_to(map_)
 
-        # 2. Build the feature groups of the map
+        # 2. Build the city limits feature group
+        if self.template.show_city_limits:
+            city_limits_config = self.template.city_limits
+            if city_limits_config.show_emm_limits is True:
+                # Fetch the geojson that represent the limits of the EMM
+                geojson = self.__fetch_emm_limits_geojson()
+
+                # Create the feature group and add it to the map
+                folium.GeoJson(
+                    geojson,
+                    name="Limites de l'EMM",
+                    style_function=lambda x: {
+                        "color": "black",
+                        "weight": 3,
+                        "fillOpacity": 0.0,
+                    },
+                    highlight_function=None,
+                    tooltip=None,
+                    show=True,
+                ).add_to(map_)
+
+            # Add the city limits if the mode is not 'only_emm'
+            if city_limits_config.mode in ('all', 'exclude', 'include'):
+                feature_group = folium.FeatureGroup(
+                    name="Limites des communes",
+                    show=True,
+                )
+
+                # Fetch the geojson that represent the limits of the cities
+                geojson = self.__fetch_cities_limits_geojson(city_limits_config)
+                folium.GeoJson(
+                    geojson,
+                    name="Limites des communes",
+                    style_function=lambda x: {
+                        "color": "black",
+                        "weight": 1,
+                        "fillOpacity": 0.0,
+                    },
+                    highlight_function=None,
+                    tooltip=None,
+                    show=True,
+                ).add_to(map_)
+
+
+        # 3. Build the feature groups of the map
         for fg in self.template.get_feature_groups():
 
             # 2.1 Add the basic feature group parameters
@@ -178,3 +222,104 @@ class MapBuilder:
             )
 
         return geojson
+    # End def __fetch_layer_geojson
+
+    @staticmethod
+    def __fetch_emm_limits_geojson() -> dict:
+        """Fetch the geojson features from the MapLayer model."""
+        # 1. Check if the layer exists in the database
+        if not City.objects.filter(name="Limites de l'EMM").exists():
+            raise ValueError(f"Cannot find the limits of the EMM in the database.")
+
+        # 2. Fetch the data from the database
+        limit_query: QuerySet = City.objects.filter(name="Limites de l'EMM")
+        # 2.1 Check if there is any data,
+        if limit_query is None or limit_query.count() == 0:
+            raise RuntimeError(f"Cannot find the limits of the EMM in the database.")
+        if limit_query.count() > 1:
+            raise RuntimeWarning(f"There are several limits for the EMM. Only the first one will be used.")
+
+        # 2.1. Fetch the data from the database
+        feature_set = limit_query.first().shape.all()
+
+        # 3. Convert the data into a GeoJSON format
+        geojson = {"type": "FeatureCollection", "features": []}
+        feature: Shape
+        for feature in feature_set:
+            geojson["features"].append(
+                {
+                    "type": feature.feature_type,
+                    "geometry": {
+                        "type": feature.geometry_type,
+                        "coordinates": eval(feature.geometry_coordinates),
+                    },
+                    "properties": {}
+                }
+            )
+
+        return geojson
+
+    @staticmethod
+    def __fetch_cities_limits_geojson(config: CityLimits) -> dict:
+        """Fetch the geojson features from the MapLayer model."""
+
+
+        cities = City.objects.all()
+
+        # 1. If the mode is 'all', fetch all the cities
+        if config.mode == "all":
+            geojson = {"type": "FeatureCollection", "features": []}
+            for city in cities:
+                if city.name == "Limites de l'EMM":
+                    continue
+                feature_set = city.shape.all()
+                for feature in feature_set:
+                    geojson["features"].append(
+                        {
+                            "type": feature.feature_type,
+                            "geometry": {
+                                "type": feature.geometry_type,
+                                "coordinates": eval(feature.geometry_coordinates),
+                            },
+                            "properties": {}
+                        }
+                    )
+            return geojson
+
+        elif config.mode == "exclude":
+            geojson = {"type": "FeatureCollection", "features": []}
+            for city in cities:
+                if city.name not in config.cities:
+                    feature_set = city.shape.all()
+                    for feature in feature_set:
+                        geojson["features"].append(
+                            {
+                                "type": feature.feature_type,
+                                "geometry": {
+                                    "type": feature.geometry_type,
+                                    "coordinates": eval(feature.geometry_coordinates),
+                                },
+                                "properties": {}
+                            }
+                        )
+            return geojson
+
+        elif config.mode == "include":
+            geojson = {"type": "FeatureCollection", "features": []}
+            for city in cities:
+                if city.name in config.cities:
+                    feature_set = city.shape.all()
+                    for feature in feature_set:
+                        geojson["features"].append(
+                            {
+                                "type": feature.feature_type,
+                                "geometry": {
+                                    "type": feature.geometry_type,
+                                    "coordinates": eval(feature.geometry_coordinates),
+                                },
+                                "properties": {}
+                            }
+                        )
+            return geojson
+    # End def __fetch_layer_geojson
+# End class MapBuilder

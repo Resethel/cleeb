@@ -194,7 +194,6 @@ class Layer:
             self.highlight.validate()
 # End class Layer
 
-
 class FeatureGroup:
     """Represents a map feature group.
 
@@ -256,6 +255,51 @@ class FeatureGroup:
     # End def add_layer
 # End class FeatureGroup
 
+class CityLimits:
+    """Represents the city limits to show on the map."""
+
+    default_style = Style(
+        stroke=True,
+        color="#3388ff",
+        weight=2,
+        opacity=0.5
+    )
+
+    def __init__(
+            self,
+            mode: Literal['all', 'exclude', 'include'],
+            cities: Collection[str] | None = None,
+            style: Style | None = None,
+            show_emm_limits: bool = True
+    ) -> None:
+
+        self.mode: Literal['all', 'exclude', 'include'] = mode
+
+        if self.mode == "all":
+            self.cities = None
+        elif self.mode == "include" or self.mode == "exclude":
+            if cities is None:
+                raise ValueError("Expected 'cities' to be a list of cities when 'mode' is 'include'")
+            if not isinstance(cities, Collection):
+                raise ValueError(f"Expected 'cities' to be a `Collection`, not `{type(cities)}`")
+            self.cities = cities
+
+        self.style = style if style is not None else CityLimits.default_style
+        self.show_emm_limits = show_emm_limits
+    # End def __init__
+
+    def validate(self):
+        """Validate the city limits."""
+        if self.mode not in ("all", "include", "exclude"):
+            raise ValueError(f"Expected 'mode' to be 'all', 'include' or 'exclude', not '{self.mode}'")
+        if self.mode != "all" and self.cities is None:
+            raise ValueError("Expected 'cities' to be a list of cities when 'mode' is 'include' or 'exclude'")
+        if self.mode != "all" and not isinstance(self.cities, Collection):
+            raise ValueError(f"Expected 'cities' to be a `Collection`, not `{type(self.cities)}`")
+
+        if self.style is not None:
+            self.style.validate()
+# End class CityLimits
 
 class MapTemplate:
     def __init__(self):
@@ -264,6 +308,8 @@ class MapTemplate:
         self.zoom_start : int | None = None
         self.enable_layer_control = True
         self.enable_zoom_control = True
+        self.show_city_limits = True
+        self.city_limits : CityLimits | None = CityLimits(mode="all", show_emm_limits=True)
 
         # Private properties
         self.__feature_groups: list[FeatureGroup] = list()
@@ -350,5 +396,9 @@ class MapTemplate:
         # Validate that the zoom start is valid
         if self.zoom_start is not None and (self.zoom_start < MIN_ZOOM or self.zoom_start > MAX_ZOOM):
             raise ValueError(f"Zoom start must be between {MIN_ZOOM} and {MAX_ZOOM} (got {self.zoom_start})")
+        if self.show_city_limits:
+            if not isinstance(self.city_limits, CityLimits):
+                raise ValueError(f"Expected 'city_limits' to be of type 'CityLimits', not '{type(self.city_limits)}'")
+            self.city_limits.validate()
 # End class MapTemplate
 
