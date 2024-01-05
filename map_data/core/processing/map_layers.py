@@ -10,6 +10,8 @@ from typing import Any
 import shapefile
 from pyproj import Transformer
 
+from map_data.core.processing import utils
+
 # ======================================================================================================================
 # Constants
 # ======================================================================================================================
@@ -20,9 +22,9 @@ LAYERS : list[dict] = [
 
     # ZNIEFF de type 1
     {
-        "name"      : "znieff_type_1",
-        "dataset"   : "dreal_grand_est",
-        "shapefile" : "ZNIEFF1et2/ZNIEFF1_S_R44.shp",
+        "name"      : "ZNIEFF de type 1",
+        "dataset"   : "dreal_grand_est/ZNIEFF1et2",
+        "shapefile" : "ZNIEFF1_S_R44.shp",
         "properties"     : {
             "Categorie"  : "ZNIEFF de type 1",
             "Nom"        : "{NOM} ({ID_MNHN})",
@@ -34,9 +36,9 @@ LAYERS : list[dict] = [
 
     # ZNIEFF de type 2
     {
-        "name"           : "znieff_type_2",
-        "dataset"        : "dreal_grand_est",
-        "shapefile"      : "ZNIEFF1et2/ZNIEFF2_S_R44.shp",
+        "name"           : "ZNIEFF de type 2",
+        "dataset"        : "dreal_grand_est/ZNIEFF1et2",
+        "shapefile"      : "ZNIEFF2_S_R44.shp",
         "properties"     : {
             "Categorie"  : "ZNIEFF de type 1",
             "Nom"        : "{NOM} ({ID_MNHN})",
@@ -48,8 +50,8 @@ LAYERS : list[dict] = [
 
     # Trame verte
     {
-        "name"     : "trame_verte",
-        "dataset"   : "N_SRCE_CORRIDOR_S_000",
+        "name"     : "Trame verte",
+        "dataset"  : "N_SRCE_CORRIDOR_S_000",
         "shapefile": "N_SRCE_CORRIDOR_S_000.shp",
         "properties": {
             "categorie": "Trame verte",
@@ -60,7 +62,7 @@ LAYERS : list[dict] = [
 
     # Trame bleue
     {
-        "name"        : "trame_bleue",
+        "name"        : "Trame bleue",
         "dataset"     : "N_SRCE_COURS_EAU_S_000",
         "shapefile"   : "N_SRCE_COURS_EAU_S_000.shp",
          "properties": {
@@ -109,9 +111,9 @@ LAYERS : list[dict] = [
 
     # ZPS
     {
-        "name"      : "reserves_naturelle_régionales",
-        "dataset"   : "dreal_grand_est",
-        "shapefile" : "N_ENP_RNR_S_R44/N_ENP_RNR_S_R44.shp",
+        "name"      : "Reserves naturelles nationales",
+        "dataset"   : "dreal_grand_est/N_ENP_RNR_S_R44",
+        "shapefile" : "N_ENP_RNR_S_R44.shp",
         "encoding"      : "latin-1",
         "out_filename"  : "reserves_naturelles_regionales.json",
         "properties": {
@@ -125,33 +127,57 @@ LAYERS : list[dict] = [
 
     # Zones boisées
     {
-        "name"      : "zones_boisées",
-        "dataset"   : "dreal_grand_est",
-        "shapefile" : "Foret/Foret_BdcartoEd181_S_R44.shp",
-        "encoding"      : "utf-8",
-        "properties"    : {
-            "ID": "{id}",
-            "type": "{nature}"
+        "name"       : "Zones boisées",
+        "dataset"    : "dreal_grand_est/Foret",
+        "shapefile"  : "Foret_BdcartoEd181_S_R44.shp",
+        "encoding"   : "utf-8",
+        "properties" : {
+            "ID"   : "{id}",
+            "type" : "{nature}"
         }
     },
 
     # Zones Humides probables
     {
-        "name"      : "zones_humides_probables",
-        "dataset"   : "dreal_grand_est",
-        "shapefile" : "zhprobableseuillee_s_r44/ZHprobableSeuillee_S_R44.shp",
-        "encoding"      : "utf-8",
-    }
+        "name"      : "Zones humides probables (seuillées)",
+        "dataset"   : "dreal_grand_est/zhprobableseuillee_s_r44",
+        "shapefile" : "ZHprobableSeuillee_S_R44.shp",
+        "encoding"  : "utf-8",
+    },
 
     # PLUi
-    # "ZONAGE_GENERAL": {
-    #     "source_path": root_path() / "data/raw/PLUi/Arreté_2023/zonage_général/zone_urba.shp",
-    #     "shapefile_name": None,
-    #     "out_filename": "zonage_general.json",
-    #     "properties": {
-    #         "Type de Zone": "{typezone}"
-    #     }
-    # }
+    {
+        "name"      : "PLUi - Zonage Géneral",
+        "dataset"   : "PLUi/zonage_general",
+        "shapefile" : "zonage_general.shp",
+        "encoding"  : "utf-8",
+        "properties": {
+            "Type de Zone": "{typezone}"
+        }
+    },
+
+    {
+        "name": "PLUi - OAPs",
+        "dataset": "PLUi/OAP",
+        "shapefile": "OAP.shp",
+        "encoding": "utf-8",
+        "properties": {
+            "Nom": "{Nom_OAP}"
+        }
+    },
+
+    {
+        "name": "PLUi - Préscriptions surfaciques",
+        "dataset": "PLUi/PRESCRIPTION_SURF",
+        "shapefile": "PRESCRIPTION_SURF.shp",
+        "encoding": "utf-8",
+        "properties": {
+            "Type": "{LIBELLE}"
+        },
+        "max_polygons_points": None,
+        "max_multipolygons": None,
+        "max_multipolygon_points": None,
+    }
 ]
 
 METZ_LOCATION = (49.119309, 6.175716)
@@ -321,6 +347,7 @@ def list_layers() -> list[str]:
 
 def generate_map_layer_entry(name : str, convert_properties: bool = True) -> list[dict]:
 
+    print(f"Generating map layer entry for '{name}'...")
     # 1. Get the layer config
     layer_config = None
     try:
@@ -335,8 +362,14 @@ def generate_map_layer_entry(name : str, convert_properties: bool = True) -> lis
 
     # 3. Read the shapefile
     print("Reading shapefile...")
-    geojson = __convert_shapefile_to_geojson(dataset_path, layer_config.get("shapefile"),
-                                             encoding=layer_config.get("encoding", "utf-8"))
+    geojson = utils.convert_shapefile_to_geojson(
+        file_path=dataset_path,
+        shapefile_name=layer_config.get("shapefile"),
+        encoding=layer_config.get("encoding", "utf-8"),
+        max_polygon_points=layer_config.get("max_polygons_points", None),
+        max_multipolygons=layer_config.get("max_multipolygons", None),
+        max_multipolygon_points=layer_config.get("max_multipolygon_points", None),
+    )
 
     # 4. Filter the data to only include the data in the filter area.
     print("Filtering data...")
@@ -362,7 +395,6 @@ def generate_map_layer_entry(name : str, convert_properties: bool = True) -> lis
         }
         for feature in geojson["features"]
     ]
-
 
     # 7. Return the list of features
     return features
