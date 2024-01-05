@@ -38,8 +38,6 @@ class InteractiveMapDetailView(DetailView):
             map_embed_html = None
             map_fs_url     = None
 
-        # Filter the sections related to the ThematicMapText and order them by 'order'
-
         # Add the text and sections to the context
         context['title']           = title
         context['thematics']       = thematics
@@ -75,7 +73,7 @@ class InteractiveMapDetailView(DetailView):
 
         # Wrap the introduction in a <p> tag if it is not already wrapped
         if soup.p is None:
-            soup.wrap(soup.new_tag('p'))
+            soup.string.wrap(soup.new_tag('p'))
 
         return soup.decode_contents()
 
