@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Callable
 
 from django.core.files.base import ContentFile
@@ -75,26 +77,36 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # 1. First clean all the maps
-        MapRender.objects.all().delete()
-
-        # 2. Reset the auto field so that the next map will have the id 1
-        reset_auto_field(MapRender)
-
-        # 3. Generate the maps
         for template_generator in self.TEMPLATES:
             template = template_generator()
-            map_builder = MapBuilder(template_generator())
-            map_ = map_builder.build()
+            map_render_name = template.name
+            print(f"Generating map for {template.name}...")
 
-            # 3.1 Save the map html in a ContentFile and save it in the database
-            map_embed_html = ContentFile(name=f"{snake_case(template.name)}.html", content=map_._repr_html_())
-            map_full_html = ContentFile(name=f"{snake_case(template.name)}_full.html", content=map_.get_root().render())
-            MapRender.objects.create(
-                name=template.name,
-                embed_html=map_embed_html,
-                full_html=map_full_html,
-            )
+            # 1. Generate the map
+            map_ = MapBuilder(template_generator()).build()
+
+            # 2. Check if the map already exists
+            map_render : MapRender | None = MapRender.objects.filter(name=map_render_name).first()
+
+            # 3. If the map does not exist, create it
+            if map_render is None:
+                print(f"Creating new map render '{template.name}'...")
+                map_embed_html = ContentFile(name=f"{snake_case(template.name)}.html", content=map_._repr_html_())
+                map_full_html = ContentFile(name=f"{snake_case(template.name)}_full.html",
+                                            content=map_.get_root().render())
+                MapRender.objects.create(
+                    name=template.name,
+                    embed_html=map_embed_html,
+                    full_html=map_full_html,
+                )
+
+            # 4. If the map already exists, update it
+            else:
+                print(f"Updating map render '{template.name}'...")
+                with map_render.embed_html.open("w") as f:
+                    f.write(map_._repr_html_())
+                with map_render.full_html.open("w") as f:
+                    f.write(map_.get_root().render())
 # End class Command
 
 
