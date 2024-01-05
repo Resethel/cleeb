@@ -6,7 +6,7 @@ from __future__ import annotations
 import folium
 from django.db.models import QuerySet
 
-from map_data.core.map.template import CityLimits, MapTemplate
+from map_data.core.map.template import CityLimits, Filter, MapTemplate
 from map_data.models import City, MapLayer, Shape
 
 # ======================================================================================================================
@@ -165,6 +165,9 @@ class MapBuilder:
                 # 2.2.1 Fetch the data from the MapLayer model and add it to the feature group
                 geojson = self.__fetch_layer_geojson(layer.map_layer)
 
+                if layer.filters is not None and len(layer.filters) > 0:
+                    geojson = self.__filter_geojson(geojson, *layer.filters)
+
                 # 2.2.3. Add the feature group to the map
                 folium.GeoJson(
                     geojson,
@@ -322,4 +325,33 @@ class MapBuilder:
                         )
             return geojson
     # End def __fetch_layer_geojson
+
+    @staticmethod
+    def __filter_geojson(geojson: dict, *filters: Filter) -> dict:
+        """Filter the geojson features based on the filters provided."""
+        # 1. Check if the geojson is valid
+        if geojson is None or "features" not in geojson.keys():
+            raise ValueError("The geojson is invalid.")
+
+        # 2. Filter the geojson
+        filtered_features : list[dict] = geojson["features"]
+        initial_length = len(filtered_features)
+        for filter_ in filters:
+            temp_features = []
+            for feature in filtered_features:
+                properties = feature["properties"]
+                if filter_.property_name not in properties.keys():
+                    continue
+
+                if filter_.op(properties[filter_.property_name], filter_.property_value) is True:
+                    # print(properties[filter_.property_name], f"operator: {filter_.op}({type(filter_.op)})",
+                    #                           filter_.property_value)
+                    temp_features.append(feature)
+
+            filtered_features = temp_features
+
+        print(f"Filtering: kept {len(filtered_features)}/{initial_length} features")
+        return {"type": "FeatureCollection", "features": filtered_features}
+
+
 # End class MapBuilder

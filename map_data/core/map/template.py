@@ -3,8 +3,9 @@ Module to create a template of a map.
 """
 from __future__ import annotations
 
+import operator
 from enum import Enum
-from typing import Collection, Iterable
+from typing import Callable, Collection, Iterable, Literal
 
 from map_data.core.utils import snake_case_to_camel_case
 
@@ -160,6 +161,68 @@ class Style:
     # End def __fill_defaults
 # End class Style
 
+
+class Filter:
+    """Represents a filter to apply to the data."""
+
+    def __init__(
+            self,
+            property_name: str,
+            op: Literal[
+                    '==', '!=', '>', '>=', '<', '<='
+                ] | operator.eq | operator.ne | operator.gt | operator.ge | operator.lt | operator.le,
+            property_value: str,
+    ) -> None:
+        self.property_name  : str = property_name
+        self.op           : Callable = op
+        self.property_value : str = property_value
+
+    # End def __init__
+
+    @property
+    def op(self) -> Callable:
+        """Get the operator."""
+        return self.__op
+
+    @op.setter
+    def op(self, operator_: Literal[
+                                '==', '!=', '>', '>=', '<', '<='] | operator.eq | operator.ne | operator.gt | operator.ge | operator.lt | operator.le):
+        """Set the operator."""
+        if isinstance(operator_, str):
+            if operator_ == "==":
+                self.__op = operator.eq
+            elif operator_ == "!=":
+                self.__op = operator.ne
+            elif operator_ == ">":
+                self.__op = operator.gt
+            elif operator_ == ">=":
+                self.__op = operator.ge
+            elif operator_ == "<":
+                self.__op = operator.lt
+            elif operator_ == "<=":
+                self.__op = operator.le
+            else:
+                raise ValueError(f"Invalid operator '{operator_}'")
+
+        elif isinstance(operator_, Callable):
+            if operator_ not in (operator.eq, operator.ne, operator.gt, operator.ge, operator.lt, operator.le):
+                raise ValueError(f"Invalid operator '{operator_}'")
+            self.__op = operator_
+
+        else:
+            raise TypeError(f"Expected 'operator' to be of type 'str' or 'Callable', not '{type(operator_)}'")
+    # End def op
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def validate(self):
+        """Validate the filter."""
+        pass
+    # End def validate
+# End class Filter
+
 class Layer:
     """Represents a map layer.
 
@@ -172,14 +235,34 @@ class Layer:
             map_layer: str,
             style : Style | None = None,
             highlight : Style | None = None,
+            filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
             show_on_startup : bool = True
     ) -> None:
-        self.name            : str          = name
-        self.map_layer       : str          = map_layer
-        self.style           : Style | None = style
-        self.highlight       : Style | None = highlight
-        self.show_on_startup : bool         = show_on_startup
+        self.name            : str           = name
+        self.map_layer       : str           = map_layer
+        self.filters         : list[Filter]  = []
+        self.style           : Style | None  = style
+        self.highlight       : Style | None  = highlight
+        self.show_on_startup : bool          = show_on_startup
+
+        # add filters
+        if filters is not None:
+            if not isinstance(filters, (Collection, Iterable)):
+                self.add_filter(filters)
+
+            for i, filter_ in enumerate(filters):
+                self.add_filter(filter_)
+
     # End def __init__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Add filters
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def add_filter(self, filter_ : Filter):
+        """Add a filter to the layer."""
+        self.filters.append(filter_)
+    # End def add_filter
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -192,6 +275,11 @@ class Layer:
             self.style.validate()
         if self.highlight is not None:
             self.highlight.validate()
+
+        for idx, filter_ in enumerate(self.filters):
+            if not isinstance(filter_, Filter):
+                raise ValueError(f"Expected 'filters@{idx}' to be of type 'Filter', not '{type(filter_)}'")
+            filter_.validate()
 # End class Layer
 
 class FeatureGroup:
