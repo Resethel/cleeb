@@ -21,8 +21,15 @@
     width: 90%;
     height: 100%;
 
-    max-width: var(--max-text-width);
+    max-width: var(--content-max-width);
     margin: 0 auto;
+}
+
+@media screen and (max-width: 768px) {
+    .hero-container .info {
+        justify-content: center;
+        text-align: center;
+    }
 }
 
 .hero-container .info h1 {
@@ -57,4 +64,23 @@
 
     font-size: 0.5rem;
     background-color: #444;
+}
+
+@media screen and (max-width: 768px) {
+    .hero-container .info{
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-container .info h2 {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .hero-container .info p {
+    font-size: 1.2rem;
+    max-width: 100%;
+    text-align: center;
+    }
 }

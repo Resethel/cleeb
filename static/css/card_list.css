@@ -35,14 +35,13 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     }
 }
 
-
 /* Individual Theme Item */
 .card {
     position: relative;
     margin: 0 0 40px;
     border-radius: 20px;
-    background: #4bb166;
-    color: #ffffff;
+    background: var(--eco-emerald);
+    color: white;
     cursor: pointer;
     transition: all .8s;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -70,7 +69,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 /* Style for the Thematic cards                                                                                       */
 /* ================================================================================================================== */
 
-.thematic-card {
+.card.thematic-card {
     padding: 40px;
     min-height: 300px;
     background: /* background is defined with the variable --back-img */
@@ -84,8 +83,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     text-decoration: none;
 }
 
-.thematic-card h5 {
-    margin-bottom: 1.2rem;
+.card.thematic-card h5 {
     font-size: 1.2rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -93,8 +91,9 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     max-width: 100%;
 }
 
-.thematic-card p {
+.card.thematic-card p {
     font-size: 1rem;
+    line-height: 1.618rem;
     font-weight: 400;
     max-width: 90%;
 }
@@ -103,7 +102,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 /* Style for the Organization cards
 /* ================================================================================================================== */
 
-.org-card {
+.card.org-card {
     overflow: hidden;
     max-height: 300px;
     /* Fonts & colors */
@@ -115,14 +114,14 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     padding-bottom: 20px;
 }
 
-.org-card h1 {
+.card.org-card h5 {
     display: block;
     margin: 20px;
     text-align: center;
     color: #ffff;
 }
 
-.org-card > img {
+.card.org-card img {
     height: 50%;
     width: 100%;
     object-fit: contain;
@@ -131,21 +130,30 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     background-color: #ffff;
 }
 
-.org-card-socials {
+.card.org-card .card-socials {
     width: 100%;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.org-card-social-link {
+.card.org-card .card-socials a {
+    text-decoration: none;
+    color: #ffffff;
+    padding-left: 5px;
+    padding-right: 5px;
+    transition: all .3s
+}
+
+.card.org-card .card-socials a>img {
     margin: auto;
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: auto;
+    background-color: transparent;
     filter: invert(1); /* SVG to white */
-    transitions: all .3s
 }
 
 
@@ -153,54 +161,51 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 /* Style for the Map Cards
 /* ================================================================================================================== */
 
-.map-card {
+.card.map-card {
     overflow: hidden;
-
     /* Fonts & colors */
-    font-family: sans-serif;
     text-align: left;
-    color: #ffffff;
+    color: white;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     text-decoration: none;
 }
 
-.map-card img {
+.card.map-card img {
     height: auto;
     width: 100%;
     object-fit: cover;
 }
 
-.map-card-content {
+.card.map-card .card-content {
     padding: 15px 25px 33px;
     display:flex;
     flex-direction: column;
 }
 
 
-.map-card-metadata {
+.card.map-card .card-content .card-metadata {
     font-size: 12px;
     display:flex;
     width: 100%;
     padding-bottom: 1em;
 }
 
-.map-card-metadata-divider {
+.card.map-card .card-content .card-metadata .metadata-divider {
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
 
-.map-card-metadata-author
-{
+.card.map-card .card-content .card-metadata .metadata-authors {
     display: flex;
     align-items: center;
 }
 
-.map-card-metadata-author a {
+.card.map-card .card-content .card-metadata .metadata-authors a {
     text-decoration: none;
     color:#fff;
 }
 
-.map-card-metadata-author img {
+.card.map-card .card-content .card-metadata .metadata-authors img {
     height: 24px;
     width: 24px;
     border-radius: 50%;
@@ -208,7 +213,6 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     vertical-align: middle;
 }
 
-
-.map-card-metadata a:hover{
+.card.map-card .card-content .card-metadata .metadata-authors a:hover {
     text-decoration: underline;
 }

@@ -10,9 +10,10 @@
     <title>Listes des Thématiques</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
 </head>
 <body class="page">
@@ -23,60 +24,61 @@
     <!-- Main Content Section -->
     <main class="main">
 
-        <div class="hero">
-            <div class="hero-content">
-                <div class="hero-title">
-                    <div class="hero-title-text">Thématiques de la Cartographie: pluralité des luttes</div>
+        <sec class="content-header">
+            <div class="header-container">
+                <div class="header-content">
+                    <h1>Thématiques de la Cartographie</h1>
                 </div>
             </div>
-        </div>
+        </sec>
 
-        <div class="container">
-            <section class="section" id="introduction">
-                <div class="text-block">
-                    <p>
-                        La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
-                        qui ont lieu sur le territoire de la Métropole de Metz.
-                    </p>
-                    <br>
-                    <p>
-                        Ces luttes sont nombreuses et variées, et nous avons choisie les organiser en thématiques afin de
-                        faciliter la navigation sur la carte. Chaque thématique regroupe des luttes qui ont des points
-                        communs, mais qui sont aussi très différentes les unes des autres. Nous avons choisi de ne pas
-                        hiérarchiser les thématiques, car nous considérons que toutes les luttes sont importantes et
-                        qu’elles méritent d’être mises en avant.
-                    </p>
-                    <br>
-                    <p>
-                        Ci-dessous, vous trouverez la liste des thématiques que nous avons choisies de mettre en avant.
-                        Pour chaque thématique, vous trouverez une description, ainsi que les luttes qui y sont associées
-                        en cliquant sur la carte de la thématique.
-                    </p>
-                </div>
-            </section>
+        <div class="content-wrapper">
+            <div class="content content--with-header">
+                <section class="introduction">
+                    <h3>Introduction</h3>
+                    <div class="introduction-text">
+                        <p>
+                            La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
+                            qui ont lieu sur le territoire de la Métropole de Metz.
+                        </p>
+                        <p>
+                            Ces luttes sont nombreuses et variées, et nous avons choisie les organiser en thématiques afin de
+                            faciliter la navigation sur la carte. Chaque thématique regroupe des luttes qui ont des points
+                            communs, mais qui sont aussi très différentes les unes des autres. Nous avons choisi de ne pas
+                            hiérarchiser les thématiques, car nous considérons que toutes les luttes sont importantes et
+                            qu’elles méritent d’être mises en avant.
+                        </p>
+                        <p>
+                            Ci-dessous, vous trouverez la liste des thématiques que nous avons choisies de mettre en avant.
+                            Pour chaque thématique, vous trouverez une description, ainsi que les luttes qui y sont associées
+                            en cliquant sur la carte de la thématique.
+                        </p>
+                    </div>
+                </section>
 
-            <section class="section" id="thematic-cards-list">
-                <h1 class="section-title">Ensemble des thématiques</h1>
-                <div class="card-container">
-                    <div class="card-row">
-                        <!-- Render a list of themes with cards linking to individual theme pages -->
-                        {% for thematic in thematics %}
-                            <div class="card-col">
-                                <a href="{% url 'thematic_detail' thematic.id %}">
-                                    <div class="card thematic-card" style="--back-img: url('{{ thematic.splash_img.url }}')">
-                                        <h5>{{ thematic.name }}</h5>
-                                        <p>{{ thematic.short_desc }}</p>
-                                    </div>
-                                </a>
-                            </div>
-                            {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                <section class="panel" id="thematic-cards-list">
+                    <h3>Ensemble des thématiques</h3>
+                    <div class="card-container">
+                        <div class="card-row">
+                            <!-- Render a list of themes with cards linking to individual theme pages -->
+                            {% for thematic in thematics %}
+                                <div class="card-col">
+                                    <a href="{% url 'thematic_detail' thematic.id %}">
+                                        <div class="card thematic-card" style="--back-img: url('{{ thematic.splash_img.url }}')">
+                                            <h5>{{ thematic.name }}</h5>
+                                            <p>{{ thematic.short_desc }}</p>
+                                        </div>
+                                    </a>
                                 </div>
-                                <div class="card-row">
-                            {% endif %}
-                        {% endfor %}
-                        </div>
-                </div>
-            </section>
+                                {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                    </div>
+                                    <div class="card-row">
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                    </div>
+                </section>
+            </div>
         </div>
     </main>
 

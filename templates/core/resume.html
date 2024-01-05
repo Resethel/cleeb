@@ -13,17 +13,13 @@
     <title>{{ title }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/resume.css' %}">
 </head>
 <body class="page">
     <!-- Header Section -->
-    <header class="header">
-        <!-- Navigation Bar -->
-        {% include 'core/topbar.html' %}
-    </header>
+    {% include 'core/topbar.html' %}
 
     <!-- Main Content Section -->
     <main class="resume">

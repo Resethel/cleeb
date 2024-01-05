@@ -10,7 +10,8 @@
     <title>Thématique: {{ thematic_name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
@@ -25,75 +26,77 @@
     <main class="main">
 
         <!-- Hero part of the page -->
-        <div class="hero">
-            <div class="hero-content">
-                <div class="hero-title">
-                    <div class="hero-title-text">{{ thematic_name }}</div>
+        <div class="content-header">
+            <div class="header-container">
+                <div class="header-content">
+                    <h1>{{ thematic_name }}</h1>
                 </div>
             </div>
         </div>
 
         <!-- Main content of the page -->
-        <div class="container">
-            <!-- Description of the theme -->
-            <section class="section" id="description">
-                <div class="text-block">
-                    {{ thematic_desc | safe }}
-                </div>
-            </section>
+        <div class="content-wrapper">
+            <div class="content content--with-header">
+                <!-- Description of the theme -->
+                <section class="reading-section" id="description">
+                    <h3>Description de la thématique</h3>
+                    <article class="section-article">
+                        {{ thematic_desc | safe }}
+                    </article>
+                </section>
 
-            <section class="section" id="map_list">
-                <div class="section-title">
-                    Cartes interactives sur cette thématique:
-                </div>
-                <div class="card-container">
-                    <div class="card-row">
-                        {% for map in maps %}
-                            <div class="card-col">
-                                <a href="{% url 'interactive_map_detail' map.slug %}">
-                                    <div class="card map-card">
-                                        {% if map.thumbnail %}
-                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
-                                        {% else %}
-                                            <img src="{% static 'images/map_placeholder.png' %}" alt="{{ map.name }}">
-                                        {% endif %}
-                                        <div class="map-card-content">
-                                            <div class="map-card-metadata">
-                                                {% for author in map.authors.all %}
-                                                    <div class="map-card-metadata-author">
-                                                        {% if author.picture %}
-                                                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
-                                                        {% else %}
-                                                            <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                <section class="panel" id="map_list">
+                    <h3>Cartes interactives sur cette thématique:</h3>
+                    <div class="card-container">
+                        <div class="card-row">
+                            {% for map in maps %}
+                                <div class="card-col">
+                                    <a href="{% url 'interactive_map_detail' map.slug %}">
+                                        <div class="card map-card">
+                                            {% if map.thumbnail %}
+                                                <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
+                                            {% else %}
+                                                <img src="{% static 'images/map_placeholder.png' %}" alt="{{ map.name }}">
+                                            {% endif %}
+                                            <div class="card-content">
+                                                <div class="card-metadata">
+                                                    {% for author in map.authors.all %}
+                                                        <div class="metadata-authors">
+                                                            {% if author.picture %}
+                                                                <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                                                            {% else %}
+                                                                <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                                                            {% endif %}
+                                                            <a href="#{{ author.lastname }}-{{ author.firstname }}">
+                                                                <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                                            </a>
+                                                        </div>
+                                                        {% if not forloop.last %}
+                                                            <span class="metadata-divider">·</span>
                                                         {% endif %}
-                                                        <a href="#{{ author.lastname }}-{{ author.firstname }}">
-                                                            <span>{{ author.firstname }} {{ author.lastname }}</span>
-                                                        </a>
-                                                    </div>
-                                                    {% if not forloop.last %}
-                                                        <span class="map-card-metadata-divider">·</span>
+                                                    {% endfor %}
+                                                    {%  if map.published_at %}
+                                                        <span class="metadata-divider">·</span>
+                                                        <div class="metadata-dates">
+                                                            <span>{{ map.published_at }}</span>
+                                                        </div>
                                                     {% endif %}
-                                                {% endfor %}
-                                                {%  if map.published_at %}
-                                                    <span class="map-card-metadata-divider">·</span>
-                                                    <div class="map-card-metadata-date">{{ map.published_at }}</div>
-                                                {% endif %}
+                                                </div>
+                                                <h5 class="card-title">{{ map.title }}</h5>
                                             </div>
-                                            <h1 class="map-card-title">{{ map.title }}</h1>
                                         </div>
-                                    </div>
-                                </a>
-                            </div>
-                            {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                    </a>
                                 </div>
-                                <div class="card-row">
-                            {% endif %}
-                        {% endfor %}
+                                {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                                    </div>
+                                    <div class="card-row">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
-
     </main>
 
     <!-- Footer -->

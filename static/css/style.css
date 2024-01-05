@@ -15,7 +15,8 @@
 
     --topbar-height: 60px;
     --footer-height: 60px;
-    --max-text-width: 1200px;
+    --content-max-width: 1200px;
+    --text-max-width: 800px;
 }
 
 /* ================================================================================================================== */
@@ -144,10 +145,36 @@ a.btn-white-large {
     font-size: 1.2rem;
     padding: 1.5rem 2rem;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
 
 a.btn-white-large:hover {
     background-color: var(--verdant-green);
     color: #fff;
+}
+
+/* ================================================================================================================== */
+/* Formatting for the main content of the page                                                                        */
+/* ================================================================================================================== */
+
+body.page {
+    position: relative;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--topbar-height);
+    box-sizing: border-box;
+    background-color: var(--pale-aqua);
+}
+
+.header {
+    position: relative;
+    height: var(--topbar-height);
+    overflow: hidden;
+}
+
+.main {
+    position: relative;
+    flex: 1 0 auto;
+    width: 100%;
 }

@@ -9,82 +9,86 @@
     <title>{{ thematic_map.title }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/interactive_map.css' %}">
 
 </head>
 <body class="page">
     <!-- Header Section -->
-    <header class="header">
-        {% include 'core/topbar.html' %}
-    </header>
+    {% include 'core/topbar.html' %}
 
-    <!-- Splash Section (displayed at the top of the page) -->
-    <section class="map-hero">
-        <div class="map-hero-content">
-            <div class="map-hero-themes">
-                {% for thematic in thematics %}
-                    <a class="map-hero-theme" href="{% url 'thematic_detail' thematic.id %}">
-                        {{ thematic.short_name }}
-                    </a>
-                {% endfor %}
-            </div>
-            <div class="map-hero-title">
-                <div class="map-title">{{ title }}</div>
-                <div class="map-metadata">
-                    <div class="map-metadata-date">
-                        <span>Créer le: {{ created_at }}</span>
-                        <span>Dernière modification: {{ last_modified }}</span>
-                    </div>
-                    <div class="map-metadata-authors">
-                        {% for author in authors %}
-                        <a class="" href="{{ author.url }}">
-                            <span>{{ author.firstname }} {{ author.lastname }}</span>
-                            {% if author.picture %}
-                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
-                            {% else %}
-                            <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
-                            {% endif %}
-                        </a>
-                        {% endfor %}
+    <!-- Main Section -->
+    <main class="main">
+        <section class="content-header">
+            <div class="header-container">
+                <div class="header-themes">
+                    {% for thematic in thematics %}
+                        <a href="{% url 'thematic_detail' thematic.id %}"><span>{{ thematic.short_name }}</span></a>
+                    {% endfor %}
+                </div>
+                <div class="header-content">
+                    <h1>{{ title }}</h1>
+                    <div class="header-metadata">
+                        <div class="metadata-dates">
+                            <span>Créer le: {{ created_at }}</span>
+                            <span>Dernière modification: {{ last_modified }}</span>
+                        </div>
+                        <div class="metadata-authors">
+                            {% for author in authors %}
+                            <a class="" href="{{ author.url }}">
+                                <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                {% if author.picture %}
+                                <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                                {% else %}
+                                <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <div class="content-wrapper">
+            <div class="content content--with-header">
+
+                <!-- Introduction -->
+                {% if introduction %}
+                    <section class="introduction">
+                        <h3>Introduction</h3>
+                        <div class="introduction-text">{{ introduction | safe }}</div>
+                    </section>
+                {% endif %}
+
+                <!-- Interactive Map -->
+                <section class="interactive-map">
+                    <h3>Carte interactive</h3>
+                    {% if map_embed_html %}
+                        <div class="map-render">{{ map_embed_html | safe }}</div>
+                        <a class="fullscreen-link" href="{{ map_fs_url }}">Ouvrir la carte en plein écran &gt</a>
+                    {% else %}
+                        <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
+                    {%  endif %}
+                </section>
+
+                <!-- Reading Section -->
+                <section class="reading-section">
+                    <h3>Informations complémentaires</h3>
+                    <article class="section-article">
+                        {% for section in sections %}
+                            <section>
+                                {{ section | safe }}
+                            </section>
+                        {% endfor %}
+                    </article>
+                </section>
+            </div>
         </div>
-    </section>
-
-    <div class="map-main">
-        <!-- Introductory Section -->
-        <section class="map-intro">
-            {{ introduction | safe }}
-        </section>
-
-        <!-- Map Section -->
-        <section class="map-display">
-            {% if map_embed_html %}
-                <div class="map-display-render">{{ map_embed_html | safe }}</div>
-                <a class="map-display-fs-link" href="{{ map_fs_url }}">Ouvrir la carte en plein écran &gt</a>
-            {% else %}
-                <img src="https://placehold.jp/2560x1440.png" alt="Placeholder" class="place-holder">
-            {%  endif %}
-        </section>
-
-        <!-- Detail Section -->
-        <article class="map-text">
-        {% for section in sections %}
-            <section>
-                {{ section | safe }}
-            </section>
-        {% endfor %}
-        </article>
-
-        <section class="map-credits">
-
-        </section>
-    </div>
-
+    </main>
     <!-- Footer Section -->
     {% include 'core/footer.html' %}
 

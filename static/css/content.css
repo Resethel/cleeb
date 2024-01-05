@@ -1,0 +1,151 @@
+/* content.css */
+/* CSS for the content of a page */
+
+.content-wrapper {
+    max-width: var(--content-max-width);
+    margin: auto;
+    width: 100%;
+}
+
+.content-wrapper .content {
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    background-color: #ffffff;
+    margin: 150px 0;
+    padding: 40px;
+    border-radius: 15px;
+    /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
+    box-shadow: 0 6px 12px -2px rgba(50, 50, 93, 0.25), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
+}
+
+.content-wrapper .content.content--with-header {
+    margin-top: 0;
+    padding-top: 0;
+    border-radius: 0 0 15px 15px;
+}
+
+/* ================================================================================================================== */
+/* Introduction
+/* ================================================================================================================== */
+
+/* Style for the Introduction of a content page */
+.content .introduction {
+    display: flex;
+    flex-direction: column;
+    /* Bottom margin and border */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.content .introduction > h1,
+.content .introduction > h2,
+.content .introduction > h3,
+.content .introduction > h4,
+.content .introduction > h5,
+.content .introduction > h6 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--verdant-green);
+}
+
+.content .introduction .introduction-text {
+    max-width: var(--text-max-width);
+    margin-left: auto;
+    margin-right: auto;
+
+     /* Adjust the fonts */
+    text-align: justify; /* Align the text */
+    text-transform: uppercase;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+    letter-spacing: 1px; /* Adjust space between letters */
+}
+
+/* ================================================================================================================== */
+/* Generic Content Block
+/* ================================================================================================================== */
+
+/* Style for a generic content block of a content page */
+.content .panel {
+    display: flex;
+    flex-direction: column;
+    /* Bottom margin and border */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.content .panel > h1,
+.content .panel > h2,
+.content .panel > h3,
+.content .panel > h4,
+.content .panel > h5,
+.content .panel > h6 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--verdant-green);
+}
+
+/* ================================================================================================================== */
+/* Reading Section
+/* ================================================================================================================== */
+
+/* Style for the Reading Section of a content page */
+.content .reading-section {
+    /* Bottom margin and border */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.content .reading-section > h1,
+.content .reading-section > h2,
+.content .reading-section > h3,
+.content .reading-section > h4,
+.content .reading-section > h5,
+.content .reading-section > h6 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--verdant-green);
+}
+
+.content .reading-section .section-article {
+    max-width: var(--text-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    word-wrap: anywhere;
+}
+
+.content .reading-section .section-article h1,
+.content .reading-section .section-article h2,
+.content .reading-section .section-article h3,
+.content .reading-section .section-article h4,
+.content .reading-section .section-article h5,
+.content .reading-section .section-article h6 {
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-bottom: 10px;
+    padding-bottom: 0.5rem;
+    color: var(--eco-emerald);
+}
+
+.content .reading-section .section-article ul {
+    background-color: var(--eco-emerald);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.content .reading-section .section-article ul li {
+    margin-bottom: 5px;
+    list-style-type: circle;
+    list-style-position: inside;
+    color: #ffffff;
+}
+
+
+
+
