@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from map_data.core.processing import cities, map_layers
-from map_data.models import City, MapLayer
+from map_data.core.processing import map_layers
+from map_data.models import MapLayer
 
 
 class Command(BaseCommand):
@@ -99,7 +99,7 @@ class Command(BaseCommand):
         # 2. Then, regenerate the data.
         layers_entries = map_layers.generate_all_map_layers_entries()
         for layer_name, layer_entry in layers_entries.items():
-            self.stdout.write(self.style.SUCCESS(f"Creating {len(layer_entry)} entries in the database for {layer_name}..."))
+            self.stdout.write(self.style.SUCCESS(f"Creating {len(layer_entry)} entries in the database for layer '{layer_name}'..."))
             # Create the shape entry
             map_layer_instance = MapLayer.objects.create(
                 name=layer_name,
