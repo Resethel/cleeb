@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from map_layers.models import Dataset
+from map_layers.models import Dataset, MapLayer, MapLayerCustomProperty
+
 
 # ======================================================================================================================
 # Dataset Admin
@@ -24,3 +25,21 @@ class DatasetAdmin(admin.ModelAdmin):
 # End class DatasetAdmin
 
 admin.site.register(Dataset, DatasetAdmin)
+
+# ======================================================================================================================
+# MapLayer Admin
+# ======================================================================================================================
+
+class MapLayerCustomPropertyInline(admin.TabularInline):
+    model = MapLayerCustomProperty
+    extra = 0
+
+class MapLayerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'dataset')
+    ordering = ('name',)
+
+    inlines = [
+        MapLayerCustomPropertyInline,
+    ]
+
+admin.site.register(MapLayer, MapLayerAdmin)
