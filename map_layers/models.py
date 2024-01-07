@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 import zipfile
 import geojson
@@ -11,6 +13,7 @@ from django.dispatch import receiver
 # Choices
 # ======================================================================================================================
 
+# Dataset formats
 SHAPEFILE = 'shapefile'
 GEOJSON = 'geojson'
 DATASET_FORMAT_CHOICES = {
@@ -22,6 +25,44 @@ DATASET_FORMAT_CHOICES = {
 # ======================================================================================================================
 # Dataset Model
 # ======================================================================================================================
+
+def validate_dataset_file(instance : Dataset):
+    if instance.format == SHAPEFILE:
+        if not zipfile.is_zipfile(instance.file):
+            raise ValidationError('Le fichier doit être un fichier ZIP.')
+        else:
+            try:
+                zip_file : zipfile.ZipFile
+                with zipfile.ZipFile(instance.file) as zip_file:
+                    if not zip_file.testzip() is None:
+                        raise ValidationError('Le fichier ZIP est corrompu.')
+                    else:
+                        # Check that the zip file contains at least one file with a .shp extension
+                        shapefile_found = False
+                        for file_name in zip_file.namelist():
+                            if file_name.endswith('.shp'):
+                                shapefile_found = True
+                                break
+                        if not shapefile_found:
+                            raise ValidationError('Le fichier ZIP doit contenir au moins un fichier avec une extension .shp.')
+            except zipfile.BadZipFile:
+                raise ValidationError('Le fichier ZIP est corrompu.')
+
+    elif instance.format == GEOJSON:
+        try:
+            obj : geojson.GeoJSON = geojson.loads(instance.file.read())
+            if not obj.is_valid:
+                raise ValidationError('Le fichier doit être un fichier GeoJSON valide. (erreur: {})'.format(obj.errors()))
+        except ValueError:
+            raise ValidationError('Le fichier doit être un fichier GeoJSON.')
+
+        finally:
+            # Reset the file pointer to the beginning of the file
+            instance.file.seek(0)
+
+    else:
+        raise ValidationError('Le format du jeu de données est invalide.')
+# End def validate_dataset_file
 
 class Dataset(models.Model):
     """A dataset is a file containing geographic data.
@@ -68,10 +109,13 @@ class Dataset(models.Model):
         help_text="Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON."
     )
 
+    def get_file_path(self, _):
+        return f'datasets/{uuid.uuid4()}'
+    # End def get_file_path
 
     file = models.FileField(
-        upload_to=lambda instance, filename: 'datasets/{}'.format(uuid.uuid4()),
-        help_text="Fichier du jeu de données. Le fichier doit correspondre au format choisi."
+        upload_to=get_file_path,
+        help_text="Fichier du jeu de données. Le fichier doit correspondre au format choisi.",
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -81,6 +125,10 @@ class Dataset(models.Model):
     def __str__(self):
         return self.name
     # End def __str__
+
+    def clean(self):
+        validate_dataset_file(self)
+    # End def clean
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -107,41 +155,4 @@ def dataset_pre_save(sender, instance, **kwargs):
     if instance.category is None or instance.category.strip() == '':
         instance.category = 'Non classé'
     instance.category = instance.category.strip()
-
-    # 3. Validate the file format
-    if instance.format == SHAPEFILE:
-        if not zipfile.is_zipfile(instance.file):
-            raise ValidationError('Le fichier doit être un fichier ZIP.')
-        else:
-            try:
-                zip_file : zipfile.ZipFile
-                with zipfile.ZipFile(instance.file) as zip_file:
-                    if not zip_file.testzip() is None:
-                        raise ValidationError('Le fichier ZIP est corrompu.')
-                    else:
-                        # Check that the zip file contains at least one file with a .shp extension
-                        shapefile_found = False
-                        for file_name in zip_file.namelist():
-                            if file_name.endswith('.shp'):
-                                shapefile_found = True
-                                break
-                        if not shapefile_found:
-                            raise ValidationError('Le fichier ZIP doit contenir au moins un fichier avec une extension .shp.')
-            except zipfile.BadZipFile:
-                raise ValidationError('Le fichier ZIP est corrompu.')
-
-    elif instance.format == GEOJSON:
-        try:
-            obj : geojson.GeoJSON = geojson.loads(instance.file.read())
-            if not obj.is_valid:
-                raise ValidationError('Le fichier doit être un fichier GeoJSON valide. (erreur: {})'.format(obj.errors()))
-        except ValueError:
-            raise ValidationError('Le fichier doit être un fichier GeoJSON.')
-
-        finally:
-            # Reset the file pointer to the beginning of the file
-            instance.file.seek(0)
-
-    else:
-        raise ValidationError('Le format du jeu de données est invalide.')
 # End def dataset_pre_save
