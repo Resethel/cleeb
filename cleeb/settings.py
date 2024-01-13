@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'interactive_maps.apps.InteractiveMapsConfig',
     "map_data.apps.MapDataConfig",
     "map_thematics.apps.MapThematicsConfig",
-    "map_layers.apps.MapLayersConfig"
+    "map_layers.apps.MapLayersConfig",
+    "shapes.apps.ShapesConfig",
 ]
 
 MIDDLEWARE = [
