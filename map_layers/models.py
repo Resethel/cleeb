@@ -4,9 +4,11 @@ import uuid
 import zipfile
 
 import geojson
+from celery import current_app
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -34,6 +36,17 @@ ENCODING_CHOICES = {
     ASCII: 'ASCII'
 }
 
+# ======================================================================================================================
+# Enums
+# ======================================================================================================================
+
+class MapLayerStatus(models.TextChoices):
+    """Status of a map layer."""
+    PENDING = 'PENDING', 'En attente de génération'
+    GENERATING = 'GENERATING', 'Génération en cours'
+    DONE = 'DONE', 'Génération terminée'
+    ERROR = 'ERROR', 'Erreur lors de la génération'
+# End class MapLayerStatus
 
 
 # ======================================================================================================================
@@ -324,6 +337,20 @@ class MapLayer(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Shapes
+    # ------------------------------------------------------------------------------------------------------------------
+
+    status = models.CharField(
+        verbose_name="Statut",
+        max_length=20,
+        choices=MapLayerStatus.choices,
+        default=MapLayerStatus.PENDING,
+        help_text="Statut de la couche."
+    )
+
+    shapes = GenericRelation('shapes.Shape')
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -355,6 +382,18 @@ class MapLayer(models.Model):
             config_dict['custom_properties'] = {key: value for key, value in self.custom_properties.values_list('name', 'value')}
 
         return config_dict
+    # End def get_config_dict
+
+    def save(self, *args, **kwargs):
+        """Save the map layer and generate its shapes if it is ready."""
+        super().save(*args, **kwargs)
+
+        if self.status == MapLayerStatus.PENDING:
+            transaction.on_commit(
+                lambda: current_app.send_task('generate_map_layers_shapes', args=[self.id])
+            )
+    # End def save
+
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta

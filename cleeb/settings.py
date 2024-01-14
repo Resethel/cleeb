@@ -141,3 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Celery
+CELERY_IMPORTS = ('map_layers.tasks', )
+CELERY_BROKER_URL = 'amqp://cleeb:cleeb@localhost:5672/cleeb_vhost'

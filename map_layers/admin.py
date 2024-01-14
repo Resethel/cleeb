@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from map_layers.models import Dataset, MapLayer, MapLayerCustomProperty
+from map_layers.models import Dataset, MapLayer, MapLayerCustomProperty, MapLayerStatus
 
 
 # ======================================================================================================================
@@ -13,7 +13,7 @@ class DatasetAdmin(admin.ModelAdmin):
     list_filter = ('format', 'category')
     search_fields = ('name',)
     ordering = ('name', 'category')
-    readonly_fields = ('id',)
+    exclude = ('id',)
 
     def file_size(self, obj):
         if obj.file:
@@ -35,11 +35,17 @@ class MapLayerCustomPropertyInline(admin.TabularInline):
     extra = 0
 
 class MapLayerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'dataset')
+    list_display = ('name', 'dataset', 'number_of_shapes', 'status')
     ordering = ('name',)
+    exclude = ('id', 'status')
 
     inlines = [
         MapLayerCustomPropertyInline,
     ]
+
+    def number_of_shapes(self, obj):
+        if obj.shapes.count() == 0:
+            return "-"
+        return obj.shapes.count()
 
 admin.site.register(MapLayer, MapLayerAdmin)
