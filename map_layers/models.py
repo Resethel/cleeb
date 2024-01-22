@@ -40,13 +40,13 @@ ENCODING_CHOICES = {
 # Enums
 # ======================================================================================================================
 
-class MapLayerStatus(models.TextChoices):
+class GenerationStatus(models.TextChoices):
     """Status of a map layer."""
     PENDING = 'PENDING', 'En attente de génération'
     GENERATING = 'GENERATING', 'Génération en cours'
     DONE = 'DONE', 'Génération terminée'
     ERROR = 'ERROR', 'Erreur lors de la génération'
-# End class MapLayerStatus
+# End class GenerationStatus
 
 
 # ======================================================================================================================
@@ -343,8 +343,8 @@ class MapLayer(models.Model):
     status = models.CharField(
         verbose_name="Statut",
         max_length=20,
-        choices=MapLayerStatus.choices,
-        default=MapLayerStatus.PENDING,
+        choices=GenerationStatus.choices,
+        default=GenerationStatus.PENDING,
         help_text="Statut de la couche."
     )
 
@@ -388,7 +388,7 @@ class MapLayer(models.Model):
         """Save the map layer and generate its shapes if it is ready."""
         super().save(*args, **kwargs)
 
-        if self.status == MapLayerStatus.PENDING:
+        if self.status == GenerationStatus.PENDING:
             transaction.on_commit(
                 lambda: current_app.send_task('generate_map_layers_shapes', args=[self.id])
             )
@@ -406,3 +406,126 @@ class MapLayer(models.Model):
     # End class Meta
 # End class MapLayer
 
+# ======================================================================================================================
+# City Model
+# ======================================================================================================================
+
+
+class CityDatasetKeyValue(models.Model):
+    """A key/value pair for a city dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    city = models.ForeignKey(
+        'City',
+        on_delete=models.CASCADE,
+        help_text="Ville à laquelle la clé/valeur est associée. Si la ville est supprimée, la clé/valeur sera également supprimée."
+    )
+    key = models.CharField(
+        verbose_name="Clé",
+        max_length=100,
+        help_text="Clé du jeu de données."
+    )
+
+    value = models.CharField(
+        verbose_name="Valeur",
+        max_length=100,
+        help_text="Valeur du jeu de données."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return f"{self.city.name} - \"{self.key}\": \"{self.value}\""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Clé/valeur du jeu de données"
+        verbose_name_plural = "Clés/valeurs du jeu de données"
+        ordering = ['key']
+    # End class Meta
+
+
+# End class CityDatasetKeyValue
+
+class City(models.Model):
+    """A city."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(primary_key=True)
+
+    name = models.CharField(
+        verbose_name="Nom",
+        max_length=100,
+        unique=True,
+        help_text="Nom de la ville"
+    )
+
+    generation_status = models.CharField(
+        verbose_name="Statut de génération",
+        max_length=20,
+        choices=GenerationStatus.choices,
+        default=GenerationStatus.PENDING,
+        help_text="Statut de génération de la ville."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Shapes
+    # ------------------------------------------------------------------------------------------------------------------
+
+    limits_dataset = models.ForeignKey(
+        'Dataset',
+        verbose_name="Jeu de données des limites",
+        on_delete=models.CASCADE,
+        help_text=
+            "Jeu de données utilisé pour les limites de la ville. Les limites de la ville seront générées à partir de ce jeu de données."
+            "Si le jeu de données est supprimé, les limites de la ville seront également supprimées."
+    )
+
+    limits_shapefile = models.CharField(
+        verbose_name="Fichier shapefile",
+        max_length=500,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Nom du fichier shapefile à utiliser."
+    )
+
+    limits = GenericRelation('shapes.Shape')
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """Save the city and generate its shapes if it is ready."""
+        super().save(*args, **kwargs)
+
+        if self.generation_status == GenerationStatus.PENDING:
+            transaction.on_commit(
+                lambda: current_app.send_task('generate_city_shape', args=[self.id])
+            )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Ville"
+        verbose_name_plural = "Villes"
+        ordering = ['name']
+    # End class Meta
+# End class City

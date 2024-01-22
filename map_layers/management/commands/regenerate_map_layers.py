@@ -5,7 +5,7 @@ Commands for the map_layers app.
 from django.core.management import BaseCommand
 
 from map_layers.models import MapLayer
-from map_layers.models import MapLayerStatus
+from map_layers.models import GenerationStatus
 
 
 class Command(BaseCommand):
@@ -34,7 +34,7 @@ class Command(BaseCommand):
             # Load all the map layers from the database.
             self.stdout.write(self.style.SUCCESS(f"{len(available_layers)} couches marquées pour regénération"))
             for layer in available_layers:
-                layer.status = MapLayerStatus.PENDING
+                layer.status = GenerationStatus.PENDING
                 layer.save()
             self.stdout.write(self.style.SUCCESS("Done."))
             return
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 continue
 
             layer = MapLayer.objects.get(name=target)
-            layer.status = MapLayerStatus.PENDING
+            layer.status = GenerationStatus.PENDING
             layer.save()
 
         self.stdout.write(self.style.SUCCESS("Done."))

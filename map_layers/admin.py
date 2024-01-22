@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from map_layers.models import Dataset, MapLayer, MapLayerCustomProperty, MapLayerStatus
+from map_layers.models import City, Dataset, CityDatasetKeyValue, MapLayer, MapLayerCustomProperty, GenerationStatus
 
 
 # ======================================================================================================================
@@ -21,7 +21,6 @@ class DatasetAdmin(admin.ModelAdmin):
         return "-"
 
     file_size.short_description = 'File Size (MB)'
-
 # End class DatasetAdmin
 
 admin.site.register(Dataset, DatasetAdmin)
@@ -49,3 +48,25 @@ class MapLayerAdmin(admin.ModelAdmin):
         return obj.shapes.count()
 
 admin.site.register(MapLayer, MapLayerAdmin)
+
+# ======================================================================================================================
+# City Admin
+# ======================================================================================================================
+
+class CityDatasetKeyValueInline(admin.TabularInline):
+    model = CityDatasetKeyValue
+    extra = 1  # Number of extra forms to display
+# End class CityDatasetKeyValueInline
+
+
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'limits_dataset', 'generation_status')
+    ordering = ('name',)
+    exclude = ('id', 'status')
+
+    inlines = [
+        CityDatasetKeyValueInline,
+    ]
+# End class CityAdmin
+
+admin.site.register(City, CityAdmin)
