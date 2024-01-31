@@ -4,6 +4,7 @@ Views for the interactive maps application.
 from __future__ import annotations
 
 from bs4 import BeautifulSoup
+from django.shortcuts import render
 from django.views.generic import DetailView
 
 from interactive_maps.models import Author, Map
@@ -11,11 +12,11 @@ from map_thematics.models import Thematic
 
 
 # ======================================================================================================================
-# Vue pour les cartes interactives
+# Interactive maps detail view
 # ======================================================================================================================
 
 class InteractiveMapDetailView(DetailView):
-    """Detail view for thematic maps."""
+    """Detail view for the interactive maps."""
     model = Map
     template_name = 'interactive_maps/interactive_map.html'
     context_object_name = 'interactive_maps'
@@ -94,5 +95,23 @@ class InteractiveMapDetailView(DetailView):
     # End def __split_text_sections
 # End class InteractiveMapDetailView
 
+# ======================================================================================================================
+# Interactive maps' catalog view
+# ======================================================================================================================
+
+def interactive_maps_catalog_view(request):
+    # List all the available maps
+    map_objects  = Map.objects.all()
 
 
+    context = []
+    for m in map_objects:
+        sub_context = {}
+        sub_context['title']         = m.title
+        sub_context['thematics']     = m.thematics.all()
+        sub_context['created_at']    = m.created_at
+        sub_context['last_modified'] = m.last_modified
+        sub_context['authors']       = m.authors
+        context.append(context)
+
+    return render(request, 'interactive_maps/catalog.html', context={'maps' : map_objects})
