@@ -29,23 +29,23 @@
                 {% for social_link in social_links %}
                     {% if social_link.name == 'email' %}
                         <a class="resume-social-link" href="mailto:{{ organization.contact }}" target="_blank">
-                            <img src="{% static 'images/icons/social-media/email.svg' %}" alt="email" width="25px" height="25px">
+                            <img src="{% static 'assets/icons/envelop.svg' %}" alt="email" width="25px" height="25px">
                         </a>
                     {% elif social_link.name == 'website' %}
                         <a class="resume-social-link" href="{{ organization.website }}" target="_blank">
-                            <img src="{% static 'images/icons/social-media/website.svg' %}" alt="website" width="25px" height="25px">
+                            <img src="{% static 'assets/icons/link.svg' %}" alt="website" width="25px" height="25px">
                         </a>
                     {% elif social_link.name == 'facebook' %}
                         <a class="resume-social-link" href="{{ organization.facebook }}" target="_blank">
-                            <img src="{% static 'images/icons/social-media/facebook.svg' %}" alt="facebook" width="25px" height="25px">
+                            <img src="{% static 'assets/icons/facebook.svg' %}" alt="facebook" width="25px" height="25px">
                         </a>
                     {% elif social_link.name == 'instagram' %}
                         <a class="resume-social-link" href="{{ organization.instagram }}" target="_blank">
-                            <img src="{% static 'images/icons/social-media/instagram.svg' %}" alt="instagram" width="25px" height="25px">
+                            <img src="{% static 'assets/icons/instagram.svg' %}" alt="instagram" width="25px" height="25px">
                         </a>
                     {% elif social_link.name == 'twitter' %}
                         <a class="resume-social-link" href="{{ organization.twitter }}" target="_blank">
-                            <img src="{% static 'images/icons/social-media/twitter_x.svg' %}" alt="twitter" width="25px" height="25px">
+                            <img src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter" width="25px" height="25px">
                         </a>
                     {% endif %}
                 {% endfor %}
@@ -75,23 +75,23 @@
                         {% for social_link in social_links %}
                             {% if social_link.name == 'email' %}
                                 <a class="resume-social-link" href="mailto:{{ organization.contact }}" target="_blank">
-                                    <img src="{% static 'images/icons/social-media/email.svg' %}" alt="email">
+                                    <img src="{% static 'assets/icons/envelop.svg' %}" alt="email">
                                 </a>
                             {% elif  social_link.name == 'website' %}
                                 <a class="resume-social-link" href="{{ organization.website }}" target="_blank">
-                                    <img src="{% static 'images/icons/social-media/website.svg' %}" alt="website">
+                                    <img src="{% static 'assets/icons/link.svg' %}" alt="website">
                                 </a>
                             {% elif social_link.name == 'facebook' %}
                                 <a class="resume-social-link" href="{{ organization.facebook }}" target="_blank">
-                                    <img src="{% static 'images/icons/social-media/facebook.svg' %}" alt="facebook">
+                                    <img src="{% static 'assets/icons/facebook.svg' %}" alt="facebook">
                                 </a>
                             {% elif social_link.name == 'instagram' %}
                                 <a class="resume-social-link" href="{{ organization.instagram }}" target="_blank">
-                                    <img src="{% static 'images/icons/social-media/instagram.svg' %}" alt="instagram">
+                                    <img src="{% static 'assets/icons/instagram.svg' %}" alt="instagram">
                                 </a>
                             {% elif social_link.name == 'twitter' %}
                                 <a class="resume-social-link" href="{{ organization.twitter }}" target="_blank">
-                                    <img src="{% static 'images/icons/social-media/twitter_x.svg' %}" alt="twitter">
+                                    <img src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter">
                                 </a>
                             {% endif %}
                         {% endfor %}

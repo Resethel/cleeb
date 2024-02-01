@@ -4,7 +4,7 @@
     height: calc(100vh - 60px); /* height of viewport - header */
     background:
             linear-gradient(rgba(0,0,0,0.445), rgba(0,0,0,0.411)),
-            url('../images/home/hero.webp') no-repeat center / cover;
+            url('../assets/images/home-hero.webp') no-repeat center / cover;
     color: #fff;
     display: flex;
     flex-direction: column;

@@ -56,7 +56,7 @@
                                             {% if map.thumbnail %}
                                                 <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
                                             {% else %}
-                                                <img src="{% static 'images/map_placeholder.png' %}" alt="{{ map.name }}">
+                                                <img src="{% static 'assets/images/placeholder/map.png' %}" alt="{{ map.name }}">
                                             {% endif %}
                                             <div class="card-content">
                                                 <div class="card-metadata">
@@ -65,7 +65,7 @@
                                                             {% if author.picture %}
                                                                 <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
                                                             {% else %}
-                                                                <img src="{% static 'images/icons/author_placeholder.svg' %}" style="width: 24px; height: 24px" alt="">
+                                                                <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
                                                             {% endif %}
                                                             <a href="#{{ author.lastname }}-{{ author.firstname }}">
                                                                 <span>{{ author.firstname }} {{ author.lastname }}</span>

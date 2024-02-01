@@ -153,7 +153,6 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     width: 35px;
     height: auto;
     background-color: transparent;
-    filter: invert(1); /* SVG to white */
 }
 
 
