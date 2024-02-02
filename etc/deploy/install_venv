@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Default values
+APPLICATION_NAME="cleeb"
+VENV_DIR="venv"
+GROUP=${APPLICATION_NAME}
+PYTHON_VERSION="3.11"
+PYTHON_EXEC=""
+
+# Function to display script usage
+usage() {
+    echo "Usage: $0 -v <venv_dir>"
+    exit 1
+}
+
+# Parse command line options
+while getopts "v:" opt; do
+    case $opt in
+        v) VENV_DIR="$OPTARG" ;;
+        *) usage ;;
+    esac
+done
+echo "VENV_DIR=$VENV_DIR"
+
+
+# Find the python executable
+PYTHON_EXEC=$(which python${PYTHON_VERSION})
+
+
+
+# 0. Ensure that the current directory is the root directory of the project
+if [[ ! -f "pyproject.toml" ]]; then
+    echo "Please run this script from the root directory of the project"
+    exit 1
+fi
+
+# 1. Verify that the script is not run as root
+if [[ $EUID -eq 0 ]]; then
+    echo "Please do not run this script as root; don't sudo it"
+    exit 1
+fi
+
+
+# 3. Build the wheel using poetry
+echo "Building the application wheel..."
+poetry build --no-cache --format=wheel
+
+# 4. Check if the wheel exists
+echo "Finding the wheel file for the application..."
+WHEEL_PATH=$(find dist/ -name "cleeb-*.whl" | head -n 1)
+if [[ -z "$WHEEL_PATH" ]]; then
+    echo "Couldn't find the wheel file"
+    exit 1
+fi
+
+# 4. Check if the virtual environment exists
+if [[ -d "$VENV_DIR" ]]; then
+    echo "Virtual environment already exists at $VENV_DIR."
+    venv_exists=true
+else
+    venv_exists=false
+fi
+
+# 5. If the virtual environment doesn't exist, create it
+if [[ "$venv_exists" = false ]]; then
+  echo "Creating the virtual environment for the application..."
+  mkdir -p "$VENV_DIR"
+  python3 -m virtualenv --python="$PYTHON_EXEC" "$VENV_DIR"
+fi
+
+# 6. Activate the virtual environment
+source "${VENV_DIR}/bin/activate"
+
+# 7. Install the wheel in the virtual environment
+echo "Installing the application wheel in the virtual environment (at $VENV_DIR)..."
+export MYSQLCLIENT_CFLAGS=${MYSQLCLIENT_CFLAGS:-$(mysql_config --cflags)}
+export MYSQLCLIENT_LDFLAGS=${MYSQLCLIENT_LDFLAGS:-$(mysql_config --libs)}
+if [[ "$venv_exists" = true ]]; then
+  python3 -m pip install --no-cache-dir --upgrade "$WHEEL_PATH"
+else
+  python3 -m pip install --no-cache-dir "$WHEEL_PATH"
+fi
