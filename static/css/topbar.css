@@ -15,6 +15,18 @@
     align-items: center;
 }
 
+/* ================================================================================================================== */
+/* Logo                                                                                                               */
+/* ================================================================================================================== */
+
+.topbar-logo {
+    flex: 1;
+}
+
+/* ================================================================================================================== */
+/* Navigation                                                                                                         */
+/* ================================================================================================================== */
+
 .topbar-nav {
     height: 100%;
     display: flex;
@@ -55,10 +67,86 @@
     margin: 0; /* Cancel the margin from the basic style */
 }
 
+/* ================================================================================================================== */
+/* Tools                                                                                                              */
+/* ================================================================================================================== */
+
 .topbar-tools {
-    display:inline-block;
+    flex: 1;
+    display:flex;
+    justify-content: flex-end;
 }
 
-.topbar-tools-item {
-    display: inline-block;
+
+.topbar-tools a {
+    margin: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: relative;
+}
+
+.topbar-tools a > img {
+    /* Rezise the svg so it takes the full height of the topbar */
+    height: 100%;
+    display: block;
+
+    /* Recolor the svg to the primary color : */
+    filter: invert(29%) sepia(87%) saturate(390%) hue-rotate(121deg) brightness(95%) contrast(90%);
+
+    /* Soften the transition */
+    transition: all 0.1s ease-in-out;
+}
+
+.topbar-tools a > span {
+    /* Hide the text when not hovered */
+    display: none;
+
+    /* Position it above the image */
+    position: absolute;
+    top: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* ensure it takes the full width */
+    width: auto;
+    min-width: calc(3rem - 2px);
+
+    /* reduce the font size */
+    font-size: 0.75em;
+    white-space: nowrap;
+
+    /* Center the text */
+    background-color: var(--verdant-green);
+    text-transform: uppercase;
+    text-align: center;
+    color: white;
+
+    /* Add a little padding */
+    padding: 8px;
+}
+/* Add a triangle to the bottom of the tooltip */
+.topbar-tools a > span::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid var(--verdant-green);
+}
+
+/* Add a border between the tools */
+.topbar-tools > a + a {
+    border-left: solid black 2px;
+}
+
+/* On hover, translate it toward the bottom */
+.topbar-tools a:hover > img {
+    transform: translateY(10px);
+}
+
+/* On hover, show the text */
+.topbar-tools a:hover > span {
+    display: block;
 }
