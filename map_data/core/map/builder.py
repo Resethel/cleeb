@@ -7,7 +7,8 @@ import folium
 from django.db.models import QuerySet
 
 from map_data.core.map.template import CityLimits, Filter, MapTemplate
-from map_data.models import City, MapLayer, Shape
+from map_data.models import City, MapLayer
+from shapes.models import Shape
 
 # ======================================================================================================================
 # Constants

@@ -15,6 +15,8 @@ rich = "^13.5.2"
 django = "^5.0"
 lorem = "^0.1.1"
 pyshp = "^2.3.1"
+geojson = "^3.1.0"
+celery = "^5.3.6"
 
 
 [build-system]
