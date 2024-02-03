@@ -2,12 +2,14 @@
 from __future__ import annotations
 import uuid
 import zipfile
+from pathlib import Path
 
 import geojson
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 # ======================================================================================================================
 # Constants
@@ -19,6 +21,47 @@ DATASET_FORMAT_CHOICES = {
     SHAPEFILE: 'Shapefile',
     GEOJSON: 'GeoJSON'
 }
+
+# ======================================================================================================================
+# DatasetFile Model
+# ======================================================================================================================
+
+def dataset_version_filepath(instance : DatasetVersion, filename : str) -> str:
+    return f"datasets/{instance.dataset.id}_{uuid.uuid4()}{Path(filename).suffix}"
+# End def dataset_version_filepath
+
+class DatasetVersion(models.Model):
+    """A version of a dataset file."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id      = models.AutoField(primary_key=True)
+    dataset = models.ForeignKey('Dataset', on_delete=models.CASCADE, related_name='versions')
+    date    = models.DateTimeField(default=timezone.now, help_text="Date de la version du jeu de données.")
+    file    = models.FileField(upload_to=dataset_version_filepath, help_text="Fichier de la version du jeu de données.")
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+    def __str__(self):
+        return f"Version of {self.dataset.name} from {self.date}"
+    # End def __str__
+
+    def clean(self):
+        validate_dataset_version_file(self)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+    class Meta:
+        verbose_name = "Version de jeu de données"
+        verbose_name_plural = "Versions de jeux de données"
+        ordering = ['-date']
+    # End class Meta
+# End class DatasetVersion
+
 
 # ======================================================================================================================
 # Dataset Model
@@ -70,15 +113,6 @@ class Dataset(models.Model):
         help_text="Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON."
     )
 
-    def get_file_path(self, _):
-        return f'datasets/{uuid.uuid4()}'
-    # End def get_file_path
-
-    file = models.FileField(
-        upload_to=get_file_path,
-        help_text="Fichier du jeu de données. Le fichier doit correspondre au format choisi.",
-    )
-
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
@@ -87,9 +121,10 @@ class Dataset(models.Model):
         return self.name
     # End def __str__
 
-    def clean(self):
-        validate_dataset_file(self)
-    # End def clean
+    def get_latest_version(self) -> DatasetVersion | None:
+        """Return the latest version of the dataset file."""
+        return self.versions.latest('date') if  self.versions.exists() else None
+    # End def get_latest_version
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -123,8 +158,8 @@ def dataset_pre_save(sender, instance, **kwargs):
 # ======================================================================================================================
 
 
-def validate_dataset_file(instance : Dataset):
-    if instance.format == SHAPEFILE:
+def validate_dataset_version_file(instance : DatasetVersion):
+    if instance.dataset.format == SHAPEFILE:
         if not zipfile.is_zipfile(instance.file):
             raise ValidationError('Le fichier doit être un fichier ZIP.')
         else:
@@ -145,7 +180,7 @@ def validate_dataset_file(instance : Dataset):
             except zipfile.BadZipFile:
                 raise ValidationError('Le fichier ZIP est corrompu.')
 
-    elif instance.format == GEOJSON:
+    elif instance.dataset.format == GEOJSON:
         try:
             obj : geojson.GeoJSON = geojson.loads(instance.file.read())
             if not obj.is_valid:

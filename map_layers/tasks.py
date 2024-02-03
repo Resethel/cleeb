@@ -36,7 +36,7 @@ def generate_map_layers_shapes(map_layer_id):
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         zip_path = tmp_path / "dataset.zip"
-        shutil.copy(map_layer.dataset.file.path, zip_path)
+        shutil.copy(map_layer.dataset.get_latest_version().file.path, zip_path)
 
         # 4. Generate the map layer shapes
         try:

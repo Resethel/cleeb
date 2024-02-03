@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                         ('short_desc', models.CharField(blank=True, default=None, help_text="Description courte du jeu de données. Optionnel. Utilisé pour générer l'aide contextuelle.", max_length=100, null=True)),
                         ('description', models.TextField(blank=True, default=None, help_text='Description du jeu de données. Optionnel.', null=True)),
                         ('format', models.CharField(choices=[('shapefile', 'Shapefile'), ('geojson', 'GeoJSON')], help_text='Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON.', max_length=10)),
-                        ('file', models.FileField(help_text='Fichier du jeu de données. Le fichier doit correspondre au format choisi.', upload_to=datasets.models.Dataset.get_file_path)),
+                        ('file', models.FileField(help_text='Fichier du jeu de données. Le fichier doit correspondre au format choisi.', upload_to='datasets.models.Dataset.get_file_path')),
                     ],
                     options={
                         'verbose_name': 'Jeu de données',
