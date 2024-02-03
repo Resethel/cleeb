@@ -3,6 +3,11 @@
 import map_layers.models
 from django.db import migrations, models
 
+# Manual edit: Since the Dataset model is removed in a future migration, the following migration will break.
+# Instead of directly getting the function `map_layers.models.Dataset.get_file_path` from the `Dataset` model,
+# a string is used to represent the function. This way, the migration will not break when the `Dataset` model
+# is removed.
+
 
 class Migration(migrations.Migration):
 
@@ -14,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dataset',
             name='file',
-            field=models.FileField(help_text='Fichier du jeu de données. Le fichier doit correspondre au format choisi.', upload_to=map_layers.models.Dataset.get_file_path),
+            field=models.FileField(help_text='Fichier du jeu de données. Le fichier doit correspondre au format choisi.', upload_to="map_layers.models.Dataset.get_file_path"),
         ),
     ]
