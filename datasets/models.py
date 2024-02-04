@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
+
+import re
 import uuid
 import zipfile
 from pathlib import Path
@@ -7,9 +9,10 @@ from pathlib import Path
 import geojson
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.template.defaultfilters import slugify
 
 # ======================================================================================================================
 # Constants
@@ -22,8 +25,11 @@ DATASET_FORMAT_CHOICES = {
     GEOJSON: 'GeoJSON'
 }
 
+SVG_REGEX = re.compile(r'(?:<\?xml\b[^>]*>[^<]*)?(?:<!--.*?-->[^<]*)*(?:<svg|<!DOCTYPE svg)\b', re.DOTALL)
+
+
 # ======================================================================================================================
-# DatasetFile Model
+# DatasetVersion Model
 # ======================================================================================================================
 
 def dataset_version_filepath(instance : DatasetVersion, filename : str) -> str:
@@ -62,6 +68,68 @@ class DatasetVersion(models.Model):
     # End class Meta
 # End class DatasetVersion
 
+# ======================================================================================================================
+# DatasetCategory Model
+# ======================================================================================================================
+
+class DatasetCategory(models.Model):
+    """A category for a dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True, help_text="Nom de la catégorie du jeu de données.")
+    icon = models.FileField(upload_to='datasets/category_icons', help_text="Icône de la catégorie du jeu de données. Doit être un fichier SVG monochrome (noir, fond transparent).")
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return self.name
+    # End def __str__
+
+    def clean(self):
+        if not SVG_REGEX.match(self.icon.file.read().decode('latin-1')):
+            raise ValidationError('Le fichier doit être un fichier SVG valide.')
+    # End def clean
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Catégorie d'un jeu de données"
+        verbose_name_plural = "Catégories de jeux de données"
+        ordering = ['name']
+    # End class Meta
+# End class DatasetCategory
+
+
+# ======================================================================================================================
+# DatasetTechnicalInformation Model
+# ======================================================================================================================
+
+class DatasetTechnicalInformation(models.Model):
+    """A piece of technical information about a dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(primary_key=True)
+    key = models.CharField(max_length=100, help_text="Clé de l'information technique.")
+    value = models.CharField(max_length=250, help_text="Valeur de l'information technique.")
+    dataset = models.ForeignKey(
+        'Dataset',
+        on_delete=models.CASCADE,
+        related_name='technical_information',
+        help_text="Jeu de données associé à l'information technique."
+    )
+# End class DatasetTechnicalInformation
+
 
 # ======================================================================================================================
 # Dataset Model
@@ -79,6 +147,7 @@ class Dataset(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     id = models.AutoField(primary_key=True)
+    slug = models.CharField(max_length=200, null=True, default=None)
 
     name = models.CharField(
         max_length=100,
@@ -86,10 +155,15 @@ class Dataset(models.Model):
         help_text="Nom du jeu de données"
     )
 
-    category = models.CharField(
-        max_length=100,
+    public = models.BooleanField(
+        default=True,
+        help_text="Indique si le jeu de données peut être partagé publiquement."
+    )
+
+    categories = models.ManyToManyField(
+        'DatasetCategory',
         blank=True,
-        help_text="Catégorie du jeu de données. Optionnel."
+        help_text="Catégories du jeu de données."
     )
 
     short_desc = models.CharField(
@@ -106,6 +180,45 @@ class Dataset(models.Model):
         default=None,
         help_text="Description du jeu de données. Optionnel."
     )
+
+    # ----- Metadata fields -----
+
+    source = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Source du jeu de données. Optionnel."
+    )
+
+    last_update = models.DateField(
+        auto_now=True,
+        help_text="Date de dernière mise à jour du jeu de données.")
+
+    language = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Langue du jeu de données. Optionnel."
+    )
+
+    license = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Licence du jeu de données. Optionnel."
+    )
+
+    usage_restrictions = models.TextField(
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Restrictions d'utilisation du jeu de données. Optionnel."
+    )
+
+    # ----- Technical fields -----
 
     format = models.CharField(
         max_length=10,
@@ -146,12 +259,30 @@ def dataset_pre_save(sender, instance, **kwargs):
         instance.short_desc = None
     if instance.description is not None and instance.description.strip() == '':
         instance.description = None
-
-    # 2. Complete the category field if it is empty
-    if instance.category is None or instance.category.strip() == '':
-        instance.category = 'Non classé'
-    instance.category = instance.category.strip()
 # End def dataset_pre_save
+
+@receiver(pre_save, sender=Dataset)
+def generate_slug(sender, instance, **kwargs):
+    """Generate the slug for the resource"""
+    instance.slug = slugify(instance.name)
+# End def generate_slug
+
+@receiver(post_save, sender=Dataset)
+def set_up_format_technical_information(sender, instance, created, **kwargs):
+    """Create a piece of technical information about the dataset format."""
+    # If the format is already set, simply update the technical information
+    if instance.technical_information.filter(key='format').exists():
+        instance.technical_information.filter(key='format').update(value=instance.format)
+
+    else:
+        DatasetTechnicalInformation.objects.create(
+            key='format',
+            value=instance.format,
+            dataset=instance
+        ).save()
+# End def create_format_technical_information
+
+
 
 # ======================================================================================================================
 # Helper methods
