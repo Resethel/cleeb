@@ -1,0 +1,49 @@
+/* Dataset Detail Page CSS */
+
+/* ================================================================================================================== */
+/* Tag of a category. Usually a <a> button                                                                            */
+/* ================================================================================================================== */
+
+.category-tag {
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: fit-content;
+
+    /* cursor */
+    cursor: pointer;
+
+    /* paddings and margins */
+    padding: 4px;
+    margin-right: 4px;
+
+    /* Font adjustment */
+    color: var(--verdant-green);
+    border: 2px solid var(--verdant-green);
+    border-radius: 8px;
+    text-decoration: none !important;
+
+    /* transition */
+}
+
+.category-tag span {
+    color: var(--verdant-green);
+    margin: auto 0;
+}
+
+.category-tag img {
+    margin-left: 4px;
+}
+
+.category-tag:hover {
+    background-color: var(--verdant-green);
+}
+
+.category-tag:hover span {
+    color: white;
+}
+
+.category-tag:hover img {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(56deg) brightness(107%) contrast(102%);
+}

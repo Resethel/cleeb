@@ -1,0 +1,120 @@
+{% load static %}
+<!-- dataset_detail.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jeux de données: {{ dataset.name }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/datasets_detail.css' %}">
+</head>
+<body class="page">
+
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+
+        <section class="content-header">
+            <div class="header-container">
+                <div class="header-content">
+
+                    <h1><img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset_icon"></img>{{ dataset.name }}</h1>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-wrapper">
+            <div class="content content--with-header">
+                <section class="introduction">
+                    <div class="introduction-text">
+                        {{ dataset.description | safe }}
+                    </div>
+                </section>
+                <section class="table-section">
+                    <h3>À propos de ce jeux de données</h3>
+                    <table class="table--no-header">
+                        <tr>
+                            <td>Catégories</td>
+                            <td class="td--flex">
+                                {% for category in dataset.categories.all %}
+                                    <a href="#" class="category-tag">
+                                        <span>{{ category.name }}</span>
+                                        {% if category.icon %}
+                                            <img src="{{ category.icon.url }}" alt="{{ category.name }}_icon" class="verdant-green-filter">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Langue</td>
+                            <td>{{ dataset.language }}</td>
+                        </tr>
+                        <tr>
+                            <td>Source</td>
+                            <td>{{ dataset.source }}</td>
+                        </tr>
+                        <tr>
+                            <td>License</td>
+                            {% if dataset.license %}
+                                <td>{{ dataset.license }}</td>
+                            {% else %}
+                                <td>Aucune contrainte de license</td>
+                            {% endif %}
+                        </tr>
+                    </table>
+                </section>
+                <section class="table-section">
+                    <h3>Informations techniques</h3>
+                    <table class="table--no-header">
+                        {% for tech_info in dataset.technical_information.all %}
+                            <tr>
+                                <td>{{ tech_info.key }}</td>
+                                <td>{{ tech_info.value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </section>
+                <section class="table-section">
+                    <h3>Téléchargements</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Date</th>
+                                <th>Fichier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for version in dataset_versions %}
+                                <tr>
+                                    <td>Version {{ forloop.revcounter }}</td>
+                                    <td>{{ version.date }}</td>
+                                    <td>
+                                        <a href="{{ version.file.url }}" download>
+                                            <img src="{% static 'assets/icons/download_black_24dp.svg' %}" alt="download_icon" class="verdant-green-filter">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

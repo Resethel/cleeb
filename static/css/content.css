@@ -146,6 +146,65 @@
     color: #ffffff;
 }
 
+/* ================================================================================================================== */
+/* Table section
+/* ================================================================================================================== */
+
+/* Style for a table of a content page */
+.content .table-section {
+    /* Bottom margin and border */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.content .table-section > h1,
+.content .table-section > h2,
+.content .table-section > h3,
+.content .table-section > h4,
+.content .table-section > h5,
+.content .table-section > h6 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--verdant-green);
+}
+
+.content .table-section table {
+    width: var(--text-max-width);
+    border-collapse: collapse;
+    margin: 10px auto;
+}
+
+.content .table-section table.table--no-header th {
+    display: none;
+}
+
+.content .table-section table tr {
+    border-bottom: 1px solid var(--eco-emerald);
+}
 
 
+/* Draw a line at the top of the table as there is no header */
+.content .table-section table.table--no-header tr {
+    border-top: 1px solid var(--eco-emerald);
+}
 
+.content .table-section table th {
+    background-color: var(--eco-emerald);
+    color: #ffffff;
+    padding: 10px;
+    text-align: left;
+}
+
+.content .table-section table tr:nth-child(even) {
+    background-color: var(--pale-aqua);
+}
+
+.content .table-section table td {
+    padding: 10px;
+}
+
+.content .table-section table td.td--flex {
+    display: flex;
+    flex-direction: row;
+}
