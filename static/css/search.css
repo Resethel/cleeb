@@ -1,0 +1,378 @@
+/* search.css */
+/* A CSS file for the search template. */
+
+/* ================================================================================================================== */
+/* General                                                                                                            */
+/* ================================================================================================================== */
+
+/* class to hide labels used for accessibility */
+label.--hidden {
+    position: absolute;
+    clip: rect(1px 1px 1px 1px);
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+/* ================================================================================================================== */
+/* Header of the search section                                                                                       */
+/* ================================================================================================================== */
+
+.search-header {
+    display: block;
+    width: 100%;
+    background: linear-gradient(90deg, var(--verdant-green), var(--eco-emerald));
+}
+
+.search-header__title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 75%;
+    min-height: 240px;
+
+    padding: 20px 0;
+    margin: 0 auto;
+
+    color: white;
+}
+
+.search-header__title h1,
+.search-header__title h2,
+.search-header__title h3,
+.search-header__title h4,
+.search-header__title h5 {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    font-weight: 800;
+    color: white;
+}
+
+.search-header__form__container {
+    display: flex;
+
+    width: 75%;
+
+    margin: 0 auto;
+    border: 1px solid black;
+}
+
+.search-header__form {
+    padding: 40px 12.5%;
+    display: flex;
+    align-items: stretch;
+    background: var(--verdant-green);
+}
+
+.search-header__form__select {
+    flex: 0;
+}
+
+.search-header__form__select select {
+    -webkit-appearance: none;
+
+    height: 100%;
+    padding: 5px;
+
+    border-radius: 0;
+    border-right:  0;
+    border-top:    2px solid white;
+    border-left:   2px solid white;
+    border-bottom: 2px solid white;
+
+    background-color: transparent;
+
+    font-size: 1rem;
+    color: white;
+}
+
+.search-header__form__input {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.search-header__form__input:focus-within {
+    outline: 2px solid var(--eco-emerald);
+}
+
+.search-header__form__input input {
+    -webkit-appearance: none;
+
+    flex: 1;
+
+    padding: 5px;
+
+    border-top:    2px solid white;
+    border-left:   2px solid white;
+    border-bottom: 2px solid white;
+    border-right: 0;
+
+    color: white;
+    font-size: 1rem;
+
+    background-color: transparent;
+}
+
+.search-header__form__input input::placeholder {
+    color: white;
+}
+
+/* Removed, as handled by parent */
+.search-header__form__input input:focus {
+    outline: none;
+}
+
+.search-header__form__input button {
+    -webkit-appearance: none;
+    display: block;
+
+    width: 2rem;
+
+    padding: 3px;
+
+    border: 2px solid white;
+    border-left: 0;
+
+    background-color: transparent;
+}
+
+
+.search-header__form__input button img {
+    height: auto;
+    width: 100%;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(6170%) hue-rotate(13deg) brightness(107%) contrast(102%);
+}
+
+
+/* ================================================================================================================== */
+/* Search Results                                                                                                     */
+/* ================================================================================================================== */
+
+.search-result__grid {
+    max-width: var(--content-max-width);
+    margin: 80px auto;
+}
+
+.search-result__grid__row {
+    display: flex;
+    align-items: stretch;
+    height: 400px;
+}
+
+.search-result__grid__column {
+    margin: calc(var(--gutter-x));
+}
+
+.search-result__grid.--1cols .search-result__grid__column {width: 100%;}
+.search-result__grid.--2cols .search-result__grid__column {width: 50%;}
+.search-result__grid.--3cols .search-result__grid__column {width: 33.333%;}
+.search-result__grid.--4cols .search-result__grid__column {width: 25%;}
+
+/* ================================================================================================================== */
+/* Search Results - Item                                                                                              */
+/* ================================================================================================================== */
+
+.search-result__item {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    padding: 4%;
+
+    border-radius: 8px;
+    background-color: var(--verdant-green);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    transition: all .1s ease-in-out;
+}
+/* On hover, the card will move up and the shadow will be more pronounced */
+.search-result__item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ================================================================================================================== */
+/* Search Results - Item - Categories                                                                                 */
+/* ================================================================================================================== */
+
+.search-result__item__categories {
+    display: flex;
+}
+
+.search-result__item__categories span {
+    display: inline-block;
+}
+
+.search-result__item__categories a {
+    display: flex;
+    align-items: center;
+
+    padding: 4px;
+
+    border-radius: 4px;
+    background-color:var(--pale-aqua);
+
+    font-size: 14px;
+    color: var(--verdant-green);
+    text-decoration: none;
+}
+/* The second category and beyond will have a margin to separate them */
+.search-result__item__categories a+a {
+    margin-left: 5px;
+}
+
+.search-result__item__categories a:hover {
+    background-color: #ccc;
+    text-decoration: none;
+}
+
+.search-result__item__categories a>img {
+    margin-left: 2px;
+}
+
+.search-result__item__categories__more {
+    margin-left: 5px;
+    position: relative;
+}
+
+/* Display the list of categories when the button is clicked, and rotate the arrow */
+.search-result__item__categories__more.--show .search-result__item__categories__more__list {display: block;}
+.search-result__item__categories__more.--show .search-result__item__categories__more__button img {transform: rotateX(180deg);}
+
+.search-result__item__categories__more__button {
+    -webkit-appearance: none;
+
+    position: relative;
+
+    width: 100%;
+    padding: 4px;
+
+    border: 0;
+    border-radius: 4px;
+    background-color:var(--pale-aqua);
+
+    font-size: 14px;
+    color: var(--verdant-green);
+    text-decoration: none;
+}
+.search-result__item__categories__more__button:hover {
+    background-color: #ccc;
+}
+
+.search-result__item__categories__more__list {
+    display: none;
+    position: absolute;
+    right: 0;
+
+    margin-top: 5px;
+
+    border-radius: 4px;
+    background-color: var(--pale-aqua);
+}
+
+.search-result__item__categories__more__list a {
+    width: 100%;
+    margin: 0;
+    background-color: transparent;
+}
+
+.search-result__item__categories__more__list a+a {
+    margin: 0;
+}
+
+/* ================================================================================================================== */
+/* Search Results - Item - Title                                                                                      */
+/* ================================================================================================================== */
+
+.search-result__item__title {
+    width: 100%;
+
+    margin-top: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    text-decoration: none;
+}
+
+.search-result__item__title > h1,
+.search-result__item__title > h2,
+.search-result__item__title > h3,
+.search-result__item__title > h4,
+.search-result__item__title > h5 {
+    margin: 0;
+}
+
+.search-result__item__title:hover {
+    color: white;
+    text-decoration: none;
+    cursor: auto;
+}
+
+.search-result__item__title * {
+    color: white;
+}
+
+/* ================================================================================================================== */
+/* Search Results - Item - Description                                                                                */
+/* ================================================================================================================== */
+
+.search-result__item__description {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.search-result__item__description:hover {
+    text-decoration: none;
+}
+
+.search-result__item__description img {
+    height: 10rem;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+
+    border: 1px solid var(--teal-shadow);
+    border-radius: 8px;
+
+}
+
+.search-result__item__description p {
+    margin: 0 0 0 calc(var(--gutter-x) * .5);
+
+    color: white;
+    font-size:14px;
+
+    line-height: 1rem;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+/* ================================================================================================================== */
+/* Search Results - Empty                                                                                             */
+/* ================================================================================================================== */
+
+.search-result__empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width:100%;
+    height:500px;
+
+    font-weight: 800;
+    color: var(--verdant-green);
+}
+
+.search-result__empty > h1,
+.search-result__empty > h2,
+.search-result__empty > h3,
+.search-result__empty > h4,
+.search-result__empty > h5 {
+    margin: 0;
+}

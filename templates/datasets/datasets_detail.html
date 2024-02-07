@@ -47,7 +47,7 @@
                             <td>Catégories</td>
                             <td class="td--flex">
                                 {% for category in dataset.categories.all %}
-                                    <a href="#" class="category-tag">
+                                    <a href="{% url 'datasets-search' %}?category={{ category.slug }}" class="category-tag">
                                         <span>{{ category.name }}</span>
                                         {% if category.icon %}
                                             <img src="{{ category.icon.url }}" alt="{{ category.name }}_icon" class="verdant-green-filter">

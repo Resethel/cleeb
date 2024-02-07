@@ -5,7 +5,7 @@
     justify-content: center;
     width: 100%;
     padding-top: 2%;
-    background-color: var(--eco-emerald);
+    background: linear-gradient(90deg, var(--verdant-green), var(--eco-emerald));
     overflow-y: clip;
 }
 

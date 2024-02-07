@@ -15,8 +15,15 @@
 
     --topbar-height: 60px;
     --footer-height: 60px;
+
     --content-max-width: 1200px;
     --text-max-width: 800px;
+
+    --gutter-x: 1.5rem;
+
+    /* box shadow for cards */
+    --box-shadow-std: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --box-shadow-hov:  0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 /* ================================================================================================================== */
@@ -189,4 +196,5 @@ body.page {
     position: relative;
     flex: 1 0 auto;
     width: 100%;
+    min-height: calc(100vh - var(--topbar-height) - var(--footer-height));
 }
