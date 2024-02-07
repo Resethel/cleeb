@@ -10,7 +10,7 @@ from .models import Dataset, DatasetCategory, DatasetTechnicalInformation, Datas
 class DatasetCategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
     ordering = ('name',)
-    exclude = ('id',)
+    exclude = ('id', 'slug')
 # End class DatasetCategoryAdmin
 admin.site.register(DatasetCategory, DatasetCategoryAdmin)
 

@@ -82,6 +82,7 @@ class DatasetCategory(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True, help_text="Nom de la catégorie du jeu de données.")
     icon = models.FileField(upload_to='datasets/category_icons', help_text="Icône de la catégorie du jeu de données. Doit être un fichier SVG monochrome (noir, fond transparent).")
+    slug = models.SlugField(max_length=200, null=True, default=None)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -106,6 +107,12 @@ class DatasetCategory(models.Model):
         ordering = ['name']
     # End class Meta
 # End class DatasetCategory
+
+@receiver(pre_save, sender=DatasetCategory)
+def generate_slug(sender, instance, **kwargs):
+    """Generate the slug for the resource"""
+    instance.slug = slugify(instance.name)
+# End def generate_slug
 
 
 # ======================================================================================================================
@@ -166,12 +173,12 @@ class Dataset(models.Model):
         help_text="Catégories du jeu de données."
     )
 
-    short_desc = models.CharField(
-        max_length=100,
+    short_desc = models.TextField(
+        max_length=400,
         blank=True,
         null=True,
         default=None,
-        help_text="Description courte du jeu de données. Optionnel. Utilisé pour générer l'aide contextuelle."
+        help_text="Description courte du jeu de données affichée dans les listes (max: 400 caractères, optionnel)."
     )
 
     description = models.TextField(
