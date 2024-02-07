@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "map_thematics.apps.MapThematicsConfig",
     "map_layers.apps.MapLayersConfig",
     "shapes.apps.ShapesConfig",
+    "datasets.apps.DatasetsConfig",
 ]
 
 MIDDLEWARE = [

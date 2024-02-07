@@ -4,9 +4,8 @@ Commands for the map_layers app.
 """
 from django.core.management import BaseCommand
 
-from map_layers.models import City, Dataset, MapLayer
-from map_layers.models import GenerationStatus
-
+from datasets.models import Dataset
+from map_layers.models import City, GenerationStatus
 
 PREDEFINED_CITIES = [
     ("Amanvillers"             , "Communes de l'eurométropole de Metz", "Communes_emm.shp", {"nom": "AMANVILLERS"}),

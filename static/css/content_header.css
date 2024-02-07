@@ -5,7 +5,7 @@
     justify-content: center;
     width: 100%;
     padding-top: 2%;
-    background-color: var(--eco-emerald);
+    background: linear-gradient(90deg, var(--verdant-green), var(--eco-emerald));
     overflow-y: clip;
 }
 
@@ -64,6 +64,13 @@
 .content-header .header-content h1 {
     padding: 0;
     margin: 0;
+    display: flex;
+}
+
+/* Adjust the size of images embedded in the h1 tag */
+.content-header .header-content h1 img {
+    height: 100%;
+    margin-right: 10px;
 }
 
 .content-header .header-metadata {
