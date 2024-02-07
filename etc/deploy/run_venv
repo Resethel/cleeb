@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# 1. Activate the virtualenv environment under venv
+source venv/bin/activate
+
+# 2. Export PYTHONPATH and DJANGO_SETTINGS_MODULE
+export PYTHONPATH=/etc/opt/cleeb
+export DJANGO_SETTINGS_MODULE=settings
+
+# 3. Export flags from "mysql_config --cflags" and "mysql_config --libs"
+export MYSQL_CFLAGS=$(mysql_config --cflags)
+export MYSQL_LDFLAGS=$(mysql_config --libs)
+
+echo "Script completed successfully."
