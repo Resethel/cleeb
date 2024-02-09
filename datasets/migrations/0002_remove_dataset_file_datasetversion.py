@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('datasets', '0001_initial'),
+        ('map_layers', '0007_alter_city_limits_dataset_alter_maplayer_dataset_and_more'),
     ]
 
     operations = [
