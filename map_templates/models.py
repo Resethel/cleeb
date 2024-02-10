@@ -655,6 +655,11 @@ class MapTemplate(models.Model):
     def __str__(self):
         return self.name
 
+    def as_template_object(self) -> MapTemplateObject:
+        """Returns the map template object."""
+        return MapTemplateObject.from_model(self)
+    # End def as_template_object
+
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
