@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-party apps
+    'colorfield',
+    'nested_admin',
+
     # Local apps
     'core.apps.CoreConfig',
     'interactive_maps.apps.InteractiveMapsConfig',
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     "map_layers.apps.MapLayersConfig",
     "shapes.apps.ShapesConfig",
     "datasets.apps.DatasetsConfig",
+    "map_templates.apps.MapTemplatesConfig"
 ]
 
 MIDDLEWARE = [
