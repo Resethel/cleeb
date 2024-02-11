@@ -304,7 +304,8 @@ label.--hidden {
 .search-result__item__title > h3,
 .search-result__item__title > h4,
 .search-result__item__title > h5 {
-    margin: 0;
+    margin: .334rem 0;
+    line-height: 1.5rem;
 }
 
 .search-result__item__title:hover {
