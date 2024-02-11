@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from django.contrib import admin
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from xyzservices import TileProvider
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -26,12 +29,14 @@ class TileLayer(models.Model):
 
     # Name of the tile
     name = models.CharField(
+        unique=True,
         max_length=100,
         verbose_name="Nom",
         help_text="Nom de la tuile de carte."
     )
 
     verbose_name = models.CharField(
+        unique=True,
         max_length=100,
         default=None,
         blank=True,
@@ -71,6 +76,7 @@ class TileLayer(models.Model):
 
     # URL of the tile
     url = models.URLField(
+        max_length=500,
         default=None,
         blank=True,
         null=True,
@@ -143,6 +149,15 @@ class TileLayer(models.Model):
             temp_provider["accessToken"] = self.access_token
             if temp_provider.requires_token(): # requires_token() should return False if the token is valid
                 raise ValidationError(f"Le jeton d'accès fourni est invalide pour la tuile '{self.name}@{self.url}'.")
+
+        # The url can be quite long, so it is splittable in multiple lines in the admin
+        # So we must make sure that no line break is present in the URL
+        if self.url is not None:
+            self.url = self.url.replace("\n", "")
+            self.url = self.url.replace("\r", "")
+            self.url = self.url.replace("\t", "")
+            self.url = self.url.strip()
+            self.url = self.url.replace(" ", "")
     # End def clean
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -154,6 +169,13 @@ class TileLayer(models.Model):
         verbose_name_plural = "Tuiles de carte"
     # End class Meta
 # End class TileLayer
+
+@receiver(pre_save, sender=TileLayer)
+def fill_missing_verbose_name(sender, instance, **kwargs):
+    """If the verbose name is not set, fill it with the name."""
+    if instance.verbose_name is None or instance.verbose_name == "":
+        instance.verbose_name = instance.name.title()
+# End def fill_missing_verbose_name
 
 # ======================================================================================================================
 # Styles
@@ -304,6 +326,28 @@ class Style(BaseStyle):
     id = models.AutoField(primary_key=True)
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Admin display
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @admin.display(description="Type")
+    def style_type(self):
+        if hasattr(self, "style_of") and self.style_of is not None:
+            return "Style"
+        if hasattr(self, "highlight_of") and self.highlight_of is not None:
+            return "Surbrillance"
+        return "Non défini"
+    # End def style_type
+
+    @admin.display(description="Couche")
+    def owning_layer(self):
+        if hasattr(self, "style_of") and isinstance(self.style_of, Layer):
+            return str(self.style_of)
+        if hasattr(self, "highlight_of") and isinstance(self.highlight_of, Layer):
+            return str(self.highlight_of)
+        return "Non défini"
+
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -340,6 +384,10 @@ class PropertyStyle(BaseStyle):
     def __str__(self):
         return f"PropertyStyle[{self.key}={self.value}]@{self.id}"
     # End def __str__
+
+    class Meta:
+        verbose_name = "Style de propriété"
+        verbose_name_plural = "Styles des propriétés"
 # End class LayerPropertyStyle
 
 
@@ -490,7 +538,7 @@ class Layer(models.Model):
     style = models.OneToOneField(
         'Style',
         related_name='style_of',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         default=None,
         blank=True,
         null=True
@@ -499,7 +547,7 @@ class Layer(models.Model):
     highlight = models.OneToOneField(
         'Style',
         related_name='highlight_of',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         default=None,
         blank=True,
         null=True

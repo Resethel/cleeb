@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
 from django.contrib import admin
+from django import forms
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
 from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style, PropertyStyle, TileLayer
@@ -11,41 +13,130 @@ from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style
 
 @admin.register(TileLayer)
 class TileLayerAdmin(NestedModelAdmin):
-    list_display = ('name',)
-    list_display_links = ('name',)
-    search_fields = ('name', )
+    list_display = ('verbose_name', 'name', 'type', 'display_url')
+    list_display_links = ('verbose_name', 'name')
+    list_filter = ('type',)
+    search_fields = ('name', 'type')
+    ordering = ('verbose_name', 'type')
     list_per_page = 25
+
+    # Add a custom display for the URL
+    def display_url(self, obj):
+        if obj.url is None:
+            return 'N/A'
+
+        # If the URL is too long, display only the first 50 characters
+        if len(obj.url) > 50:
+            return obj.url[:50] + "..."
+        return obj.url
+    display_url.short_description = 'URL'
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super().formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'url':
+            formfield.widget = forms.Textarea(attrs={'rows': 4, 'cols': 100})
+        return formfield
 # End class TileLayerAdmin
 
 # ======================================================================================================================
 # Style
 # ======================================================================================================================
 
-@admin.register(Style)
-class StyleAdmin(NestedModelAdmin):
-    list_display = ('id', 'color', 'dash_array', 'dash_offset', 'fill', 'fill_color', 'fill_opacity', 'fill_rule')
-    list_display_links = ('id',)
-    search_fields = ('color', 'dash_array', 'dash_offset', 'fill', 'fill_color', 'fill_opacity', 'fill_rule')
-    list_per_page = 25
-# End class StyleAdmin
-
 @admin.register(PropertyStyle)
 class PropertyStyleAdmin(NestedModelAdmin):
-    list_display = ('id', 'key', 'value', 'style')
-    list_display_links = ('id', 'key', 'value')
-    search_fields = ('key', 'value', 'style')
+    list_display = ('style', 'key', 'value')
+    list_display_links = ('style', 'key', 'value')
+    list_filter = ('style',)
     list_per_page = 25
+
+    search_fields = ('style', 'key', 'value')
+    ordering = ('style', 'key')
+
+    fieldsets = (
+        ("Style lié", {
+            'fields': ('style',)
+        }),
+        ("Clé et valeur", {
+            'fields': (('key', 'value'),)
+        }),
+        ("Style", {
+            'fields': ('color', 'weight', 'opacity', 'fill', 'fill_color', 'fill_rule', 'fill_opacity', 'dash_array',
+                       'dash_offset', 'line_cap', 'line_join')
+        }),
+    )
+
+
 # End class PropertyStyleAdmin
 
 class PropertyStyleInline(NestedStackedInline):
     model = PropertyStyle
     extra = 0
-    verbose_name = "Property Style"
-    verbose_name_plural = "Property Styles"
+    verbose_name = "Style des propriétés"
+    verbose_name_plural = "Styles des propriétés"
+
+    fieldsets = (
+        ("Clé et valeur", {
+            'fields': (('key', 'value'),)
+        }),
+        ("Style", {
+            'fields': ('color', 'weight', 'opacity', 'fill', 'fill_color', 'fill_rule', 'fill_opacity', 'dash_array',
+                       'dash_offset', 'line_cap', 'line_join')
+        }),
+    )
 # End class PropertyStyleInline
 
 
-# Create an inline for the style, knowing it has a foreign key to a generic model
+@admin.register(Style)
+class StyleAdmin(NestedModelAdmin):
+    list_display = (
+        'style_type',
+        'owning_layer',
+        'id',
+        'color',
+        'weight',
+        'opacity',
+        'fill',
+        'fill_color',
+        'fill_opacity',
+        'fill_rule',
+        'line_cap',
+        'line_join',
+        'dash_array',
+        'dash_offset',
+    )
+    list_display_links = ('id',)
+    readonly_fields = ('style_type', 'owning_layer', 'id')
+    search_fields = ('style_type', 'owning_layer', 'id')
+    list_per_page = 25
+
+
+    inlines = [
+        PropertyStyleInline
+    ]
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # FieldSets
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        ("Appartenance", {
+            'classes': ('collapse',),  # Hide the fieldset by default
+            'description': "L'appartenance d'un style à une couche.",
+            'fields': (('style_type', 'owning_layer', 'id'),)
+        }),
+        ("Bordures", {
+            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+            'fields': ('stroke', ('color', 'weight', 'opacity', 'dash_array', 'dash_offset', 'line_cap', 'line_join'))
+        }),
+        ("Remplissage", {
+            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+            'fields': ('fill', ('fill_color', 'fill_opacity', 'fill_rule'))
+        }),
+
+    )
+# End class StyleAdmin
+
+
 class StyleInline(NestedStackedInline):
     model = Style
     extra = 0
@@ -57,7 +148,6 @@ class StyleInline(NestedStackedInline):
     ]
 # End class StyleInline
 
-# Create an inline for the property style, knowing it has a foreign key to a generic model
 
 # ======================================================================================================================
 # Filter
@@ -93,7 +183,6 @@ class LayerAdmin(NestedModelAdmin):
 
     inlines = [
         FilterInline,
-        # StyleInline,
     ]
 # End class LayerAdmin
 
@@ -102,12 +191,18 @@ class LayerInline(NestedStackedInline):
     extra = 0
     verbose_name = "Layer"
     verbose_name_plural = "Layers"
-    # show_change_link = True
 
     inlines = [
         FilterInline,
-        # StyleInline,
     ]
+
+    # Hide the foreign keys to the map template and the feature group in the admin.
+    # If direct alteration is needed, it should be done through the map template or the feature group
+    # admin pages and not through the layer admin page
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name in ['owner_map_template', 'owner_feature_group']:
+            return None
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 # End class LayerInline
 
 # ======================================================================================================================
