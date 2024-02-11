@@ -46,7 +46,14 @@ class DatasetVersion(models.Model):
     id      = models.AutoField(primary_key=True)
     dataset = models.ForeignKey('Dataset', on_delete=models.CASCADE, related_name='versions')
     date    = models.DateTimeField(default=timezone.now, help_text="Date de la version du jeu de données.")
-    file    = models.FileField(upload_to=dataset_version_filepath, help_text="Fichier de la version du jeu de données.")
+    file    = models.FileField(
+        upload_to=dataset_version_filepath,
+        verbose_name="Fichier",
+        help_text="Fichier de la version du jeu de données.",
+        default=None,
+        null=True,
+        blank=True
+    )
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
