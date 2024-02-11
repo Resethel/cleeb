@@ -116,10 +116,10 @@ class DatasetCategory(models.Model):
 # End class DatasetCategory
 
 @receiver(pre_save, sender=DatasetCategory)
-def generate_slug(sender, instance, **kwargs):
+def generate_dataset_category_slug(sender, instance, **kwargs):
     """Generate the slug for the resource"""
     instance.slug = slugify(instance.name)
-# End def generate_slug
+# End def generate_dataset_category_slug
 
 
 # ======================================================================================================================
@@ -276,10 +276,10 @@ def dataset_pre_save(sender, instance, **kwargs):
 # End def dataset_pre_save
 
 @receiver(pre_save, sender=Dataset)
-def generate_slug(sender, instance, **kwargs):
+def generate_dataset_slug(sender, instance, **kwargs):
     """Generate the slug for the resource"""
     instance.slug = slugify(instance.name)
-# End def generate_slug
+# End def generate_dataset_slug
 
 @receiver(post_save, sender=Dataset)
 def set_up_format_technical_information(sender, instance, created, **kwargs):
