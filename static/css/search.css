@@ -165,7 +165,7 @@ label.--hidden {
 }
 
 .search-result__grid__column {
-    margin: calc(var(--gutter-x));
+    padding: calc(var(--gutter-x));
 }
 
 .search-result__grid.--1cols .search-result__grid__column {width: 100%;}
