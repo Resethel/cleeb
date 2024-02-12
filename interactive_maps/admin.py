@@ -9,7 +9,7 @@ from .models import Map
 # ======================================================================================================================
 
 class AuthorInline(admin.TabularInline):
-    """Inline class for the Author model."""
+    """Inline class for the Person model."""
     model = Map.authors.through
     extra = 1
 
@@ -20,7 +20,7 @@ class MapAdmin(admin.ModelAdmin):
     """Admin class for ThematicMap model."""
 
     inlines = [
-        AuthorInline, # Inline for the Author model
+        AuthorInline, # Inline for the Person model
     ]
 # End class MapAdmin
 

@@ -6,7 +6,7 @@ from django.template.defaultfilters import slugify
 # Person (Author, Contributor, etc.)
 # ======================================================================================================================
 
-class Author(models.Model):
+class Person(models.Model):
     """Model that represents an author of a thematic map."""
     # ID of the author
     id = models.AutoField(primary_key=True)

@@ -1,17 +1,16 @@
 from django.contrib import admin
-from core.models import Author, Organization
+from core.models import Person, Organization
 
-# Register your models here.
 
 # ======================================================================================================================
-# Author
+# Person
 # ======================================================================================================================
 
-class AuthorAdmin(admin.ModelAdmin):
-    """Admin class for the Author model."""
+class PersonAdmin(admin.ModelAdmin):
+    """Admin class for the Person model."""
 # End class AuthorAdmin
 
-admin.site.register(Author, AuthorAdmin)
+admin.site.register(Person, PersonAdmin)
 
 
 # ======================================================================================================================

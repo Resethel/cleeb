@@ -21,9 +21,9 @@ class Map(models.Model):
 
     # Author of the thematic map
     authors = models.ManyToManyField(
-        'core.Author',
+        'core.Person',
         blank=True,
-        help_text="Les auteurs de la carte interactive."
+        help_text="Les auteur.ice.s de la carte interactive."
     )
 
     created_at = models.DateField(

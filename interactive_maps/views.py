@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from django.shortcuts import render
 from django.views.generic import DetailView
 
-from core.models import Author
+from core.models import Person
 from interactive_maps.models import Map
 from map_thematics.models import Thematic
 
@@ -30,7 +30,7 @@ class InteractiveMapDetailView(DetailView):
         introduction   : str           = self.object.introduction
         text           : str           = self.object.text
         thematics      : set[Thematic] = self.object.thematics.all()
-        authors        : set[Author]   = self.object.authors.all()
+        authors        : set[Person]   = self.object.authors.all()
         title          : str           = self.object.title
         try:
             map_embed_html : str | None = self.object.map_render.embed_html.read().decode('utf-8')
