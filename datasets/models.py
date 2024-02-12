@@ -18,15 +18,26 @@ from django.template.defaultfilters import slugify
 # Constants
 # ======================================================================================================================
 
+# ----- Dataset format -----
 SHAPEFILE = 'shapefile'
 GEOJSON = 'geojson'
 DATASET_FORMAT_CHOICES = {
     SHAPEFILE: 'Shapefile',
     GEOJSON: 'GeoJSON'
 }
+# ----- Encoding -----
+UTF8 = 'utf8'
+LATIN1 = 'latin1'
+UTF16 = 'utf16'
+ASCII = 'ascii'
+ENCODING_CHOICES = {
+    UTF8: 'UTF-8',
+    LATIN1: 'Latin-1',
+    UTF16: 'UTF-16',
+    ASCII: 'ASCII'
+}
 
 SVG_REGEX = re.compile(r'(?:<\?xml\b[^>]*>[^<]*)?(?:<!--.*?-->[^<]*)*(?:<svg|<!DOCTYPE svg)\b', re.DOTALL)
-
 
 # ======================================================================================================================
 # DatasetVersion Model
@@ -160,8 +171,11 @@ class Dataset(models.Model):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
+    # ----- Identification -----
     id = models.AutoField(primary_key=True)
     slug = models.CharField(max_length=200, null=True, default=None)
+
+    # ----- Description -----
 
     name = models.CharField(
         max_length=100,
@@ -232,12 +246,17 @@ class Dataset(models.Model):
         help_text="Restrictions d'utilisation du jeu de données. Optionnel."
     )
 
-    # ----- Technical fields -----
-
     format = models.CharField(
         max_length=10,
         choices=DATASET_FORMAT_CHOICES,
         help_text="Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON."
+    )
+
+    encoding = models.CharField(
+        max_length=10,
+        choices=ENCODING_CHOICES,
+        default=UTF8,
+        help_text="Encodage du jeu de données."
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -252,6 +271,10 @@ class Dataset(models.Model):
         """Return the latest version of the dataset file."""
         return self.versions.latest('date') if  self.versions.exists() else None
     # End def get_latest_version
+
+    def get_absolute_url(self):
+        return f"/dataset/{self.slug}"
+    # End def get_absolute_url
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -280,22 +303,6 @@ def generate_dataset_slug(sender, instance, **kwargs):
     """Generate the slug for the resource"""
     instance.slug = slugify(instance.name)
 # End def generate_dataset_slug
-
-@receiver(post_save, sender=Dataset)
-def set_up_format_technical_information(sender, instance, created, **kwargs):
-    """Create a piece of technical information about the dataset format."""
-    # If the format is already set, simply update the technical information
-    if instance.technical_information.filter(key='format').exists():
-        instance.technical_information.filter(key='format').update(value=instance.format)
-
-    else:
-        DatasetTechnicalInformation.objects.create(
-            key='format',
-            value=instance.format,
-            dataset=instance
-        ).save()
-# End def create_format_technical_information
-
 
 
 # ======================================================================================================================

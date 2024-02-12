@@ -77,6 +77,14 @@
                 <section class="table-section">
                     <h3>Informations techniques</h3>
                     <table class="table--no-header">
+                        <tr>
+                            <td>Format</td>
+                            <td>{{ dataset.format }}</td>
+                        </tr>
+                        <tr>
+                            <td>Codage des caractères</td>
+                            <td>{{ dataset.encoding }}</td>
+                        </tr>
                         {% for tech_info in dataset.technical_information.all %}
                             <tr>
                                 <td>{{ tech_info.key }}</td>

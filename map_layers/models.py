@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Models for the `map_layers` application.
+"""
 from __future__ import annotations
 
 from celery import current_app
@@ -6,24 +10,6 @@ from django.core.validators import MinValueValidator
 from django.db import models, transaction
 
 from datasets.models import SHAPEFILE
-
-# ======================================================================================================================
-# Choices
-# ======================================================================================================================
-
-# Dataset formats
-
-# Encodings
-UTF8 = 'utf-8'
-UTF16 = 'utf-16'
-LATIN1 = 'latin-1'
-ASCII = 'ascii'
-ENCODING_CHOICES = {
-    UTF8: 'UTF-8',
-    LATIN1: 'Latin-1',
-    UTF16: 'UTF-16',
-    ASCII: 'ASCII'
-}
 
 # ======================================================================================================================
 # Enums
@@ -142,14 +128,6 @@ class MapLayer(models.Model):
         help_text="Nom du fichier shapefile à utiliser."
     )
 
-    encoding = models.CharField(
-        verbose_name="Codage des caractères",
-        max_length=50,
-        choices=ENCODING_CHOICES,
-        default=UTF8,
-        help_text="Encodage du fichier shapefile."
-    )
-
     max_polygons_points = models.IntegerField(
         verbose_name="Nombre maximum de points par polygone",
         blank=True,
@@ -224,7 +202,7 @@ class MapLayer(models.Model):
         if self.dataset.format == SHAPEFILE:
             config_dict.extend({
                 'shapefile': self.shapefile,
-                'encoding': self.encoding,
+                'encoding': self.dataset.encoding,
                 'max_polygons_points': self.max_polygons_points,
                 'max_multipolygons_polygons': self.max_multipolygons_polygons,
                 'max_multiolygons_points': self.max_multiolygons_points
