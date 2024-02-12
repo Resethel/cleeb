@@ -109,7 +109,7 @@
                                     <td>Version {{ forloop.revcounter }}</td>
                                     <td>{{ version.date }}</td>
                                     <td>
-                                        <a href="{{ version.file.url }}" download>
+                                        <a href="{% url 'dataset-download' dataset.slug version.id %}" download>
                                             <img src="{% static 'assets/icons/download_black_24dp.svg' %}" alt="download_icon" class="verdant-green-filter">
                                         </a>
                                     </td>

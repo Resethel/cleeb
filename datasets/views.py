@@ -1,9 +1,10 @@
-from django.db.models import Q
-from django.http import HttpRequest
+from django.db.models import Q, QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.text import slugify
 from django.views.generic import DetailView, ListView
 
-from datasets.models import Dataset, DatasetCategory
+from datasets.models import Dataset, DatasetCategory, DatasetVersion
 
 
 # ======================================================================================================================
@@ -75,3 +76,37 @@ class DatasetDetailView(DetailView):
         # print(context)
         return context
 # End class DatasetDetailView
+
+# ======================================================================================================================
+# Dataset Download View
+# ======================================================================================================================
+
+def dataset_version_download_view(request: HttpRequest, slug: str, pk: int) -> HttpResponse:
+
+    # Find the dataset mentioned by the slug
+    dataset = Dataset.objects.get(slug=slug)
+    if not dataset:
+        return HttpResponse('Aucun jeu de données trouvé', status=404)
+
+    # Find the version of the dataset
+    if not pk:
+        return HttpResponse('Aucune version de jeu de données spécifiée', status=400)
+
+    data = DatasetVersion.objects.get(pk=pk)
+    if not data:
+        return HttpResponse('Aucune version de jeu de données trouvée', status=404)
+
+    # Builds the file name for the dataset to get
+    parent_name = data.dataset.name
+    all_versions : QuerySet = data.dataset.versions.all()
+    # Find which version is this one
+    version = 1
+    for v in all_versions:
+        if v.date < data.date:
+            version += 1
+    file_name = f"{slugify(parent_name)}_v{version}.zip"
+
+    response = HttpResponse(data.file, content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={file_name}'
+    return response
+# End def dataset_version_download_view
