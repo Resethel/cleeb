@@ -1,16 +1,7 @@
 from django.contrib import admin
 
-from .models import Author, Map
+from .models import Map
 
-# ======================================================================================================================
-# Admin classes for the Author model
-# ======================================================================================================================
-
-class AuthorAdmin(admin.ModelAdmin):
-    """Admin class for the Author model."""
-# End class AuthorAdmin
-
-admin.site.register(Author, AuthorAdmin)
 
 
 # ======================================================================================================================
@@ -18,7 +9,7 @@ admin.site.register(Author, AuthorAdmin)
 # ======================================================================================================================
 
 class AuthorInline(admin.TabularInline):
-    """Inline class for the Author model."""
+    """Inline class for the Person model."""
     model = Map.authors.through
     extra = 1
 
@@ -29,7 +20,7 @@ class MapAdmin(admin.ModelAdmin):
     """Admin class for ThematicMap model."""
 
     inlines = [
-        AuthorInline, # Inline for the Author model
+        AuthorInline, # Inline for the Person model
     ]
 # End class MapAdmin
 

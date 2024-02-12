@@ -7,42 +7,9 @@ from core.models import Organization
 from map_data.models import MapRender
 from map_thematics.models import Thematic
 
-
-class Author(models.Model):
-    """Model that represents an author of a thematic map."""
-    # ID of the author
-    id = models.AutoField(primary_key=True)
-
-    # Name of the author
-    lastname = models.CharField(max_length=100)
-
-    # First-name of the author
-    firstname = models.CharField(max_length=100)
-
-    # Biography of the author
-    biography = models.TextField(
-        blank=True
-    )
-
-    # Picture of the author
-    picture = models.ImageField(
-        upload_to='interactive_maps/authors/pictures',
-        blank=True,
-        null=True,
-        default=None
-    )
-
-    # Organization of the author
-    organization = models.ManyToManyField(
-        'core.Organization',
-        blank=True,
-        default=None
-    )
-
-    def __str__(self):
-        return f"{self.firstname} {self.lastname}"
-# End class Author
-
+# ======================================================================================================================
+# Interactive Map
+# ======================================================================================================================
 
 class Map(models.Model):
 
@@ -54,9 +21,9 @@ class Map(models.Model):
 
     # Author of the thematic map
     authors = models.ManyToManyField(
-        'Author',
+        'core.Person',
         blank=True,
-        help_text="Les auteurs de la carte interactive."
+        help_text="Les auteur.ice.s de la carte interactive."
     )
 
     created_at = models.DateField(
