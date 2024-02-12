@@ -1,16 +1,7 @@
 from django.contrib import admin
 
-from .models import Author, Map
+from .models import Map
 
-# ======================================================================================================================
-# Admin classes for the Author model
-# ======================================================================================================================
-
-class AuthorAdmin(admin.ModelAdmin):
-    """Admin class for the Author model."""
-# End class AuthorAdmin
-
-admin.site.register(Author, AuthorAdmin)
 
 
 # ======================================================================================================================

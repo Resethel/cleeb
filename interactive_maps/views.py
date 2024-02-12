@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 from django.shortcuts import render
 from django.views.generic import DetailView
 
-from interactive_maps.models import Author, Map
+from core.models import Author
+from interactive_maps.models import Map
 from map_thematics.models import Thematic
 
 
