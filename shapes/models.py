@@ -1,5 +1,5 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -16,11 +16,29 @@ class Shape(models.Model):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
+    # ----- Identification -----
+
     id = models.BigAutoField(
         primary_key=True,
         verbose_name="ID",
         help_text="L'ID de la géométrie GeoJSON.",
     )
+
+    # ----- Parenthood -----
+
+    parent_layer = models.ForeignKey(
+        'map_layers.MapLayer',
+        related_name="shapes",
+        on_delete=models.SET_NULL, # Set to NULL if the parent layer is deleted,
+                                   # unreferenced shape are periodically deleted
+        verbose_name="Couche parent",
+        help_text="La couche parent de la géométrie GeoJSON.",
+        blank=True,
+        default=None,
+        null=True,
+    )
+
+    # ----- Geojson fields -----
 
     feature_type = models.CharField(
         max_length=255,
@@ -53,10 +71,15 @@ class Shape(models.Model):
         default=None,
     )
 
-    # Generic foreign key to link the GeoJSON to any model.
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    def parent(self):
+        if self.parent_layer is not None:
+            return self.parent_layer
+    # End def parent
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -71,5 +94,21 @@ class Shape(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.geometry_type}@{self.id}"
+    # End def __str__
+
+
+    def clean(self):
+        # Ensure that at most one parent is created
+        n_parents = sum([
+            self.parent_layer == True,
+        ])
+
+        if n_parents > 1:
+            error_str = "Either remove this parent or another one"
+            assigned_fields = dict()
+            if self.parent_layer:
+                assigned_fields["parent_layer"] = error_str
+            raise ValidationError("This shape has more than one parent assigned.", params=assigned_fields)
+    # End def clean
 # End class Shape

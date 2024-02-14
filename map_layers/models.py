@@ -4,7 +4,6 @@ Models for the `map_layers` application.
 """
 from __future__ import annotations
 
-from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -66,6 +65,8 @@ class MapLayer(models.Model):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
+
+    # ----- Identification -----
     id = models.AutoField(primary_key=True)
 
     name = models.CharField(
@@ -74,6 +75,8 @@ class MapLayer(models.Model):
         unique=True,
         help_text="Nom de la couche"
     )
+
+    # ----- Description -----
 
     short_desc = models.CharField(
         verbose_name="Description courte",
@@ -91,6 +94,8 @@ class MapLayer(models.Model):
         default=None,
         help_text="Description de la couche. Optionnel."
     )
+
+    # ----- Relations -----
 
     dataset = models.ForeignKey(
         'datasets.Dataset',
@@ -151,11 +156,6 @@ class MapLayer(models.Model):
         default=False,
         help_text="Personnalise les proppriétés de chaque feature du jeu de données selon les règles définies dans le champ 'Règles de conversion des propriétés'."
         "Les anciennes propriétés seront supprimées."
-    )
-
-    shapes = GenericRelation(
-        'shapes.Shape',
-        related_name='layer'
     )
 
     # ------------------------------------------------------------------------------------------------------------------
