@@ -1,3 +1,4 @@
+import geojson
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -111,4 +112,49 @@ class Shape(models.Model):
                 assigned_fields["parent_layer"] = error_str
             raise ValidationError("This shape has more than one parent assigned.", params=assigned_fields)
     # End def clean
+
+
+    def as_geojson(self) -> geojson.Feature:
+        """Convert the shape to a GeoJSON feature."""
+        match self.geometry_type.casefold():
+            case "point":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.Point(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case "linestring":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.LineString(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case "polygon":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.Polygon(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case "multipoint":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.MultiPoint(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case "multilinestring":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.MultiLineString(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case "multipolygon":
+                return geojson.Feature(
+                    id=self.id,
+                    geometry=geojson.MultiPolygon(self.geometry_coordinates),
+                    properties=self.properties,
+                )
+            case _:
+                raise ValueError(f"Unknown geometry type: {self.geometry_type}")
+    # End def as_geojson
+
 # End class Shape

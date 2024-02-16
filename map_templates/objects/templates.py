@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Objects for map templates.
+"""
 from __future__ import annotations
 
+import builtins
 import json
 from typing import Collection, Iterable, Literal
 
@@ -51,8 +56,6 @@ class MapTemplate:
                 if not isinstance(feature, Feature):
                     raise ValueError(f"Expected 'feature' to be of type 'Layer' or 'FeatureGroup', not '{type(feature)}'")
                 self.add_feature(feature)
-
-
     # End def __init__
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -173,10 +176,16 @@ class MapTemplate:
             features.append(FeatureGroup.from_model(feature))
 
 
-        template = MapTemplate(name=model.name, zoom_start=model.zoom_start, layer_control=model.layer_control,
-                               zoom_control=model.zoom_control, tiles=[
+        template = MapTemplate(
+            name=model.name,
+            zoom_start=model.zoom_start,
+            layer_control=model.layer_control,
+            zoom_control=model.zoom_control,
+            tiles=[
                 TileLayer.from_model(tile) for tile in model.tiles.all()
-            ], features=features)
+            ],
+            features=features
+        )
 
         # Validate the template
         template.validate()
