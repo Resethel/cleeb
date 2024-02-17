@@ -5,11 +5,11 @@ from typing import Callable
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.db import connection
+from django.utils.text import slugify
 from folium.plugins import CirclePattern, StripePattern
 
 from map_data.core.map.builder import MapBuilder
 from map_data.core.map.template import FeatureGroup, Filter, Layer, MapTemplate, Style, Tile
-from map_data.core.utils import snake_case
 from map_data.models import MapRender
 
 # ======================================================================================================================
@@ -255,8 +255,8 @@ class Command(BaseCommand):
             # 3. If the map does not exist, create it
             if map_render is None:
                 print(f"Creating new map render '{template.name}'...")
-                map_embed_html = ContentFile(name=f"{snake_case(template.name)}.html", content=map_._repr_html_())
-                map_full_html = ContentFile(name=f"{snake_case(template.name)}_full.html",
+                map_embed_html = ContentFile(name=f"{slugify(template.name)}.html", content=map_._repr_html_())
+                map_full_html = ContentFile(name=f"{slugify(template.name)}_full.html",
                                             content=map_.get_root().render())
                 MapRender.objects.create(
                     name=template.name,

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from map_layers.models import City, CityDatasetKeyValue, MapLayer, MapLayerCustomProperty, GenerationStatus
+from map_layers.models import MapLayer, MapLayerCustomProperty
 
 
 # ======================================================================================================================
@@ -12,7 +12,7 @@ class MapLayerCustomPropertyInline(admin.TabularInline):
     extra = 0
 
 class MapLayerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'dataset', 'number_of_shapes', 'status')
+    list_display = ('name', 'dataset', 'number_of_shapes')
     ordering = ('name',)
     exclude = ('id', 'status')
 
@@ -26,25 +26,3 @@ class MapLayerAdmin(admin.ModelAdmin):
         return obj.shapes.count()
 
 admin.site.register(MapLayer, MapLayerAdmin)
-
-# ======================================================================================================================
-# City Admin
-# ======================================================================================================================
-
-class CityDatasetKeyValueInline(admin.TabularInline):
-    model = CityDatasetKeyValue
-    extra = 1  # Number of extra forms to display
-# End class CityDatasetKeyValueInline
-
-
-class CityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'limits_dataset', 'generation_status')
-    ordering = ('name',)
-    exclude = ('id', 'status')
-
-    inlines = [
-        CityDatasetKeyValueInline,
-    ]
-# End class CityAdmin
-
-admin.site.register(City, CityAdmin)

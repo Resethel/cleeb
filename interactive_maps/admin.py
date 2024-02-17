@@ -1,8 +1,17 @@
 from django.contrib import admin
 
-from .models import Map
+from .models import Map, MapRender
 
 
+# ======================================================================================================================
+# Admin classes for the MapRender model
+# ======================================================================================================================
+
+class MapRenderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'embed_html', 'full_html')
+    search_fields = ('id', 'name')
+
+admin.site.register(MapRender, MapRenderAdmin)
 
 # ======================================================================================================================
 # Admin classes for the Map model

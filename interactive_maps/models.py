@@ -1,11 +1,87 @@
+from uuid import uuid4
+
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 
 from core.models import Organization
-from map_data.models import MapRender
 from map_thematics.models import Thematic
+
+# ======================================================================================================================
+# Rendered Map
+# ======================================================================================================================
+
+def map_render_embed_path(instance, filename):
+    # Generate a random UUID for the file name
+    uuid_str = str(uuid4())
+    # Get the extension of the file
+    extension = filename.split('.')[-1]
+    # Return the path
+    return f"maps/{instance.id}/{uuid_str}-embed.{extension}"
+# End def map_render_embed_path
+
+def map_render_full_path(instance, filename):
+    # Generate a random UUID for the file name
+    uuid_str = str(uuid4())
+    # Get the extension of the file
+    extension = filename.split('.')[-1]
+    # Return the path
+    return f"maps/{instance.id}/{uuid_str}-full.{extension}"
+# End def map_render_full_path
+
+class MapRender(models.Model):
+    """This class represents a map render."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(
+        primary_key=True,
+        verbose_name="ID",
+        help_text="L'ID de la carte.",
+    )
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Nom",
+        help_text="Le nom de la carte.",
+    )
+
+    embed_html = models.FileField(
+        name="embed_html",
+        verbose_name="HTML intégrable",
+        upload_to=map_render_embed_path,
+        help_text="Le code HTML de la carte pouvant être intégré dans une page web.",
+        null=True,
+        default=None,
+    )
+
+    full_html = models.FileField(
+        name="full_html",
+        verbose_name="HTML complet",
+        upload_to=map_render_full_path,
+        help_text="Le code HTML d'une page web contenant la carte.",
+        null=True,
+        default=None,
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Rendu de carte"
+        verbose_name_plural = "Rendus de carte"
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return self.name
+# End class MapRender
 
 # ======================================================================================================================
 # Interactive Map
@@ -46,7 +122,7 @@ class Map(models.Model):
     )
 
     map_render = models.ForeignKey(
-        'map_data.MapRender',
+        MapRender,
         verbose_name="Rendu de carte",
         on_delete=models.SET_NULL,
         blank=True,

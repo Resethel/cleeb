@@ -6,7 +6,7 @@ from typing import Literal
 from folium.plugins import CirclePattern, StripePattern
 
 from map_templates import models
-from map_templates.utils import repr_str
+from map_templates.utils import repr_str, snake_to_camel
 
 # ======================================================================================================================
 # Constants
@@ -34,6 +34,7 @@ STYLE_ATTRIBUTES = [
     "weight",
     "opacity",
     "line_cap",
+    "line_join",
     "dash_array",
     "dash_offset",
     "fill",
@@ -97,10 +98,41 @@ class Style:
 
     def validate(self):
         """Validate the style."""
-        validate_style_attributes(self.__dict__)
+        validate_style_attributes({k: v for k, v in self.__dict__.items() if k in STYLE_ATTRIBUTES})
         for property_style in self.property_styles:
             property_style.validate()
     # End def validate
+
+    def function(self, x : dict) -> dict:
+        """Function used to style the data.
+
+        Args:
+            x (dict): The data to style.
+        """
+
+        rstyle = {}
+        # Get the style for the layer
+        for attr in STYLE_ATTRIBUTES:
+            value = getattr(self, attr)
+            if value is not None:
+                rstyle[snake_to_camel(attr, capitalize_first=False)] = value
+
+        # For each property style, check if the property value matches the value of the property in the data
+        # If it does, add the style to the style
+        for key, value, style in self.property_styles:
+            try:
+                print(x, type(x))
+                if x["properties"].get(key, None) == value:
+                    for attr in STYLE_ATTRIBUTES:
+                        value = getattr(style, attr)
+                        if value is not None:
+                            rstyle[snake_to_camel(attr, capitalize_first=False)] = value
+                print(x)
+            except Exception:
+                pass
+
+        return rstyle
+    # End def function_style
 
     # ------------------------------------------------------------------------------------------------------------------
     # Private methods
@@ -362,6 +394,11 @@ def validate_style_attributes(attributes: dict):
 
     # 2. Validate the style attributes
     for attr, value in attributes.items():
+        if value is None:
+            continue
+        if attr not in STYLE_ATTRIBUTES:
+            raise ValueError(f"Invalid attribute '{attr}'")
+
         match attr:
             case "stroke" | "fill":
                 if not isinstance(value, bool):
@@ -386,10 +423,10 @@ def validate_style_attributes(attributes: dict):
                 if value not in ['miter', 'round', 'bevel']:
                     raise ValueError(f"Expected 'line_join' to be one of 'miter', 'round', 'bevel', not '{value}'")
             case "dash_array":
-                if not isinstance(value, str):
+                if value is not None and value is not isinstance(value, str):
                     raise ValueError(f"Expected 'dash_array' to be of type 'str', not '{type(value)}'")
             case "dash_offset":
-                if not isinstance(value, (float, int)):
+                if value is not None and value is not isinstance(value, (float, int)):
                     raise ValueError(f"Expected 'dash_offset' to be of type 'float' or 'int', not '{type(value)}'")
             case "fill_rule":
                 if value not in ['nonzero', 'evenodd']:
