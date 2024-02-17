@@ -11,10 +11,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.DeleteModel(
-            name='City',
+            name='CityDatasetKeyValue',
         ),
         migrations.DeleteModel(
-            name='CityDatasetKeyValue',
+            name='City',
         ),
         migrations.RemoveField(
             model_name='maplayer',
