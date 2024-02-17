@@ -14,7 +14,7 @@ from django.core.files.base import ContentFile
 from django.db.models import QuerySet
 from django.utils.text import slugify
 
-from map_data.models import MapRender
+from interactive_maps.models import MapRender
 from map_layers.models import MapLayer as MapLayerModel
 from map_templates.models import MAX_ZOOM, MIN_ZOOM, MapTemplate as MapTemplateModel
 from map_templates.objects.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
