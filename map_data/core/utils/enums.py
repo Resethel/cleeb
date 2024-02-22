@@ -17,3 +17,4 @@ class Encoding(Enum):
     ISO_8859_1 = 'iso-8859-1'
     LATIN_1 = 'latin-1'
     UTF_16 = 'utf-16'
+    ASCII = 'ascii'
