@@ -119,15 +119,13 @@ class Style:
 
         # For each property style, check if the property value matches the value of the property in the data
         # If it does, add the style to the style
-        for key, value, style in self.property_styles:
+        for property_style in self.property_styles:
             try:
-                print(x, type(x))
-                if x["properties"].get(key, None) == value:
+                if x["properties"].get(property_style.key, None) == property_style.value:
                     for attr in STYLE_ATTRIBUTES:
-                        value = getattr(style, attr)
+                        value = getattr(property_style, attr)
                         if value is not None:
                             rstyle[snake_to_camel(attr, capitalize_first=False)] = value
-                print(x)
             except Exception:
                 pass
 
@@ -285,7 +283,7 @@ class PropertyStyle:
             raise ValueError(f"Expected 'key' to be of type 'str', not '{type(self.key)}'")
         if not isinstance(self.value, str):
             raise ValueError(f"Expected 'value' to be of type 'str', not '{type(self.value)}'")
-        validate_style_attributes(self.__dict__)
+        validate_style_attributes({k: v for k, v in self.__dict__.items() if k in STYLE_ATTRIBUTES})
     # End def validate
 
     # ------------------------------------------------------------------------------------------------------------------
