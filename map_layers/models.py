@@ -4,13 +4,18 @@ Models for the `map_layers` application.
 """
 from __future__ import annotations
 
+from django.contrib import admin
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-from datasets.models import SHAPEFILE
+import map_layers.tasks as tasks
+from map_layers.choices import GenerationStatus
+
 
 # ======================================================================================================================
-# MapLayer Model
+# MapLayerCustomProperty Model
 # ======================================================================================================================
 
 
@@ -59,12 +64,16 @@ class MapLayerCustomProperty(models.Model):
     # End class Meta
 # End class MapLayerCustomProperty
 
+# ======================================================================================================================
+# MapLayer Model
+# ======================================================================================================================
+
+
 class MapLayer(models.Model):
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
-
 
     # ----- Identification -----
     id = models.AutoField(primary_key=True)
@@ -159,38 +168,49 @@ class MapLayer(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Task specific fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    task_id = models.CharField(
+        verbose_name="ID de la tâche",
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="ID de la tâche asynchrone utilisée pour générer les géométries de la couche."
+    )
+
+    generation_status = models.CharField(
+        verbose_name="Statut de la génération",
+        max_length=10,
+        choices=GenerationStatus.choices,
+        default=GenerationStatus.PENDING,
+        help_text="Statut de la génération des géométries de la couche."
+    )
+
+    regenerate = models.BooleanField(
+        verbose_name="Regénérer",
+        default=False,
+        help_text="Relance la génération des géométries de la couche."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-Persistent Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @admin.display(description="Formes Générées")
+    def has_shapes(self):
+        """Return True if the map layer has shapes."""
+        return self.shapes.exists()
+    # End def has_shapes
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
         return self.name
-
-    def get_config_dict(self):
-        """Return a dictionary containing the map layer's data.
-        Used when generating the geojson file of the map layers.
-        """
-        # Create the config dictionary
-        config_dict = {
-            'name': self.name,
-            'dataset': self.dataset.name,
-            'dataset_format': self.dataset.format
-        }
-
-        if self.dataset.format == SHAPEFILE:
-            config_dict.extend({
-                'shapefile': self.shapefile,
-                'encoding': self.dataset.encoding,
-                'max_polygons_points': self.max_polygons_points,
-                'max_multipolygons_polygons': self.max_multipolygons_polygons,
-                'max_multiolygons_points': self.max_multiolygons_points
-            })
-
-        config_dict['customize_properties'] = True
-        if self.customize_properties is True:
-            config_dict['custom_properties'] = {key: value for key, value in self.custom_properties.values_list('name', 'value')}
-
-        return config_dict
-    # End def get_config_dict
+    # End def __str__
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -202,3 +222,24 @@ class MapLayer(models.Model):
         ordering = ['name']
     # End class Meta
 # End class MapLayer
+
+@receiver(post_save, sender=MapLayer)
+def generate_map_layer_geometries(sender, instance, created, **kwargs):
+    """Generate the geometries for the map layer."""
+    print(f"{instance}: {instance.generation_status}, {instance.task_id}")
+    if instance.generation_status in [None, GenerationStatus.PENDING]:
+        tasks.generate_layer_geometries_task.delay(instance.id)
+
+    # Edge case where something went wrong and a task was killed midway
+    elif instance.generation_status == GenerationStatus.RUNNING:
+        if instance.task_id is None:
+            tasks.generate_layer_geometries_task.delay(instance.id)
+
+    # In the case where the status is either COMPLETED or FAILED,
+    # only submit a task if the user has requested to regenerate the geometries
+    elif instance.regenerate:
+        tasks.generate_layer_geometries_task.delay(instance.id)
+        instance.regenerate = False
+        instance.save()
+
+# End def generate_map_layer_geometries
