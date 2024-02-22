@@ -10,13 +10,13 @@ from typing import Iterable, Iterator
 import folium
 import geojson
 import xyzservices
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.db.models import QuerySet
 from django.utils.text import slugify
 
 from interactive_maps.models import MapRender
 from map_layers.models import MapLayer as MapLayerModel
-from map_templates.models import MAX_ZOOM, MIN_ZOOM, MapTemplate as MapTemplateModel
 from map_templates.objects.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
 from map_templates.objects.filters import Filter
 from map_templates.objects.templates import MapTemplate as MapTemplateObject
@@ -27,6 +27,8 @@ from map_templates.objects.templates import MapTemplate as MapTemplateObject
 
 LOCATION_OF_METZ = (49.119309, 6.175716) # TODO: Replace by start location defined in a MapTemplate
 logger = logging.getLogger(__name__)
+MAX_ZOOM = 18
+MIN_ZOOM = 1
 
 # ======================================================================================================================
 # Map Generator
@@ -35,13 +37,11 @@ logger = logging.getLogger(__name__)
 class TemplateProcessor:
     """Class that generates a map from a MapTemplate object or model."""
 
-    def __init__(self, template : MapTemplateModel | MapTemplateObject | None) -> None:
+    def __init__(self, template) -> None:
         self.map: folium.Map | None = None
         self.__template : MapTemplateObject | None = None
         if template is not None:
             self.template = template
-
-
     # End def __init__
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -53,9 +53,10 @@ class TemplateProcessor:
         return self.__template
 
     @template.setter
-    def template(self, value: MapTemplateObject | MapTemplateModel):
+    def template(self, value):
+        map_template_model = apps.get_model("map_templates", "MapTemplate")
         # 1. Check if the value is a MapTemplate
-        if isinstance(value, MapTemplateModel):
+        if isinstance(value, map_template_model):
             obj = value.as_template_object()
         elif isinstance(value, MapTemplateObject):
             obj = value

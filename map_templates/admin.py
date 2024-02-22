@@ -1,11 +1,34 @@
 # -*- coding: utf-8 -*-
+"""
+Admin module for the `map_templates` application.
+"""
 from __future__ import annotations
 from django.contrib import admin
 from django import forms
+from django.utils.html import format_html
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
+from map_templates.choices import GenerationStatus
 from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style, PropertyStyle, TileLayer
 
+# ======================================================================================================================
+# Constants
+# ======================================================================================================================
+
+CLOCK_ICON_HTML = """
+<span style="background-image: url('/static/admin/img/icon-clock.svg');
+             background-repeat: no-repeat;
+             background-position: 0 -16;
+             position: relative;
+             width: 16px;
+             height: 16px;
+             display: inline-block;
+             vertical-align: middle;
+             overflow: hidden;
+
+             filter: brightness(0) saturate(100%) invert(51%) sepia(49%) saturate(4518%) hue-rotate(359deg) brightness(100%) contrast(107%);"
+></span>
+"""
 
 # ======================================================================================================================
 # TileLayer
@@ -238,13 +261,52 @@ class FeatureGroupInline(NestedStackedInline):
 
 @admin.register(MapTemplate)
 class MapTemplateAdmin(NestedModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'generation_status_icon')
     list_display_links = ('name',)
     search_fields = ('name',)
     list_per_page = 25
+
+    readonly_fields = ('generation_status', 'task_id')
 
     inlines = [
         LayerInline,
         FeatureGroupInline,
     ]
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # FieldSets
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        ('Description', {
+            'fields': ('name',)
+        }),
+        ('Tiles and Controls', {
+            'fields': ('tiles','zoom_start', 'layer_control', 'zoom_control')
+        }),
+        ('Generation Control', {
+            'classes': ('collapse',),
+            'fields': (
+                ('generation_status', 'task_id'),
+                'regenerate'
+            )
+        }),
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-Persistent Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def generation_status_icon(self, obj):
+        match obj.generation_status:
+            case GenerationStatus.COMPLETED:
+                return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
+            case GenerationStatus.FAILED:
+                return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            case GenerationStatus.PENDING:
+                return format_html('<img src="/static/admin/img/icon-unknown.svg" alt="Unknown">')
+            case GenerationStatus.RUNNING:
+                return format_html(CLOCK_ICON_HTML)
+        return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
+    generation_status_icon.short_description = "Statut de Génération"
 # End class MapTemplateAdmin

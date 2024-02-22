@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from xyzservices import TileProvider
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -8,6 +8,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from colorfield.fields import ColorField
 
+from map_templates import tasks
+from map_templates.choices import GenerationStatus
 from map_templates.objects.templates import MapTemplate as MapTemplateObject
 
 # ======================================================================================================================
@@ -697,6 +699,33 @@ class MapTemplate(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Task specific fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    task_id = models.CharField(
+        verbose_name="ID de la tâche",
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="ID de la tâche asynchrone utilisée pour générer le rendu de la carte."
+    )
+
+    generation_status = models.CharField(
+        verbose_name="Statut de la génération",
+        max_length=10,
+        choices=GenerationStatus.choices,
+        default=GenerationStatus.PENDING,
+        help_text="Statut de la génération du rendu de la carte."
+    )
+
+    regenerate = models.BooleanField(
+        verbose_name="Regénérer",
+        default=False,
+        help_text="Relance la génération du rendu de la carte."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -717,3 +746,24 @@ class MapTemplate(models.Model):
         verbose_name_plural = "Modèles de carte"
     # End class Meta
 # End class MapTemplate
+
+
+@receiver(post_save, sender=MapTemplate)
+def generate_map_render(sender, instance, created, **kwargs):
+    """Generate the render of the map template."""
+    print(f"{instance}: {instance.generation_status}, {instance.task_id}")
+    if instance.generation_status in [None, GenerationStatus.PENDING]:
+        tasks.generate_map_render_from_map_template_task.delay(instance.id)
+
+    # Edge case where something went wrong and a task was killed midway
+    elif instance.generation_status == GenerationStatus.RUNNING:
+        if instance.task_id is None:
+            tasks.generate_map_render_from_map_template_task.delay(instance.id)
+
+    # In the case where the status is either COMPLETED or FAILED,
+    # only submit a task if the user has requested to regenerate the geometries
+    elif instance.regenerate:
+        tasks.generate_map_render_from_map_template_task.delay(instance.id)
+        instance.regenerate = False
+        instance.save()
+# End def generate_map_layer_geometries
