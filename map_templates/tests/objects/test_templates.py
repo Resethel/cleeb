@@ -5,7 +5,7 @@ import django.test as djangotest
 from map_templates import models
 from map_templates.objects.templates import MAX_ZOOM, MIN_ZOOM, MapTemplate
 from map_templates.objects.tiles import TileLayer
-from map_templates.objects.features import Layer, FeatureGroup
+from map_templates.objects.features import FeatureType, Layer, FeatureGroup
 from map_templates.objects.styles import Style
 from map_templates.objects.filters import Filter
 
@@ -50,7 +50,8 @@ class TestMapTemplateObject(djangotest.TestCase):
             self.map_template.add_feature("NotAFeature")
 
     def test_removeFeature_shouldRemoveLayer(self):
-        self.map_template.remove_feature("TestLayer", "Layer")
+        self.assertIn(self.layer, self.map_template.features)
+        self.map_template.remove_feature("TestLayer", FeatureType.LAYER)
         self.assertNotIn(self.layer, self.map_template.features)
     # End def test_removeFeature_shouldRemoveLayer
 

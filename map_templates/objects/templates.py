@@ -9,7 +9,7 @@ import json
 from typing import Collection, Iterable, Literal
 
 from map_templates import models
-from map_templates.objects.features import Feature, FeatureGroup, Layer
+from map_templates.objects.features import Feature, FeatureGroup, FeatureType, Layer
 from map_templates.objects.tiles import TileLayer
 from map_templates.utils import repr_str
 
@@ -128,17 +128,17 @@ class MapTemplate:
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
-    def remove_feature(self, fg_or_name : Feature | str, type : Literal['Layer', 'FeatureGroup'] | None = None):
+    def remove_feature(self, fg_or_name : Feature | str, type : FeatureType):
         """Remove a layer from the template."""
         if isinstance(fg_or_name, str):
             if type is None:
                 raise ValueError("If 'fg_or_name' is of type 'str', 'type' must be specified")
-            if type not in ('Layer', 'FeatureGroup'):
-                raise ValueError(f"Invalid type '{type}'")
+            if isinstance(type, FeatureType):
+                raise ValueError(f"Expected 'type' to be of type 'FeatureType', not '{builtins.type(type)}'")
             try:
                 feature = next((f for f in self.__features if f.name == fg_or_name and f.type == type))
             except StopIteration:
-                raise ValueError(f"Feature '{fg_or_name}' does not exist in the template")
+                raise ValueError(f"Feature '{fg_or_name}' does not exist in the template") from None
 
         elif isinstance(fg_or_name, Feature):
             if fg_or_name not in self.__features:
