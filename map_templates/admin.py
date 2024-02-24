@@ -261,12 +261,12 @@ class FeatureGroupInline(NestedStackedInline):
 
 @admin.register(MapTemplate)
 class MapTemplateAdmin(NestedModelAdmin):
-    list_display = ('name', 'generation_status_icon')
-    list_display_links = ('name',)
-    search_fields = ('name',)
+    list_display = ('id', 'name', 'generation_status_icon', 'linked_map_render')
+    list_display_links = ('id', 'name',)
+    search_fields = ('id', 'name',)
     list_per_page = 25
 
-    readonly_fields = ('generation_status', 'task_id')
+    readonly_fields = ('id', 'generation_status', 'task_id')
 
     inlines = [
         LayerInline,
@@ -278,11 +278,9 @@ class MapTemplateAdmin(NestedModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('Description', {
-            'fields': ('name',)
-        }),
-        ('Tiles and Controls', {
-            'fields': ('tiles','zoom_start', 'layer_control', 'zoom_control')
+        ('ID', {
+            'classes': ('collapse',),
+            'fields': ('id',),
         }),
         ('Generation Control', {
             'classes': ('collapse',),
@@ -291,13 +289,19 @@ class MapTemplateAdmin(NestedModelAdmin):
                 'regenerate'
             )
         }),
+        ('Description', {
+            'fields': ('name',)
+        }),
+        ('Tiles and Controls', {
+            'fields': ('tiles','zoom_start', 'layer_control', 'zoom_control')
+        }),
     )
 
     # ------------------------------------------------------------------------------------------------------------------
     # Non-Persistent Fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    def generation_status_icon(self, obj):
+    def generation_status_icon(self, obj : MapTemplate):
         match obj.generation_status:
             case GenerationStatus.COMPLETED:
                 return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
@@ -309,4 +313,13 @@ class MapTemplateAdmin(NestedModelAdmin):
                 return format_html(CLOCK_ICON_HTML)
         return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
     generation_status_icon.short_description = "Statut de Génération"
+
+    def linked_map_render(self, obj : MapTemplate):
+        if obj.render is None:
+            return "-"
+        else:
+            name = obj.render.name
+            id_ = obj.render.id
+            return format_html(f'<a href="/admin/interactive_maps/maprender/{id_}/change/">{name}@{id_}</a>')
+    linked_map_render.short_description = "Rendu Lié"
 # End class MapTemplateAdmin

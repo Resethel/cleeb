@@ -13,21 +13,17 @@ from map_thematics.models import Thematic
 # ======================================================================================================================
 
 def map_render_embed_path(instance, filename):
-    # Generate a random UUID for the file name
-    uuid_str = str(uuid4())
     # Get the extension of the file
     extension = filename.split('.')[-1]
     # Return the path
-    return f"maps/{instance.id}/{uuid_str}-embed.{extension}"
+    return f"maps/{instance.slug}/embed.{extension}"
 # End def map_render_embed_path
 
 def map_render_full_path(instance, filename):
-    # Generate a random UUID for the file name
-    uuid_str = str(uuid4())
     # Get the extension of the file
     extension = filename.split('.')[-1]
     # Return the path
-    return f"maps/{instance.id}/{uuid_str}-full.{extension}"
+    return f"maps/{instance.slug}/full.{extension}"
 # End def map_render_full_path
 
 class MapRender(models.Model):
@@ -37,17 +33,31 @@ class MapRender(models.Model):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
+    # ----- Identification -----
+
     id = models.AutoField(
         primary_key=True,
         verbose_name="ID",
         help_text="L'ID de la carte.",
     )
 
+    slug = models.SlugField(
+        max_length=512,
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    # ------ Description ------
+
     name = models.CharField(
+        unique=True,
         max_length=255,
         verbose_name="Nom",
-        help_text="Le nom de la carte.",
+        help_text="Le nom du rendu."
     )
+
+    # ----- Maps Render -----
 
     embed_html = models.FileField(
         name="embed_html",
@@ -67,6 +77,17 @@ class MapRender(models.Model):
         default=None,
     )
 
+    # ----- Reference to MapTemplate (Optional) -----
+
+    template = models.OneToOneField(
+        to='map_templates.MapTemplate',
+        related_name='render',
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+        verbose_name='Modèle',
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
@@ -81,6 +102,12 @@ class MapRender(models.Model):
 
     def __str__(self):
         return self.name
+    # End def __str__
+
+    def clean(self, exclude=None):
+        super().clean()
+        self.slug = slugify(self.name)
+    # End def clean_fields
 # End class MapRender
 
 # ======================================================================================================================
