@@ -11,6 +11,7 @@ from colorfield.fields import ColorField
 from map_templates import tasks
 from map_templates.choices import GenerationStatus
 from map_templates.objects.templates import MapTemplate as MapTemplateObject
+from map_templates.validators import validate_dash_array
 
 # ======================================================================================================================
 # Constants
@@ -252,11 +253,12 @@ class BaseStyle(models.Model):
 
     # Dash array of the style
     dash_array = models.CharField(
-        max_length=5,
+        max_length=50,
         default=None,
         blank=True,
         null=True,
-        help_text="Chaîne de charactères définissant le motif de la bordure des formes."
+        validators=[validate_dash_array],
+        help_text="Chaîne de charactères définissant le motif de la bordure des formes.",
     )
 
     # Dash offset of the style

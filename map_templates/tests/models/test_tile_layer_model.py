@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the TileLayer model
+Tests for the `TileLayer` model of the `map_templates` application.
 """
 from unittest import mock
 

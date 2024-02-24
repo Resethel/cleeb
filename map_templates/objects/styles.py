@@ -420,11 +420,22 @@ def validate_style_attributes(attributes: dict):
             case "line_join":
                 if value not in ['miter', 'round', 'bevel']:
                     raise ValueError(f"Expected 'line_join' to be one of 'miter', 'round', 'bevel', not '{value}'")
+
+            # A dash array is a list of comma and/or white space separated <length>s and <percentage>s that
+            # specify the lengths of alternating dashes and gaps.
             case "dash_array":
-                if value is not None and value is not isinstance(value, str):
+                if value is not None and not isinstance(value, str):
                     raise ValueError(f"Expected 'dash_array' to be of type 'str', not '{type(value)}'")
+                dashes = value.replace(",", " ").replace("%", "").split()
+                for dash in dashes:
+                    try:
+                        float(dash)
+                    except ValueError:
+                        raise ValueError(f"Expected 'dash_array' to be a list of comma and/or "
+                                         f"white space separated <length>s and <percentage>s, not '{value}'") from None
+
             case "dash_offset":
-                if value is not None and value is not isinstance(value, (float, int)):
+                if value is not None and not isinstance(value, (float, int)):
                     raise ValueError(f"Expected 'dash_offset' to be of type 'float' or 'int', not '{type(value)}'")
             case "fill_rule":
                 if value not in ['nonzero', 'evenodd']:
