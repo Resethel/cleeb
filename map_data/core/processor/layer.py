@@ -3,11 +3,11 @@
 Module to process a dataset into a geojson layer.
 """
 import geojson
+from django.apps import apps
 
 from datasets.models import DatasetTechnicalInformation
 from map_data.core.utils import geo
 from map_data.core.utils.geo import EPSGProjection, Encoding
-from map_layers.models import MapLayer
 from shapes.models import Shape
 
 
@@ -18,8 +18,11 @@ from shapes.models import Shape
 class LayerProcessor:
     """The layer processor is responsible for converting a MapLayerTemplate to geojson and save them to the model."""
 
-    def __init__(self, map_layer : MapLayer) -> None:
-        if not isinstance(map_layer, MapLayer):
+    def __init__(self, map_layer) -> None:
+
+        map_layer_model = apps.get_model('map_layers', 'MapLayer')
+
+        if not isinstance(map_layer, map_layer_model):
             raise ValueError(f"Invalid type for map_layer: {type(map_layer)}")
         self.template = map_layer
         self.dataset = map_layer.dataset
@@ -67,6 +70,7 @@ class LayerProcessor:
         # NOTE: geojson datasets are not yet supported
         if self.dataset.format == "geojson":
             raise NotImplementedError("GeoJSON datasets are not yet supported")
+
 
         # 2. Process the dataset into a geojson layer
         data = geo.convert_shapefile_to_geojson(

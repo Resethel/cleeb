@@ -10,13 +10,13 @@ from typing import Iterable, Iterator
 import folium
 import geojson
 import xyzservices
+from django.apps import apps
 from django.core.files.base import ContentFile
 from django.db.models import QuerySet
 from django.utils.text import slugify
 
 from interactive_maps.models import MapRender
 from map_layers.models import MapLayer as MapLayerModel
-from map_templates.models import MAX_ZOOM, MIN_ZOOM, MapTemplate as MapTemplateModel
 from map_templates.objects.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
 from map_templates.objects.filters import Filter
 from map_templates.objects.templates import MapTemplate as MapTemplateObject
@@ -27,6 +27,8 @@ from map_templates.objects.templates import MapTemplate as MapTemplateObject
 
 LOCATION_OF_METZ = (49.119309, 6.175716) # TODO: Replace by start location defined in a MapTemplate
 logger = logging.getLogger(__name__)
+MAX_ZOOM = 18
+MIN_ZOOM = 1
 
 # ======================================================================================================================
 # Map Generator
@@ -35,13 +37,12 @@ logger = logging.getLogger(__name__)
 class TemplateProcessor:
     """Class that generates a map from a MapTemplate object or model."""
 
-    def __init__(self, template : MapTemplateModel | MapTemplateObject | None) -> None:
+    def __init__(self, template) -> None:
         self.map: folium.Map | None = None
+        self.__template_model = None
         self.__template : MapTemplateObject | None = None
         if template is not None:
             self.template = template
-
-
     # End def __init__
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -53,11 +54,14 @@ class TemplateProcessor:
         return self.__template
 
     @template.setter
-    def template(self, value: MapTemplateObject | MapTemplateModel):
+    def template(self, value):
+        map_template_model = apps.get_model("map_templates", "MapTemplate")
         # 1. Check if the value is a MapTemplate
-        if isinstance(value, MapTemplateModel):
+        if isinstance(value, map_template_model):
+            store_model = True
             obj = value.as_template_object()
         elif isinstance(value, MapTemplateObject):
+            store_model = False
             obj = value
         else: # Invalid type
             raise ValueError(f"Invalid type for template: {type(value)}. Expected a 'MapTemplate' object or model.")
@@ -70,6 +74,7 @@ class TemplateProcessor:
             raise ValueError(f"The template provided is invalid") from e
 
         # 3. Set the template
+        self.__template_model = value if store_model is True else None
         self.__template = obj
     # End def template
 
@@ -143,13 +148,23 @@ class TemplateProcessor:
             raise RuntimeError("No map has been generated yet.")
 
         # 2. Get or create the map render object
-        map_render_query = MapRender.objects.filter(name=self.template.name)
-        if map_render_query.exists():
-            map_render = map_render_query.first()
-            logger.debug(f"Updating existing map render '{self.template.name}'...")
-        else:
-            map_render = MapRender(name=self.template.name)
-            logger.debug(f"Creating new map render '{self.template.name}'...")
+        try:
+            map_render = self.__template_model.render
+            logger.debug(f"Updating {self.__template_model}'s render")
+        except Exception:
+            i = 0
+            found_name = False
+            while i < 100:
+                render_name = f"{self.template.name}" if i == 0 else f"{self.template.name}-{i}"
+                if not MapRender.objects.filter(name=render_name).exists():
+                    found_name = True
+                    break
+                i += 1
+            if not found_name:
+                raise RuntimeError("Map Name Finding loop limit reached")
+
+            map_render = MapRender(name=render_name)
+            logger.debug(f"Creating new map render '{render_name}'...")
 
         # 3. Save the map data
         # The content is unescaped to as it is meant to be displayed in a browser
@@ -157,6 +172,9 @@ class TemplateProcessor:
         full_content  = ContentFile(name=f"{slugify(self.template.name)}.html", content=html.unescape(self.map.get_root().render()))
         map_render.embed_html.save(embed_content.name, embed_content, save=False)
         map_render.full_html.save(full_content.name, full_content, save=False)
+        if self.__template_model:
+            map_render.template = self.__template_model
+        map_render.clean()
         map_render.save()
         logger.info(f"Map '{self.template.name}' saved successfully.")
     # End def save

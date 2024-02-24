@@ -1,11 +1,34 @@
 # -*- coding: utf-8 -*-
+"""
+Admin module for the `map_templates` application.
+"""
 from __future__ import annotations
 from django.contrib import admin
 from django import forms
+from django.utils.html import format_html
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
+from map_templates.choices import GenerationStatus
 from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style, PropertyStyle, TileLayer
 
+# ======================================================================================================================
+# Constants
+# ======================================================================================================================
+
+CLOCK_ICON_HTML = """
+<span style="background-image: url('/static/admin/img/icon-clock.svg');
+             background-repeat: no-repeat;
+             background-position: 0 -16;
+             position: relative;
+             width: 16px;
+             height: 16px;
+             display: inline-block;
+             vertical-align: middle;
+             overflow: hidden;
+
+             filter: brightness(0) saturate(100%) invert(51%) sepia(49%) saturate(4518%) hue-rotate(359deg) brightness(100%) contrast(107%);"
+></span>
+"""
 
 # ======================================================================================================================
 # TileLayer
@@ -238,13 +261,65 @@ class FeatureGroupInline(NestedStackedInline):
 
 @admin.register(MapTemplate)
 class MapTemplateAdmin(NestedModelAdmin):
-    list_display = ('name',)
-    list_display_links = ('name',)
-    search_fields = ('name',)
+    list_display = ('id', 'name', 'generation_status_icon', 'linked_map_render')
+    list_display_links = ('id', 'name',)
+    search_fields = ('id', 'name',)
     list_per_page = 25
+
+    readonly_fields = ('id', 'generation_status', 'task_id')
 
     inlines = [
         LayerInline,
         FeatureGroupInline,
     ]
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # FieldSets
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        ('ID', {
+            'classes': ('collapse',),
+            'fields': ('id',),
+        }),
+        ('Generation Control', {
+            'classes': ('collapse',),
+            'fields': (
+                ('generation_status', 'task_id'),
+                'regenerate'
+            )
+        }),
+        ('Description', {
+            'fields': ('name',)
+        }),
+        ('Tiles and Controls', {
+            'fields': ('tiles','zoom_start', 'layer_control', 'zoom_control')
+        }),
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-Persistent Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def generation_status_icon(self, obj : MapTemplate):
+        match obj.generation_status:
+            case GenerationStatus.COMPLETED:
+                return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
+            case GenerationStatus.FAILED:
+                return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            case GenerationStatus.PENDING:
+                return format_html('<img src="/static/admin/img/icon-unknown.svg" alt="Unknown">')
+            case GenerationStatus.RUNNING:
+                return format_html(CLOCK_ICON_HTML)
+        return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
+    generation_status_icon.short_description = "Statut de Génération"
+
+    def linked_map_render(self, obj : MapTemplate):
+        if obj.render is None:
+            return "-"
+        else:
+            name = obj.render.name
+            id_ = obj.render.id
+            return format_html(f'<a href="/admin/interactive_maps/maprender/{id_}/change/">{name}@{id_}</a>')
+    linked_map_render.short_description = "Rendu Lié"
 # End class MapTemplateAdmin

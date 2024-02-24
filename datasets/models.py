@@ -26,15 +26,17 @@ DATASET_FORMAT_CHOICES = {
     GEOJSON: 'GeoJSON'
 }
 # ----- Encoding -----
-UTF8 = 'utf8'
-LATIN1 = 'latin1'
-UTF16 = 'utf16'
+UTF8 = 'utf-8'
+LATIN1 = 'latin-1'
+ISO_8859_1 = 'iso-8859-1'
+UTF16 = 'utf-16'
 ASCII = 'ascii'
 ENCODING_CHOICES = {
     UTF8: 'UTF-8',
     LATIN1: 'Latin-1',
     UTF16: 'UTF-16',
-    ASCII: 'ASCII'
+    ASCII: 'ASCII',
+    ISO_8859_1: 'ISO-8859-1',
 }
 
 SVG_REGEX = re.compile(r'(?:<\?xml\b[^>]*>[^<]*)?(?:<!--.*?-->[^<]*)*(?:<svg|<!DOCTYPE svg)\b', re.DOTALL)
