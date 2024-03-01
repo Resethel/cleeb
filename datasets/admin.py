@@ -1,7 +1,11 @@
+import django.contrib.gis.admin as gis_admin
 from django.contrib import admin
 from django.db.models import QuerySet
+from django.utils.html import format_html
 
-from .models import Dataset, DatasetCategory, DatasetTechnicalInformation, DatasetVersion
+from .models import Dataset, DatasetCategory, DatasetLayer, DatasetLayerField, DatasetTechnicalInformation, \
+    DatasetVersion
+
 
 # ======================================================================================================================
 # Dataset Category Admin
@@ -13,6 +17,58 @@ class DatasetCategoryAdmin(admin.ModelAdmin):
     exclude = ('id', 'slug')
 # End class DatasetCategoryAdmin
 admin.site.register(DatasetCategory, DatasetCategoryAdmin)
+
+# ======================================================================================================================
+# DatasetLayer Admin
+# ======================================================================================================================
+
+class DatasetLayerFieldAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent_dataset', 'parent_layer', 'type', 'max_length', 'precision')
+    search_fields = ('name',)
+    ordering = ('name',)
+    readonly_fields = ('id',)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Custom admin fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def parent_dataset(self, field : DatasetLayerField):
+        if field.layer is not None and field.layer.dataset is not None:
+            parent_name = f"{field.layer.dataset.dataset} v{field.layer.dataset.get_version_number()}"
+            return format_html(f'<a href="/admin/datasets/dataset/{field.layer.dataset.id}/change/">{parent_name}</a>')
+        return "-"
+    parent_dataset.short_description = 'Parent Dataset'
+
+    def parent_layer(self, field : DatasetLayerField):
+        if field.layer is not None:
+            return format_html(f'<a href="/admin/datasets/datasetlayer/{field.layer.id}/change/">{field.layer.name}</a>')
+        return "-"
+    parent_layer.short_description = 'Parent Layer'
+# End class DatasetLayerFieldAdmin
+
+class DatasetLayerFieldInline(admin.TabularInline):
+    model = DatasetLayerField
+    list_display = ('name', 'type', 'max_length', 'precision')
+    extra = 0
+# End class DatasetLayerAdmin
+
+class DatasetLayerAdmin(gis_admin.GISModelAdmin):
+    list_display = ('id', 'name', 'dataset')
+    search_fields = ('name', 'dataset__name')
+    ordering = ('name',)
+    exclude = ('id', 'slug')
+
+    inlines = [DatasetLayerFieldInline]
+# End class DatasetLayerAdmin
+
+admin.site.register(DatasetLayerField, DatasetLayerFieldAdmin)
+admin.site.register(DatasetLayer, DatasetLayerAdmin)
+
+# ======================================================================================================================
+# DatasetVersion Admin
+# ======================================================================================================================
+
+admin.site.register(DatasetVersion)
 
 # ======================================================================================================================
 # Dataset Admin
@@ -50,10 +106,10 @@ class DatasetAdmin(admin.ModelAdmin):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    list_display = ('name', 'category', 'format', 'short_desc', 'file_size')
-    list_filter = ('format', CategoryFilter)
+    list_display = ('name', 'category', 'short_desc', 'file_size')
+    list_filter = (CategoryFilter,)
     search_fields = ('name',)
-    ordering = ('name', 'format')
+    ordering = ('name',)
     exclude = ('id', 'slug')
 
     # ------------------------------------------------------------------------------------------------------------------
