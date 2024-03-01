@@ -97,7 +97,11 @@ DATABASES = {
         'USER': 'cleeb',
         'PASSWORD': 'cleeb',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '5432',
+        'TEST': {
+            'NAME': 'cleeb-test-db',
+            'TEMPLATE': 'cleeb-test-db-template'
+        }
     }
 }
 
