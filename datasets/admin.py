@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Admin module for the `datasets` application.
+"""
 import django.contrib.gis.admin as gis_admin
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.utils.html import format_html
 
 from .models import Dataset, DatasetCategory, DatasetLayer, DatasetLayerField, DatasetTechnicalInformation, \
-    DatasetVersion
+    DatasetVersion, Feature
 
 
 # ======================================================================================================================
@@ -17,6 +21,17 @@ class DatasetCategoryAdmin(admin.ModelAdmin):
     exclude = ('id', 'slug')
 # End class DatasetCategoryAdmin
 admin.site.register(DatasetCategory, DatasetCategoryAdmin)
+
+# ======================================================================================================================
+# Feature Admin
+# ======================================================================================================================
+
+class FeatureAdmin(gis_admin.GISModelAdmin):
+    list_display = ('id', 'layer')
+    readonly_fields = ('id', 'layer')
+
+# End class FeatureAdmin
+admin.site.register(Feature, FeatureAdmin)
 
 # ======================================================================================================================
 # DatasetLayer Admin

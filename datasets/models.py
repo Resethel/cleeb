@@ -19,6 +19,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+from datasets import services
 from datasets.validators import validate_dataset_version_file
 
 # ======================================================================================================================
@@ -40,6 +41,78 @@ ENCODING_CHOICES = {
 }
 
 SVG_REGEX = re.compile(r'(?:<\?xml\b[^>]*>[^<]*)?(?:<!--.*?-->[^<]*)*(?:<svg|<!DOCTYPE svg)\b', re.DOTALL)
+
+# ======================================================================================================================
+# Feature Model
+# ======================================================================================================================
+
+class Feature(models.Model):
+    """Represents a geographic feature in a dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ----- Identification -----
+
+    id = models.AutoField(primary_key=True)
+
+    # ----- Parent -----
+
+    layer = models.ForeignKey(
+        'DatasetLayer',
+        on_delete=models.CASCADE,
+        related_name='features'
+    )
+
+    # ----- Properties -----
+
+    geometry = gis_models.GeometryField()
+    fields = models.JSONField()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def type(self) -> str:
+        """Get the type of the feature."""
+        return self.layer.geometry_type
+    # End def type
+
+    def get_field(self, field_name : str, **kwargs) -> any:
+        """Get the value of a field of the feature.
+
+        Keyword Args:
+            default (any): The default value to return if the field does not exist.
+        """
+        if 'default' in kwargs:
+            raw_field = self.fields.get(field_name, kwargs['default'])
+        else: # If no default value is provided, a missing field will raise a KeyError
+            raw_field = self.fields.get(field_name)
+
+        # If the field does not exist, return None
+        if raw_field is None:
+            return None
+
+        # Else fetch the type of the field and convert it to the appropriate type
+        field_type = self.layer.fields.get(name=field_name).python_type()
+        return field_type(raw_field)
+    # End def get_field
+
+    def __str__(self):
+        return f"Feature {self.id} of {self.layer.name}"
+    # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Entité géographique"
+        verbose_name_plural = "Entités géographiques"
+    # End class Meta
+# End class Feature
+
 
 
 # ======================================================================================================================
@@ -363,7 +436,6 @@ def generate_layers(sender, instance, **kwargs):
                     field_type  = layer.field_types[layer.fields.index(field)]
                     field_width = layer.field_widths[layer.fields.index(field)]
                     precision   = layer.field_precisions[layer.fields.index(field)]
-                    geometry    = layer.geom_type.name
 
                     field_model = DatasetLayerField(
                         name=field,
@@ -373,6 +445,10 @@ def generate_layers(sender, instance, **kwargs):
                         layer=layer_model
                     )
                     field_model.save()
+
+    # 4.8 Generate the features of the layer
+    # TODO: Use a celery task to generate the features in the background
+    services.generate_features(instance.id)
 # End def generate_layers
 
 # ======================================================================================================================
