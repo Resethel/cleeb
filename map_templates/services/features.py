@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Features service module for the `map_templates` application.
+"""
 from __future__ import annotations
 
 import enum
@@ -6,8 +10,8 @@ from abc import ABC, abstractmethod
 from typing import Collection, Iterable, Literal, MutableSet
 
 from map_templates import models
-from map_templates.objects.filters import Filter
-from map_templates.objects.styles import Style
+from map_templates.services.filters import Filter
+from map_templates.services.styles import Style
 from map_templates.utils import repr_str
 
 

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Test for styles.py
+Tests for the `styles` module of the `map_templates.services` package.
 """
 from django.test import TestCase
 
-from map_templates.objects.styles import PropertyStyle, Style, validate_style_attributes
+from map_templates.services.styles import PropertyStyle, Style, validate_style_attributes
 
 
 class TestStyle(TestCase):

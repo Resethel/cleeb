@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Tile layer service for the `map_templates` application.
+"""
 from __future__ import annotations
 
 import json

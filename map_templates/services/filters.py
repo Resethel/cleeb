@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Filters service module for the `map_templates` application.
+"""
 from __future__ import annotations
 
 import json

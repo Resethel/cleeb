@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Models for the `map_templates` application.
+"""
 from django.contrib import admin
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -10,7 +13,7 @@ from colorfield.fields import ColorField
 
 from map_templates import tasks
 from map_templates.choices import GenerationStatus
-from map_templates.objects.templates import MapTemplate as MapTemplateObject
+from map_templates.services.templates import MapTemplate as MapTemplateObject
 from map_templates.validators import validate_dash_array
 
 # ======================================================================================================================
@@ -538,6 +541,10 @@ class Layer(models.Model):
         verbose_name="Afficher au démarrage",
         help_text="Si la couche doit être affichée au démarrage."
     )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Style Fields
+    # ------------------------------------------------------------------------------------------------------------------
 
     style = models.OneToOneField(
         'Style',

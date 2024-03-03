@@ -17,9 +17,9 @@ from django.utils.text import slugify
 
 from interactive_maps.models import MapRender
 from map_layers.models import MapLayer as MapLayerModel
-from map_templates.objects.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
-from map_templates.objects.filters import Filter
-from map_templates.objects.templates import MapTemplate as MapTemplateObject
+from map_templates.services.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
+from map_templates.services.filters import Filter
+from map_templates.services.templates import MapTemplate as MapTemplateObject
 
 # ======================================================================================================================
 # Constants
