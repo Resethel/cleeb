@@ -7,6 +7,8 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.utils.html import format_html
 
+from common.utils.admin import get_clock_icon_html
+from common.utils.tasks import TaskStatus
 from .models import Dataset, DatasetCategory, DatasetLayer, DatasetLayerField, DatasetTechnicalInformation, \
     DatasetVersion, Feature
 
@@ -83,7 +85,74 @@ admin.site.register(DatasetLayer, DatasetLayerAdmin)
 # DatasetVersion Admin
 # ======================================================================================================================
 
-admin.site.register(DatasetVersion)
+class DatasetVersionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'parent_dataset', 'date', 'file_size', 'encoding', 'generation_status')
+    list_filter = ('dataset', 'date')
+    list_display_links = ('id', 'name')
+    search_fields = ('dataset__name',)
+    ordering = ('-date',)
+    readonly_fields = ('id', 'dataset', 'task_id', 'task_status')
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # FieldSets
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        ('Task Information', {
+            'classes': ('collapse',),  # Hide the fieldset by default
+            'fields': (
+                ('task_id', 'task_status'),
+                'regenerate'
+            )
+        }),
+        ('Information', {
+            'fields': ('id', 'dataset')
+        }),
+        ('Configuration', {
+            'fields': ('date', 'file', 'encoding')
+        }),
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Custom admin fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def name(self, version : DatasetVersion):
+        return f"{version.dataset.name} (V{version.get_version_number()})"
+    name.short_description = 'Name'
+
+    def parent_dataset(self, version : DatasetVersion):
+        if version.dataset is not None:
+            parent_name = f"{version.dataset.name}"
+            return format_html(f'<a href="/admin/datasets/dataset/{version.dataset.id}/change/">{parent_name}</a>')
+        return "-"
+    parent_dataset.short_description = 'Parent Dataset'
+
+    def file_size(self, version : DatasetVersion):
+        if version.file:
+            return f"{version.file.size / 1024 / 1024:.2f} MB"
+        return "-"
+    file_size.short_description = 'File Size (MB)'
+
+
+    def generation_status(self, version : DatasetVersion):
+        match version.task_status:
+            case TaskStatus.SUCCESS:
+                return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
+            case TaskStatus.FAILURE:
+                return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            case TaskStatus.STARTED:
+                return format_html(get_clock_icon_html("orange"))
+            case TaskStatus.PENDING:
+                return format_html(get_clock_icon_html("white"))
+            case TaskStatus.REVOKED:
+                return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            case _:
+                return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
+    generation_status.short_description = 'Generation Status'
+# End class DatasetVersionAdmin
+
+admin.site.register(DatasetVersion, DatasetVersionAdmin)
 
 # ======================================================================================================================
 # Dataset Admin

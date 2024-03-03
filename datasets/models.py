@@ -19,7 +19,8 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-from datasets import services
+from common.utils.tasks import TaskStatus
+from datasets import services, tasks
 from datasets.validators import validate_dataset_version_file
 
 # ======================================================================================================================
@@ -341,6 +342,30 @@ class DatasetVersion(models.Model):
         help_text="Encodage des propriétés du jeu de données."
     )
 
+    # ----- Task-related fields -----
+
+    task_id = models.UUIDField(
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name="ID de la tâche",
+        help_text="ID de la tâche de génération des entités géographiques."
+    )
+
+    task_status = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+        default=None,
+        choices=TaskStatus,
+        help_text="Statut de la tâche de génération des entités géographiques."
+    )
+
+    regenerate = models.BooleanField(
+        default=False,
+        help_text="Indique si les entités géographiques doivent être régénérées."
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Non-persistent fields
     # ------------------------------------------------------------------------------------------------------------------
@@ -446,9 +471,12 @@ def generate_layers(sender, instance, **kwargs):
                     )
                     field_model.save()
 
-    # 4.8 Generate the features of the layer
-    # TODO: Use a celery task to generate the features in the background
-    services.generate_features(instance.id)
+    # 4.8 Generate the features of the layer on creation, or if the `regenerate` field is set to True
+    if instance.regenerate is True or kwargs.get('created', False) is True:
+        # If there is already a task running, revoke it and start a new one
+        if instance.task_id is not None:
+            tasks.generate_features_task.AsyncResult(str(instance.task_id)).revoke()
+        tasks.generate_features_task.delay(instance.id)
 # End def generate_layers
 
 # ======================================================================================================================
@@ -478,6 +506,9 @@ class DatasetCategory(models.Model):
     def clean(self):
         if not SVG_REGEX.match(self.icon.file.read().decode('latin-1')):
             raise ValidationError('Le fichier doit être un fichier SVG valide.')
+
+        # Set the slug
+        self.slug = slugify(self.name)
     # End def clean
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -490,12 +521,6 @@ class DatasetCategory(models.Model):
         ordering = ['name']
     # End class Meta
 # End class DatasetCategory
-
-@receiver(pre_save, sender=DatasetCategory)
-def generate_dataset_category_slug(sender, instance, **kwargs):
-    """Generate the slug for the resource"""
-    instance.slug = slugify(instance.name)
-# End def generate_dataset_category_slug
 
 
 # ======================================================================================================================
