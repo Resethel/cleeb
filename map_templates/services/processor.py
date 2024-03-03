@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 """
-Module that generates the map data from a template definition.
+Processor service module for the `map_templates` application.
 """
 from __future__ import annotations
 
 import html
+import json
 import logging
 from typing import Iterable, Iterator
 
@@ -11,15 +13,15 @@ import folium
 import geojson
 import xyzservices
 from django.apps import apps
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.files.base import ContentFile
-from django.db.models import QuerySet
 from django.utils.text import slugify
 
+from datasets.models import DatasetLayer, Feature
 from interactive_maps.models import MapRender
-from map_layers.models import MapLayer as MapLayerModel
-from map_templates.objects.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
-from map_templates.objects.filters import Filter
-from map_templates.objects.templates import MapTemplate as MapTemplateObject
+from map_templates.services.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
+from map_templates.services.filters import Filter
+from map_templates.services.templates import MapTemplate as MapTemplateObject
 
 # ======================================================================================================================
 # Constants
@@ -213,7 +215,7 @@ class TemplateProcessor:
         """Generate a layer from a MapLayer object."""
 
         # 2.2.1 Fetch the data from the MapLayer model and add it to the feature group
-        feature_collection = self.__fetch_layer_geojson(map_layer)
+        feature_collection = self.__layer_to_geojson(map_layer)
         logger.debug(f"Layer '{map_layer.name}' contains {len(feature_collection.get('features'))} features.")
 
         if map_layer.filters is not None and len(map_layer.filters) > 0:
@@ -232,25 +234,35 @@ class TemplateProcessor:
     # End def __generate_layer
 
     @staticmethod
-    def __fetch_layer_geojson(layer: LayerObject) -> geojson.FeatureCollection:
+    def __layer_to_geojson(layer: LayerObject) -> geojson.FeatureCollection:
         """Fetch the geojson features from the MapLayer model."""
         # 1. Check if the layer exists in the database
-        if not MapLayerModel.objects.filter(name=layer.map_layer).exists():
-            raise ValueError(f"Layer {layer.name} does not exist in the database.")
+        if not DatasetLayer.objects.filter(id=layer.dataset_layer_id).exists():
+            raise ValueError(f"Layer {layer} does not exist in the database.")
 
         # 2. Fetch the data from the database
-        layer_query: QuerySet = MapLayerModel.objects.filter(name=layer.map_layer)
-        # 2.1 Check if there is any data,
-        if layer_query is None or layer_query.count() == 0:
-            raise RuntimeError(f"Layer {layer} does not contain any data.")
-        if layer_query.count() > 1:
-            raise RuntimeWarning(f"Layer {layer} contains more than one entry. Only the first one will be used.")
+        dataset_layer: DatasetLayer = DatasetLayer.objects.filter(id=layer.dataset_layer_id).first()
 
-        # 2.1. Fetch the data from the database
-        shape_set = layer_query.first().shapes.all()
+        # 3.1. If the layer has no boundaries, fetch all the features
+        if layer.boundaries is None:
+            features_query = Feature.objects.filter(layer=dataset_layer)
+        # 3.2. Otherwise, fetch the features that intersect the boundaries
+        else:
+            features_query = Feature.objects.filter(layer=dataset_layer, geometry__intersects=layer.boundaries)
 
-        # 3. Convert the data into a GeoJSON format
-        return geojson.FeatureCollection(features=[shape.as_geojson() for shape in shape_set])
+        # 4. Convert the data into a geojson object
+        features = []
+        for feature in features_query:
+            geometry = GEOSGeometry(feature.geometry)
+            properties = feature.fields
+            features.append(
+                geojson.Feature(
+                    geometry=json.loads(str(geometry.geojson)),
+                    properties=properties,
+                )
+            )
+
+        return geojson.FeatureCollection(features)
     # End def __fetch_layer_geojson
 
     @staticmethod

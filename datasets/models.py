@@ -273,6 +273,10 @@ class DatasetLayer(models.Model):
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
+    def __str__(self):
+        return f"{self.dataset} - {self.name}"
+    # End def __str__
+
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
@@ -377,7 +381,7 @@ class DatasetVersion(models.Model):
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
     def __str__(self):
-        return f"Version of {self.dataset.name} from {self.date}"
+        return f"{self.dataset.name} (v{self.get_version_number()})"
     # End def __str__
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -651,7 +655,7 @@ class Dataset(models.Model):
         if version_number < 1:
             raise ValueError("The version number must be greater than 0.")
         if version_number > self.versions.count():
-            raise ValueError(f"The dataset does not have a version {version_number}.")
+            raise DatasetVersion.DoesNotExist(f"The dataset does not have a version number {version_number}.")
 
         return self.versions.order_by('date')[version_number - 1]
     # End def get_version

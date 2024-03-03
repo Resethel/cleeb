@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Tests for the `templates` module of the `map_templates.services` package.
+"""
 import operator
 
 import django.test as djangotest
 
 from map_templates import models
-from map_templates.objects.templates import MAX_ZOOM, MIN_ZOOM, MapTemplate
-from map_templates.objects.tiles import TileLayer
-from map_templates.objects.features import FeatureType, Layer, FeatureGroup
-from map_templates.objects.styles import Style
-from map_templates.objects.filters import Filter
+from map_templates.services.templates import MAX_ZOOM, MIN_ZOOM, MapTemplate
+from map_templates.services.tiles import TileLayer
+from map_templates.services.features import FeatureType, Layer, FeatureGroup
+from map_templates.services.styles import Style
+from map_templates.services.filters import Filter
 
 class TestMapTemplateObject(djangotest.TestCase):
     def setUp(self):

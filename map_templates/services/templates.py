@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Objects for map templates.
+Map template service module for the `map_templates` application.
 """
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ import json
 from typing import Collection, Iterable, Literal
 
 from map_templates import models
-from map_templates.objects.features import Feature, FeatureGroup, FeatureType, Layer
-from map_templates.objects.tiles import TileLayer
+from map_templates.services.features import Feature, FeatureGroup, FeatureType, Layer
+from map_templates.services.tiles import TileLayer
 from map_templates.utils import repr_str
 
 MIN_ZOOM = 5

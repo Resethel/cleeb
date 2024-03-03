@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Features service module for the `map_templates` application.
+"""
 from __future__ import annotations
 
 import enum
@@ -5,18 +9,29 @@ import json
 from abc import ABC, abstractmethod
 from typing import Collection, Iterable, Literal, MutableSet
 
+from django.contrib.gis.geos import GEOSGeometry
+
+from datasets.models import DatasetLayer
 from map_templates import models
-from map_templates.objects.filters import Filter
-from map_templates.objects.styles import Style
+from map_templates.services.filters import Filter
+from map_templates.services.styles import Style
 from map_templates.utils import repr_str
 
+
+# ======================================================================================================================
+# Enums
+# ======================================================================================================================
 
 class FeatureType(enum.Enum):
     """The type of the feature."""
     MARKER = enum.auto()
     LAYER = enum.auto()
     FEATURE_GROUP = enum.auto()
+# End class FeatureType
 
+# ======================================================================================================================
+# Feature Base Class
+# ======================================================================================================================
 
 class Feature(ABC):
     """Represents a feature on the map.
@@ -71,7 +86,11 @@ class Feature(ABC):
         """Deserialize the feature."""
         pass
     # End def deserialize
+# End class Feature
 
+# ======================================================================================================================
+# Feature Classes
+# ======================================================================================================================
 
 class Layer(Feature):
     """Represents a map layer.
@@ -82,18 +101,24 @@ class Layer(Feature):
     def __init__(
             self,
             name : str,
-            map_layer: str,
+            dataset_layer_id : int,
+            boundaries : GEOSGeometry | None = None,
             style : Style | None = None,
             highlight : Style | None = None,
             filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
             show_on_startup : bool = True
     ) -> None:
         super().__init__(name, FeatureType.LAYER)
-        self.map_layer       : str           = map_layer
-        self.filters         : list[Filter]  = []
-        self.style           : Style | None  = style
-        self.highlight       : Style | None  = highlight
-        self.show_on_startup : bool          = show_on_startup
+        self.dataset_layer_id : int                 = dataset_layer_id
+        self.boundaries       : GEOSGeometry | None = boundaries
+        self.filters          : list[Filter]        = []
+        self.style            : Style | None        = style
+        self.highlight        : Style | None        = highlight
+        self.show_on_startup  : bool                = show_on_startup
+
+        # Ensure that the dataset layer exists
+        if not DatasetLayer.objects.filter(id=dataset_layer_id).exists():
+            raise ValueError(f"Dataset layer with id '{dataset_layer_id}' does not exist")
 
         # add filters
         if filters is not None:
@@ -112,16 +137,23 @@ class Layer(Feature):
         if not isinstance(other, Layer):
             return False
         return all([
-            self.name == other.name,
-            self.map_layer == other.map_layer,
-            self.style == other.style,
-            self.highlight == other.highlight,
-            self.filters == other.filters,
-            self.show_on_startup == other.show_on_startup])
+            self.name             == other.name,
+            self.dataset_layer_id == other.dataset_layer_id,
+            self.boundaries       == other.boundaries,
+            self.style            == other.style,
+            self.highlight        == other.highlight,
+            self.filters          == other.filters,
+            self.show_on_startup  == other.show_on_startup])
     # End def __eq__
 
     def __hash__(self):
-        return hash((self.name, self.map_layer, self.style, self.highlight, frozenset(self.filters), self.show_on_startup))
+        return hash((self.name,
+                     self.dataset_layer_id,
+                     self.boundaries,
+                     self.style,
+                     self.highlight,
+                     frozenset(self.filters),
+                     self.show_on_startup))
     # End def __hash__
 
     def __repr__(self):
@@ -165,9 +197,11 @@ class Layer(Feature):
         if not isinstance(model, models.Layer):
             raise ValueError(f"Expected 'model' to be of a 'Layer' model, not '{type(model)}'")
 
+
         return Layer(
             name=model.name,
-            map_layer=model.map_layer.name if model.map_layer else None,
+            dataset_layer_id=model.dataset_layer.id,
+            boundaries=GEOSGeometry(model.boundaries) if model.boundaries else None,
             style=Style.from_model(model.style) if model.style else None,
             highlight=Style.from_model(model.highlight) if model.highlight else None,
             filters=[Filter(key=f.key, operator=f.operator, value=f.value) for f in model.filters.all()],
@@ -209,13 +243,13 @@ class Layer(Feature):
 
     def _to_dict(self) -> dict:
         return {
-            "__type__"    : "__Layer__",
-            "name"      : self.name,
-            "map_layer" : self.map_layer,
-            "style"     : self.style.serialize('dict') if self.style else None,
-            "highlight" : self.highlight.serialize('dict') if self.highlight else None,
-            "filters"   : [f.serialize('dict') for f in self.filters],
-            "show" : self.show_on_startup
+            "__type__"         : "__Layer__",
+            "name"             : self.name,
+            "dataset_layer_id" : self.dataset_layer_id,
+            "style"            : self.style.serialize('dict') if self.style else None,
+            "highlight"        : self.highlight.serialize('dict') if self.highlight else None,
+            "filters"          : [f.serialize('dict') for f in self.filters],
+            "show"             : self.show_on_startup
         }
     # End def to_dict
 
@@ -225,12 +259,14 @@ class Layer(Feature):
             raise ValueError(f"Invalid type '{data.get('__type__', None)}'")
         return Layer(
             name=data["name"],
-            map_layer=data["map_layer"],
+            dataset_layer_id=data["dataset_layer_id"],
             style=Style.deserialize(data["style"], 'dict') if data["style"] else None,
             highlight=Style.deserialize(data["highlight"], 'dict') if data["highlight"] else None,
             filters=[Filter.deserialize(f, 'dict') for f in data["filters"]],
             show_on_startup=data["show"]
         )
+    # End def from_dict
+# End class Layer
 
 
 class FeatureGroup(MutableSet, Feature):

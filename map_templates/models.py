@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
+"""
+Models for the `map_templates` application.
+"""
+from colorfield.fields import ColorField
 from django.contrib import admin
+from django.contrib.gis.db import models as gis_models
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from xyzservices import TileProvider
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.core.exceptions import ValidationError
-from colorfield.fields import ColorField
 
+from common.utils.tasks import TaskStatus
 from map_templates import tasks
-from map_templates.choices import GenerationStatus
-from map_templates.objects.templates import MapTemplate as MapTemplateObject
+from map_templates.services.templates import MapTemplate as MapTemplateObject
 from map_templates.validators import validate_dash_array
 
 # ======================================================================================================================
@@ -479,6 +483,10 @@ class Layer(models.Model):
     The map layer to load is defined by its name in the database.
     """
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Identification fields
+    # ------------------------------------------------------------------------------------------------------------------
+
     # ID of the layer
     id = models.AutoField(primary_key=True)
 
@@ -515,7 +523,7 @@ class Layer(models.Model):
     # End def owner
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Fields
+    # Metadata Fields
     # ------------------------------------------------------------------------------------------------------------------
 
     # Name of the layer
@@ -524,20 +532,38 @@ class Layer(models.Model):
         help_text="Nom de la couche cartographique."
     )
 
-    # Map layer to load
-    map_layer = models.ForeignKey(
-        'map_layers.MapLayer',
-        on_delete=models.SET_NULL,
-        default=None,
-        blank=True,
-        null=True
-    )
-
     show = models.BooleanField(
         default=False,
         verbose_name="Afficher au démarrage",
         help_text="Si la couche doit être affichée au démarrage."
     )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Dataset relations Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Dataset Layer to load
+    dataset_layer = models.ForeignKey(
+        'datasets.DatasetLayer',
+        on_delete=models.SET_NULL,
+        default=None,
+        blank=True,
+        null=True,
+        verbose_name="Couche de jeu de données",
+    )
+
+    # Boundaries of the layer
+    boundaries = gis_models.MultiPolygonField(
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name="Délimitations",
+        help_text="La délimitations de la couche cartographique. Tout ce qui est en dehors de cette zone ne sera pas utilisé."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Style Fields
+    # ------------------------------------------------------------------------------------------------------------------
 
     style = models.OneToOneField(
         'Style',
@@ -704,27 +730,26 @@ class MapTemplate(models.Model):
     # Task specific fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    task_id = models.CharField(
-        verbose_name="ID de la tâche",
-        max_length=100,
+    task_id = models.UUIDField(
         blank=True,
         null=True,
         default=None,
-        help_text="ID de la tâche asynchrone utilisée pour générer le rendu de la carte."
+        verbose_name="ID de la tâche",
+        help_text="ID de la tâche de génération des entités géographiques."
     )
 
-    generation_status = models.CharField(
-        verbose_name="Statut de la génération",
-        max_length=10,
-        choices=GenerationStatus.choices,
-        default=GenerationStatus.PENDING,
-        help_text="Statut de la génération du rendu de la carte."
+    task_status = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+        default=None,
+        choices=TaskStatus,
+        help_text="Statut de la tâche de génération des entités géographiques."
     )
 
     regenerate = models.BooleanField(
-        verbose_name="Regénérer",
         default=False,
-        help_text="Relance la génération du rendu de la carte."
+        help_text="Indique si les entités géographiques doivent être régénérées."
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -753,19 +778,11 @@ class MapTemplate(models.Model):
 @receiver(post_save, sender=MapTemplate)
 def generate_map_render(sender, instance, created, **kwargs):
     """Generate the render of the map template."""
-    print(f"{instance}: {instance.generation_status}, {instance.task_id}")
-    if instance.generation_status in [None, GenerationStatus.PENDING]:
-        tasks.generate_map_render_from_map_template_task.delay(instance.id)
-
-    # Edge case where something went wrong and a task was killed midway
-    elif instance.generation_status == GenerationStatus.RUNNING:
-        if instance.task_id is None:
-            tasks.generate_map_render_from_map_template_task.delay(instance.id)
-
-    # In the case where the status is either COMPLETED or FAILED,
-    # only submit a task if the user has requested to regenerate the geometries
+    if created:
+        tasks.generate_maprender_from_maptemplate_task.delay(instance.id)
     elif instance.regenerate:
-        tasks.generate_map_render_from_map_template_task.delay(instance.id)
-        instance.regenerate = False
-        instance.save()
-# End def generate_map_layer_geometries
+        # Revoke the previous task to avoid multiple renders
+        if instance.task_id is not None:
+            tasks.generate_maprender_from_maptemplate_task.AsyncResult(instance.task_id).revoke()
+        tasks.generate_maprender_from_maptemplate_task.delay(instance.id)
+# End def generate_map_render

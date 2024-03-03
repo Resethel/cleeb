@@ -5,10 +5,14 @@ Admin module for the `map_templates` application.
 from __future__ import annotations
 from django.contrib import admin
 from django import forms
+from django.contrib.gis.admin import GISModelAdmin
+from django.contrib.gis.db.models import GeometryField
+from django.contrib.gis.forms import OSMWidget
 from django.utils.html import format_html
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
-from map_templates.choices import GenerationStatus
+from common.utils.admin import get_clock_icon_html
+from common.utils.tasks import TaskStatus
 from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style, PropertyStyle, TileLayer
 
 # ======================================================================================================================
@@ -198,10 +202,10 @@ class FilterInline(NestedTabularInline):
 # ======================================================================================================================
 
 @admin.register(Layer)
-class LayerAdmin(NestedModelAdmin):
-    list_display = ('id', 'map_layer', 'show')
-    list_display_links = ('id', 'map_layer', 'show')
-    search_fields = ('name', 'map_layer', 'show')
+class LayerAdmin(NestedModelAdmin, GISModelAdmin):
+    list_display       = ('id'  , 'dataset_layer', 'show')
+    list_display_links = ('id'  , 'dataset_layer', 'show')
+    search_fields      = ('name', 'dataset_layer', 'show')
     list_per_page = 25
 
     inlines = [
@@ -214,6 +218,9 @@ class LayerInline(NestedStackedInline):
     extra = 0
     verbose_name = "Layer"
     verbose_name_plural = "Layers"
+    formfield_overrides = {
+        GeometryField: {'widget': OSMWidget}
+    }
 
     inlines = [
         FilterInline,
@@ -261,12 +268,12 @@ class FeatureGroupInline(NestedStackedInline):
 
 @admin.register(MapTemplate)
 class MapTemplateAdmin(NestedModelAdmin):
-    list_display = ('id', 'name', 'generation_status_icon', 'linked_map_render')
+    list_display = ('id', 'name', 'generation_status', 'child_map_render')
     list_display_links = ('id', 'name',)
     search_fields = ('id', 'name',)
     list_per_page = 25
 
-    readonly_fields = ('id', 'generation_status', 'task_id')
+    readonly_fields = ('id', 'task_status', 'task_id')
 
     inlines = [
         LayerInline,
@@ -285,7 +292,7 @@ class MapTemplateAdmin(NestedModelAdmin):
         ('Generation Control', {
             'classes': ('collapse',),
             'fields': (
-                ('generation_status', 'task_id'),
+                ('task_id', 'task_status'),
                 'regenerate'
             )
         }),
@@ -301,25 +308,28 @@ class MapTemplateAdmin(NestedModelAdmin):
     # Non-Persistent Fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    def generation_status_icon(self, obj : MapTemplate):
-        match obj.generation_status:
-            case GenerationStatus.COMPLETED:
+    def generation_status(self, template : MapTemplate):
+        match template.task_status:
+            case TaskStatus.SUCCESS:
                 return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
-            case GenerationStatus.FAILED:
+            case TaskStatus.FAILURE:
                 return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
-            case GenerationStatus.PENDING:
-                return format_html('<img src="/static/admin/img/icon-unknown.svg" alt="Unknown">')
-            case GenerationStatus.RUNNING:
-                return format_html(CLOCK_ICON_HTML)
-        return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
-    generation_status_icon.short_description = "Statut de Génération"
+            case TaskStatus.STARTED:
+                return format_html(get_clock_icon_html("orange"))
+            case TaskStatus.PENDING:
+                return format_html(get_clock_icon_html("white"))
+            case TaskStatus.REVOKED:
+                return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            case _:
+                return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
+    generation_status.short_description = "Statut de Génération"
 
-    def linked_map_render(self, obj : MapTemplate):
+    def child_map_render(self, obj : MapTemplate):
         if obj.render is None:
             return "-"
         else:
             name = obj.render.name
             id_ = obj.render.id
             return format_html(f'<a href="/admin/interactive_maps/maprender/{id_}/change/">{name}@{id_}</a>')
-    linked_map_render.short_description = "Rendu Lié"
+    child_map_render.short_description = "Rendu Lié"
 # End class MapTemplateAdmin
