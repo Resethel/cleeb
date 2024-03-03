@@ -20,7 +20,7 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 from common.utils.tasks import TaskStatus
-from datasets import services, tasks
+from datasets import tasks
 from datasets.validators import validate_dataset_version_file
 
 # ======================================================================================================================
@@ -156,7 +156,7 @@ class DatasetLayerField(models.Model):
     # ----- Metadata -----
 
     name = models.CharField(
-        max_length=50,
+        max_length=255,
         blank=True,
         null=True,
         default=None,
@@ -232,7 +232,7 @@ class DatasetLayer(models.Model):
     # ------ Metadata ------
 
     name = models.CharField(
-        max_length=50,
+        max_length=255,
         blank=True,
         null=True,
         default=None,
