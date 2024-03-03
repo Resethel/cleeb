@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'interactive_maps.apps.InteractiveMapsConfig',
     "map_thematics.apps.MapThematicsConfig",
-    "map_layers.apps.MapLayersConfig",
-    "shapes.apps.ShapesConfig",
     "datasets.apps.DatasetsConfig",
     "map_templates.apps.MapTemplatesConfig"
 ]

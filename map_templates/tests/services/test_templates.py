@@ -18,7 +18,7 @@ class TestMapTemplateObject(djangotest.TestCase):
         self.tile = TileLayer(name="TestTile")
         self.style = Style(stroke=True, color="#000000")
         self.filter = Filter(key="test", operator="==", value="value")
-        self.layer = Layer(name="TestLayer", map_layer="TestMapLayer", style=self.style, filters=[self.filter])
+        self.layer = Layer(name="TestLayer", dataset_layer_id=0, style=self.style, filters=[self.filter])
         self.feature_group = FeatureGroup(name="TestFeatureGroup", features=[self.layer])
         self.map_template = MapTemplate(name="TestMapTemplate", tiles=[self.tile],
                                         features=[self.layer, self.feature_group])
@@ -41,7 +41,7 @@ class TestMapTemplateObject(djangotest.TestCase):
     # End def test_validate_shouldRaiseValueError_ifZoomEndIsOutOfRange
 
     def test_addFeature_shouldAddLayer(self):
-        new_layer = Layer(name="NewLayer", map_layer="NewMapLayer")
+        new_layer = Layer(name="NewLayer", dataset_layer_id=0)
         new_feature_group = FeatureGroup(name="NewFeatureGroup", features=[new_layer])
         self.map_template.add_feature(new_layer)
         self.map_template.add_feature(new_feature_group)
@@ -61,7 +61,7 @@ class TestMapTemplateObject(djangotest.TestCase):
 
     def test_removeFeature_shouldRaiseValueError_ifLayerDoesNotExist(self):
         with self.assertRaises(ValueError):
-            self.map_template.remove_feature("NonExistentLayer", "Layer")
+            self.map_template.remove_feature("NonExistentLayer", FeatureType.LAYER)
     # End def test_removeFeature_shouldRaiseValueError_ifLayerDoesNotExist
 
     def test_validate(self):

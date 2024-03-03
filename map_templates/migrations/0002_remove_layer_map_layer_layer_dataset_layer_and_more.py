@@ -13,10 +13,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='layer',
-            name='map_layer',
-        ),
         migrations.AddField(
             model_name='layer',
             name='dataset_layer',

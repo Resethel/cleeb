@@ -11,9 +11,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('map_layers', '0001_initial'),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -93,7 +91,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('name', models.CharField(help_text='Nom de la couche cartographique.', max_length=100)),
                 ('show', models.BooleanField(default=False, help_text='Si la couche doit être affichée au démarrage.', verbose_name='Afficher au démarrage')),
-                ('map_layer', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.SET_NULL, to='map_layers.maplayer')),
                 ('owner_feature_group', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='layers', to='map_templates.featuregroup')),
                 ('owner_map_template', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='layers', to='map_templates.maptemplate')),
                 ('highlight', models.OneToOneField(blank=True, default=None, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='highlight_of', to='map_templates.style')),
