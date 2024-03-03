@@ -5,6 +5,9 @@ Admin module for the `map_templates` application.
 from __future__ import annotations
 from django.contrib import admin
 from django import forms
+from django.contrib.gis.admin import GISModelAdmin
+from django.contrib.gis.db.models import GeometryField
+from django.contrib.gis.forms import OSMWidget
 from django.utils.html import format_html
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
@@ -198,10 +201,10 @@ class FilterInline(NestedTabularInline):
 # ======================================================================================================================
 
 @admin.register(Layer)
-class LayerAdmin(NestedModelAdmin):
-    list_display = ('id', 'map_layer', 'show')
-    list_display_links = ('id', 'map_layer', 'show')
-    search_fields = ('name', 'map_layer', 'show')
+class LayerAdmin(NestedModelAdmin, GISModelAdmin):
+    list_display       = ('id'  , 'dataset_layer', 'show')
+    list_display_links = ('id'  , 'dataset_layer', 'show')
+    search_fields      = ('name', 'dataset_layer', 'show')
     list_per_page = 25
 
     inlines = [
@@ -214,6 +217,9 @@ class LayerInline(NestedStackedInline):
     extra = 0
     verbose_name = "Layer"
     verbose_name_plural = "Layers"
+    formfield_overrides = {
+        GeometryField: {'widget': OSMWidget}
+    }
 
     inlines = [
         FilterInline,

@@ -2,14 +2,15 @@
 """
 Models for the `map_templates` application.
 """
+from colorfield.fields import ColorField
 from django.contrib import admin
+from django.contrib.gis.db import models as gis_models
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from xyzservices import TileProvider
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.core.exceptions import ValidationError
-from colorfield.fields import ColorField
 
 from map_templates import tasks
 from map_templates.choices import GenerationStatus
@@ -482,6 +483,10 @@ class Layer(models.Model):
     The map layer to load is defined by its name in the database.
     """
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Identification fields
+    # ------------------------------------------------------------------------------------------------------------------
+
     # ID of the layer
     id = models.AutoField(primary_key=True)
 
@@ -518,7 +523,7 @@ class Layer(models.Model):
     # End def owner
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Fields
+    # Metadata Fields
     # ------------------------------------------------------------------------------------------------------------------
 
     # Name of the layer
@@ -527,19 +532,33 @@ class Layer(models.Model):
         help_text="Nom de la couche cartographique."
     )
 
-    # Map layer to load
-    map_layer = models.ForeignKey(
-        'map_layers.MapLayer',
-        on_delete=models.SET_NULL,
-        default=None,
-        blank=True,
-        null=True
-    )
-
     show = models.BooleanField(
         default=False,
         verbose_name="Afficher au démarrage",
         help_text="Si la couche doit être affichée au démarrage."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Dataset relations Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Dataset Layer to load
+    dataset_layer = models.ForeignKey(
+        'datasets.DatasetLayer',
+        on_delete=models.SET_NULL,
+        default=None,
+        blank=True,
+        null=True,
+        verbose_name="Couche de jeu de données",
+    )
+
+    # Boundaries of the layer
+    boundaries = gis_models.MultiPolygonField(
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name="Délimitations",
+        help_text="La délimitations de la couche cartographique. Tout ce qui est en dehors de cette zone ne sera pas utilisé."
     )
 
     # ------------------------------------------------------------------------------------------------------------------
