@@ -114,8 +114,6 @@ class Feature(models.Model):
     # End class Meta
 # End class Feature
 
-
-
 # ======================================================================================================================
 # DatasetLayer & DatasetLayerField Models
 # ======================================================================================================================
@@ -647,6 +645,16 @@ class Dataset(models.Model):
         """Return the latest version of the dataset file."""
         return self.versions.latest('date') if  self.versions.exists() else None
     # End def get_latest_version
+
+    def get_version(self, version_number : int) -> DatasetVersion:
+        """Return the version of the dataset file with the given version number."""
+        if version_number < 1:
+            raise ValueError("The version number must be greater than 0.")
+        if version_number > self.versions.count():
+            raise ValueError(f"The dataset does not have a version {version_number}.")
+
+        return self.versions.order_by('date')[version_number - 1]
+    # End def get_version
 
     def get_absolute_url(self):
         return f"/dataset/{self.slug}"
