@@ -87,7 +87,7 @@ class PropertyStyleAdmin(NestedModelAdmin):
             'fields': (('key', 'value'),)
         }),
         ("Style", {
-            'fields': ('color', 'weight', 'opacity', 'fill', 'fill_color', 'fill_rule', 'fill_opacity', 'dash_array',
+            'fields': ('color', 'weight', 'fill', 'fill_color', 'fill_rule', 'dash_array',
                        'dash_offset', 'line_cap', 'line_join')
         }),
     )
@@ -106,7 +106,7 @@ class PropertyStyleInline(NestedStackedInline):
             'fields': (('key', 'value'),)
         }),
         ("Style", {
-            'fields': ('color', 'weight', 'opacity', 'fill', 'fill_color', 'fill_rule', 'fill_opacity', 'dash_array',
+            'fields': ('color', 'weight', 'fill', 'fill_color', 'fill_rule', 'dash_array',
                        'dash_offset', 'line_cap', 'line_join')
         }),
     )
@@ -121,10 +121,8 @@ class StyleAdmin(NestedModelAdmin):
         'id',
         'color',
         'weight',
-        'opacity',
         'fill',
         'fill_color',
-        'fill_opacity',
         'fill_rule',
         'line_cap',
         'line_join',
@@ -153,11 +151,20 @@ class StyleAdmin(NestedModelAdmin):
         }),
         ("Bordures", {
             'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
-            'fields': ('stroke', ('color', 'weight', 'opacity', 'dash_array', 'dash_offset', 'line_cap', 'line_join'))
+            'classes': ('wide',),
+            'fields': (
+                'stroke',
+                ('color', 'weight'),
+                ('dash_array', 'dash_offset'),
+                ('line_cap', 'line_join')
+            )
         }),
         ("Remplissage", {
             'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
-            'fields': ('fill', ('fill_color', 'fill_opacity', 'fill_rule'))
+            'fields': (
+                'fill',
+                ('fill_color', 'fill_rule')
+            )
         }),
 
     )

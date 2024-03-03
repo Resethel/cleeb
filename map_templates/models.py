@@ -200,13 +200,15 @@ class BaseStyle(models.Model):
 
     stroke = models.BooleanField(
         default=True,
+        verbose_name="Bordures",
         help_text="Indique si les bordures des formes doivent être dessinées."
     )
 
     # Color of the style
     color = ColorField(
-        default='#3388ff',
-        format="hex",
+        default='#3388ffff',
+        format="hexa",
+        verbose_name="Couleur",
         help_text="La couleur des bordures des formes."
     )
 
@@ -216,28 +218,20 @@ class BaseStyle(models.Model):
         validators=[
             MinValueValidator(0.0)
         ],
-        help_text="L'épaisseur des bordures des formes."
-    )
-
-    # Opacity of the style
-    opacity = models.FloatField(
-        default=1.0,
-        validators=[
-            MinValueValidator(0.0),
-            MaxValueValidator(1.0)
-        ],
-        help_text="L'opacité des bordures des formes."
+        verbose_name="Épaisseur",
+        help_text="L'épaisseur des bordures des formes (en pixels)."
     )
 
     # Line cap of the style
     line_cap = models.CharField(
         max_length=6,
         choices=[
-            ("butt"  , "Butt"),
-            ("round" , "Round"),
-            ("square", "Square")
+            ("butt"  , "Plate"),
+            ("round" , "Ronde"),
+            ("square", "Carrée")
         ],
         default="round",
+        verbose_name="Terminaison",
         help_text="La terminaison des bordures des formes."
     )
 
@@ -252,6 +246,7 @@ class BaseStyle(models.Model):
             ("round"     , "Round")
         ],
         default="round",
+        verbose_name="Jonction",
         help_text="La jonction des bordures des formes."
     )
 
@@ -262,7 +257,8 @@ class BaseStyle(models.Model):
         blank=True,
         null=True,
         validators=[validate_dash_array],
-        help_text="Chaîne de charactères définissant le motif de la bordure des formes.",
+        verbose_name="Pointillés",
+        help_text="Motif des Pointillés.",
     )
 
     # Dash offset of the style
@@ -271,33 +267,25 @@ class BaseStyle(models.Model):
         default=None,
         blank=True,
         null=True,
-        help_text="Chaîne définissant la distance entre les motifs de la bordure des formes."
+        verbose_name="Espacement des pointillés",
+        help_text="Espacements des Pointillés."
     )
 
     # Fill of the style
     fill = models.BooleanField(
-        default=False,
-        blank=True,
-        null=True,
+        default=True,
+        verbose_name="Remplissage",
         help_text="Indique si les formes doivent être remplies."
     )
 
     # Fill color of the style
     fill_color = ColorField(
-        default=None,
+        default='#3388ff33',
+        format="hexa",
         blank=True,
         null=True,
+        verbose_name="Couleur de remplissage",
         help_text="La couleur de remplissage des formes. Si non défini, la couleur de bordure est utilisée."
-    )
-
-    # Fill opacity of the style
-    fill_opacity = models.FloatField(
-        default=0.2,
-        validators=[
-            MinValueValidator(0.0),
-            MaxValueValidator(1.0)
-        ],
-        help_text="L'opacité de remplissage des formes."
     )
 
     # Fill rule of the style
@@ -308,10 +296,27 @@ class BaseStyle(models.Model):
             ("evenodd", "Evenodd")
         ],
         default='evenodd',
+        verbose_name="Règle de remplissage",
         help_text="La règle de remplissage des formes."
     )
 
     # TODO: Add fill patterns
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    @admin.display(description="Opacité")
+    def opacity(self) -> float:
+        return int(self.color[7:9], 16) / 255
+    # End def opacity
+
+    @property
+    @admin.display(description="Opacité de remplissage")
+    def fill_opacity(self) -> float:
+        return int(self.fill_color[7:9], 16) / 255
+    # End def fill_opacity
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
