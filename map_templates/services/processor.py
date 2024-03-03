@@ -4,7 +4,6 @@ Processor service module for the `map_templates` application.
 """
 from __future__ import annotations
 
-import html
 import json
 import logging
 from typing import Iterable, Iterator
@@ -170,8 +169,8 @@ class TemplateProcessor:
 
         # 3. Save the map data
         # The content is unescaped to as it is meant to be displayed in a browser
-        embed_content = ContentFile(name=f"{slugify(self.template.name)}.html", content=html.unescape(self.map._repr_html_()))
-        full_content  = ContentFile(name=f"{slugify(self.template.name)}.html", content=html.unescape(self.map.get_root().render()))
+        embed_content = ContentFile(name=f"{slugify(self.template.name)}.html", content=self.map._repr_html_())
+        full_content  = ContentFile(name=f"{slugify(self.template.name)}.html", content=self.map.get_root().render())
         map_render.embed_html.save(embed_content.name, embed_content, save=False)
         map_render.full_html.save(full_content.name, full_content, save=False)
         if self.__template_model:
