@@ -32,6 +32,23 @@ Ce projet est ouvert à la contribution de tous. Si vous souhaitez participer, v
 
 N'hésitez pas à ouvrir une issue ou à soumettre une demande de fusion (pull request) pour discuter de vos idées ou modifications.
 
+## Lancement des tests
+
+Pour que les tests fonctionnent, ils est nécessaire de préparer un template POSTGRES qui permet d'activer
+les extensions `postgis`.
+Pour celà, lancer les commandes suivantes dans l'inteface de `psql` :
+
+```sql
+CREATE DATABASE "cleeb-test-db-template";
+```
+```bash
+\c cleeb-test-db-template
+```
+```sql
+CREATE EXTENSION postgis;
+UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'cleeb-test-db-template';
+```
+
 ## Licence
 
 Ce projet est sous licence [MIT](https://opensource.org/licenses/MIT) - voir le fichier `LICENSE` pour plus de détails.

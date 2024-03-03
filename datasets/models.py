@@ -2,29 +2,31 @@
 from __future__ import annotations
 
 import re
-import uuid
+import tempfile
 import zipfile
+from datetime import date, datetime
 from pathlib import Path
+from time import time
 
-import geojson
+import django.contrib.gis.db.models as gis_models
+from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.geos import Polygon
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.utils import timezone
 from django.template.defaultfilters import slugify
+from django.utils import timezone
+
+from common.utils.tasks import TaskStatus
+from datasets import services, tasks
+from datasets.validators import validate_dataset_version_file
 
 # ======================================================================================================================
-# Constants
+# Module Constants
 # ======================================================================================================================
 
-# ----- Dataset format -----
-SHAPEFILE = 'shapefile'
-GEOJSON = 'geojson'
-DATASET_FORMAT_CHOICES = {
-    SHAPEFILE: 'Shapefile',
-    GEOJSON: 'GeoJSON'
-}
 # ----- Encoding -----
 UTF8 = 'utf-8'
 LATIN1 = 'latin-1'
@@ -42,11 +44,253 @@ ENCODING_CHOICES = {
 SVG_REGEX = re.compile(r'(?:<\?xml\b[^>]*>[^<]*)?(?:<!--.*?-->[^<]*)*(?:<svg|<!DOCTYPE svg)\b', re.DOTALL)
 
 # ======================================================================================================================
+# Feature Model
+# ======================================================================================================================
+
+class Feature(models.Model):
+    """Represents a geographic feature in a dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ----- Identification -----
+
+    id = models.AutoField(primary_key=True)
+
+    # ----- Parent -----
+
+    layer = models.ForeignKey(
+        'DatasetLayer',
+        on_delete=models.CASCADE,
+        related_name='features'
+    )
+
+    # ----- Properties -----
+
+    geometry = gis_models.GeometryField()
+    fields = models.JSONField()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def type(self) -> str:
+        """Get the type of the feature."""
+        return self.layer.geometry_type
+    # End def type
+
+    def get_field(self, field_name : str, **kwargs) -> any:
+        """Get the value of a field of the feature.
+
+        Keyword Args:
+            default (any): The default value to return if the field does not exist.
+        """
+        if 'default' in kwargs:
+            raw_field = self.fields.get(field_name, kwargs['default'])
+        else: # If no default value is provided, a missing field will raise a KeyError
+            raw_field = self.fields.get(field_name)
+
+        # If the field does not exist, return None
+        if raw_field is None:
+            return None
+
+        # Else fetch the type of the field and convert it to the appropriate type
+        field_type = self.layer.fields.get(name=field_name).python_type()
+        return field_type(raw_field)
+    # End def get_field
+
+    def __str__(self):
+        return f"Feature {self.id} of {self.layer.name}"
+    # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Entité géographique"
+        verbose_name_plural = "Entités géographiques"
+    # End class Meta
+# End class Feature
+
+# ======================================================================================================================
+# DatasetLayer & DatasetLayerField Models
+# ======================================================================================================================
+
+LAYER_FIELD_TYPE_MAP = {
+    'OFTInteger'        : int,
+    'OFTIntegerList'    : list[int],
+    'OFTReal'           : float,
+    'OFTRealList'       : list[float],
+    'OFTString'         : str,
+    'OFTStringList'     : list[str],
+    'OFTWideString'     : str,
+    'OFTWideStringList' : list[str],
+    'OFTBinary'         : bytes,
+    'OFTDate'           : date,
+    'OFTTime'           : time,
+    'OFTDateTime'       : datetime
+}
+LAYER_FIELD_TYPE_TYPE_CHOICES = [(k, k) for k in LAYER_FIELD_TYPE_MAP.keys()]
+
+class DatasetLayerField(models.Model):
+    """Represents a field of a dataset's layer."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ----- Identification -----
+
+    id = models.AutoField(primary_key=True)
+
+    # ----- Parent -----
+
+    layer = models.ForeignKey(
+        'DatasetLayer',
+        related_name="fields",
+        on_delete=models.CASCADE
+    )
+
+    # ----- Metadata -----
+
+    name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    type = models.CharField(
+        max_length=50,
+        choices=LAYER_FIELD_TYPE_TYPE_CHOICES,
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    max_length = models.IntegerField(
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Longueur maximale du champ de texte.",
+        validators=[MinValueValidator(0)]
+    )
+
+    precision = models.IntegerField(
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Précision du champ numérique.",
+        validators=[MinValueValidator(0)]
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def python_type(self) -> type:
+        """Get the Python type of the field.
+
+        The type is determined by the `type` field of the model.
+        See `LAYER_FIELD_TYPE_MAP` for the mapping between the GDAL field types and the Python types.
+        """
+        return LAYER_FIELD_TYPE_MAP[self.type]
+    # End def python_type
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Champ de couche de jeu de données"
+        verbose_name_plural = "Champs de couche de jeu de données"
+        unique_together = ['name', 'layer']
+    # End class Meta
+# End class DatasetLayerField
+
+class DatasetLayer(models.Model):
+    """Represents a layer of a dataset."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ----- Identification -----
+
+    id   = models.AutoField(primary_key=True)
+
+    # ----- Parent -----
+
+    dataset = models.ForeignKey(
+        'DatasetVersion',
+        related_name="layers",
+        on_delete=models.CASCADE
+    )
+
+    # ------ Metadata ------
+
+    name = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Nom de la couche de jeu de données."
+    )
+
+    srid = models.IntegerField(
+        blank=True,
+        null=True,
+        default=None,
+        help_text="SRID de la couche de jeu de données.",
+    )
+
+    bounding_box = gis_models.PolygonField(
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Boîte englobante de la couche du jeu de données."
+    )
+
+    feature_count = models.IntegerField(
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Nombre de géométries dans la couche du jeu de données.",
+        validators=[MinValueValidator(0)]
+    )
+
+    geometry_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Type de géométrie de la couche du jeu de données."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Couche de jeu de données"
+        verbose_name_plural = "Couches de jeux de données"
+        unique_together = ['name', 'dataset']
+    # End class Meta
+# End class DatasetLayer
+
+
+# ======================================================================================================================
 # DatasetVersion Model
 # ======================================================================================================================
 
 def dataset_version_filepath(instance : DatasetVersion, filename : str) -> str:
-    return f"datasets/{instance.dataset.id}_{uuid.uuid4()}{Path(filename).suffix}"
+    return f"datasets/{instance.dataset.slug}/{int(instance.date.timestamp())}{Path(filename).suffix}"
 # End def dataset_version_filepath
 
 class DatasetVersion(models.Model):
@@ -56,17 +300,78 @@ class DatasetVersion(models.Model):
     # Fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    id      = models.AutoField(primary_key=True)
-    dataset = models.ForeignKey('Dataset', on_delete=models.CASCADE, related_name='versions')
-    date    = models.DateTimeField(default=timezone.now, help_text="Date de la version du jeu de données.")
-    file    = models.FileField(
+    # ------ Identification ------
+
+    id = models.AutoField(primary_key=True)
+
+    # ----- Parent -----
+
+    dataset = models.ForeignKey(
+        'Dataset',
+        on_delete=models.CASCADE,
+        related_name='versions'
+    )
+
+    # ----- Date -----
+
+    date = models.DateTimeField(
+        default=timezone.now,
+        help_text="Date de la version du jeu de données."
+    )
+
+    # ----- File -----
+
+    file = models.FileField(
         upload_to=dataset_version_filepath,
         verbose_name="Fichier",
         help_text="Fichier de la version du jeu de données.",
         default=None,
         null=True,
-        blank=True
+        blank=True,
+        validators=[validate_dataset_version_file],
     )
+
+    # ----- Metadata -----
+
+    encoding = models.CharField(
+        max_length=10,
+        choices=ENCODING_CHOICES,
+        default=UTF8,
+        help_text="Encodage des propriétés du jeu de données."
+    )
+
+    # ----- Task-related fields -----
+
+    task_id = models.UUIDField(
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name="ID de la tâche",
+        help_text="ID de la tâche de génération des entités géographiques."
+    )
+
+    task_status = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+        default=None,
+        choices=TaskStatus,
+        help_text="Statut de la tâche de génération des entités géographiques."
+    )
+
+    regenerate = models.BooleanField(
+        default=False,
+        help_text="Indique si les entités géographiques doivent être régénérées."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def get_version_number(self) -> int:
+        """Returns the version number of the dataset."""
+        return self.dataset.versions.filter(date__lte=self.date).count()
+    # End def version_number
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -75,18 +380,102 @@ class DatasetVersion(models.Model):
         return f"Version of {self.dataset.name} from {self.date}"
     # End def __str__
 
-    def clean(self):
-        validate_dataset_version_file(self)
-
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
+
     class Meta:
         verbose_name = "Version de jeu de données"
         verbose_name_plural = "Versions de jeux de données"
         ordering = ['-date']
     # End class Meta
 # End class DatasetVersion
+
+
+@receiver(post_save, sender=DatasetVersion)
+def generate_layers(sender, instance, **kwargs):
+    """Generate the layers of the dataset."""
+
+    # 1. Open the zip file that contains the shapefile
+    with zipfile.ZipFile(instance.file) as zip_file, tempfile.TemporaryDirectory() as tmp_dir:
+        # 2. Extract the files in a temporary directory
+        zip_file.extractall(tmp_dir)
+
+        # 3. Find all the shapefiles contained in the zip file
+        shapefiles = []
+        for file_name in zip_file.namelist():
+            # Discard hidden files and directories
+            if file_name.endswith('.shp') and not file_name.startswith('__') and not file_name.startswith('.'):
+                shapefiles.append(Path(tmp_dir) / Path(file_name))
+
+        # 4. For each shapefile, generate a layer
+        for shape_file in shapefiles:
+            # 4.1 First, check if the shapefile is valid
+            try:
+                data_source : DataSource = DataSource(shape_file)
+            except:
+                print(f"Invalid shapefile: {shape_file}")
+                continue
+
+            # 4.2. If the shapefile is valid, generate the layer
+            layer_names = []
+            for layer in data_source:
+                layer_names.append(layer.name)
+                # 4.3. Check if the layer already exists, if so, use it instead of creating a new one
+                layer_model = None
+                if DatasetLayer.objects.filter(name=layer.name, dataset=instance).exists():
+                    layer_model = DatasetLayer.objects.get(name=layer.name, dataset=instance)
+                else:
+                    layer_model = DatasetLayer(
+                        name=layer.name,
+                        dataset=instance
+                    )
+
+                # 4.4 Find the srid of the layer
+                # Assume that the default projection is 2154, since most of the data is in France
+                # Eventually, this should be replaced by a user-defined projection
+                srid = layer.srs.srid if layer.srs.srid is not None else 2154
+
+                # 4.4 Generate the bounding box
+                bounding_box = Polygon.from_bbox(layer.extent.tuple)
+
+                bounding_box.srid = srid
+                layer_model.bounding_box = bounding_box
+
+                # 4.5 Save the srid and the feature count
+                layer_model.srid = srid
+                layer_model.feature_count = layer.num_feat
+                layer_model.geometry_type = layer.geom_type.name
+
+                # 4.6 Save the layer object (which will trigger the regeneration of the layer's geometries)
+                layer_model.save()
+
+                # 4.7 Generate the fields of the layer
+                # 4.7.1 First, delete all the fields of the layer
+                layer_model.fields.all().delete()
+
+                # 4.7.2 Then, generate the fields
+                for field in layer.fields:
+                    field_type  = layer.field_types[layer.fields.index(field)]
+                    field_width = layer.field_widths[layer.fields.index(field)]
+                    precision   = layer.field_precisions[layer.fields.index(field)]
+
+                    field_model = DatasetLayerField(
+                        name=field,
+                        type=field_type.__name__,
+                        max_length=field_width,
+                        precision=precision,
+                        layer=layer_model
+                    )
+                    field_model.save()
+
+    # 4.8 Generate the features of the layer on creation, or if the `regenerate` field is set to True
+    if instance.regenerate is True or kwargs.get('created', False) is True:
+        # If there is already a task running, revoke it and start a new one
+        if instance.task_id is not None:
+            tasks.generate_features_task.AsyncResult(str(instance.task_id)).revoke()
+        tasks.generate_features_task.delay(instance.id)
+# End def generate_layers
 
 # ======================================================================================================================
 # DatasetCategory Model
@@ -115,6 +504,9 @@ class DatasetCategory(models.Model):
     def clean(self):
         if not SVG_REGEX.match(self.icon.file.read().decode('latin-1')):
             raise ValidationError('Le fichier doit être un fichier SVG valide.')
+
+        # Set the slug
+        self.slug = slugify(self.name)
     # End def clean
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -127,12 +519,6 @@ class DatasetCategory(models.Model):
         ordering = ['name']
     # End class Meta
 # End class DatasetCategory
-
-@receiver(pre_save, sender=DatasetCategory)
-def generate_dataset_category_slug(sender, instance, **kwargs):
-    """Generate the slug for the resource"""
-    instance.slug = slugify(instance.name)
-# End def generate_dataset_category_slug
 
 
 # ======================================================================================================================
@@ -174,6 +560,7 @@ class Dataset(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     # ----- Identification -----
+
     id = models.AutoField(primary_key=True)
     slug = models.CharField(max_length=200, null=True, default=None)
 
@@ -211,8 +598,6 @@ class Dataset(models.Model):
         help_text="Description du jeu de données. Optionnel."
     )
 
-    # ----- Metadata fields -----
-
     source = models.CharField(
         max_length=100,
         blank=True,
@@ -248,19 +633,6 @@ class Dataset(models.Model):
         help_text="Restrictions d'utilisation du jeu de données. Optionnel."
     )
 
-    format = models.CharField(
-        max_length=10,
-        choices=DATASET_FORMAT_CHOICES,
-        help_text="Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON."
-    )
-
-    encoding = models.CharField(
-        max_length=10,
-        choices=ENCODING_CHOICES,
-        default=UTF8,
-        help_text="Encodage du jeu de données."
-    )
-
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
@@ -273,6 +645,16 @@ class Dataset(models.Model):
         """Return the latest version of the dataset file."""
         return self.versions.latest('date') if  self.versions.exists() else None
     # End def get_latest_version
+
+    def get_version(self, version_number : int) -> DatasetVersion:
+        """Return the version of the dataset file with the given version number."""
+        if version_number < 1:
+            raise ValueError("The version number must be greater than 0.")
+        if version_number > self.versions.count():
+            raise ValueError(f"The dataset does not have a version {version_number}.")
+
+        return self.versions.order_by('date')[version_number - 1]
+    # End def get_version
 
     def get_absolute_url(self):
         return f"/dataset/{self.slug}"
@@ -312,41 +694,5 @@ def generate_dataset_slug(sender, instance, **kwargs):
 # ======================================================================================================================
 
 
-def validate_dataset_version_file(instance : DatasetVersion):
-    if instance.dataset.format == SHAPEFILE:
-        if not zipfile.is_zipfile(instance.file):
-            raise ValidationError('Le fichier doit être un fichier ZIP.')
-        else:
-            try:
-                zip_file : zipfile.ZipFile
-                with zipfile.ZipFile(instance.file) as zip_file:
-                    if not zip_file.testzip() is None:
-                        raise ValidationError('Le fichier ZIP est corrompu.')
-                    else:
-                        # Check that the zip file contains at least one file with a .shp extension
-                        shapefile_found = False
-                        for file_name in zip_file.namelist():
-                            if file_name.endswith('.shp'):
-                                shapefile_found = True
-                                break
-                        if not shapefile_found:
-                            raise ValidationError('Le fichier ZIP doit contenir au moins un fichier avec une extension .shp.')
-            except zipfile.BadZipFile:
-                raise ValidationError('Le fichier ZIP est corrompu.')
 
-    elif instance.dataset.format == GEOJSON:
-        try:
-            obj : geojson.GeoJSON = geojson.loads(instance.file.read())
-            if not obj.is_valid:
-                raise ValidationError('Le fichier doit être un fichier GeoJSON valide. (erreur: {})'.format(obj.errors()))
-        except ValueError:
-            raise ValidationError('Le fichier doit être un fichier GeoJSON.')
-
-        finally:
-            # Reset the file pointer to the beginning of the file
-            instance.file.seek(0)
-
-    else:
-        raise ValidationError('Le format du jeu de données est invalide.')
-# End def validate_dataset_file
 

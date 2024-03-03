@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('language', models.CharField(blank=True, default=None, help_text='Langue du jeu de données. Optionnel.', max_length=30, null=True)),
                 ('license', models.CharField(blank=True, default=None, help_text='Licence du jeu de données. Optionnel.', max_length=100, null=True)),
                 ('usage_restrictions', models.TextField(blank=True, default=None, help_text="Restrictions d'utilisation du jeu de données. Optionnel.", null=True)),
-                ('format', models.CharField(choices=[('shapefile', 'Shapefile'), ('geojson', 'GeoJSON')], help_text='Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON.', max_length=10)),
+                ('format', models.CharField(choices=[('shapefile', 'Shapefile'), ('geojson', 'GeoJSON')], help_text='Format du jeu de données. Soit un fichier ZIP contenant un fichier shapefile, soit un fichier GeoJSON.', max_length=10, null=True)),
                 ('encoding', models.CharField(choices=[('utf-8', 'UTF-8'), ('latin-1', 'Latin-1'), ('utf-16', 'UTF-16'), ('ascii', 'ASCII'), ('iso-8859-1', 'ISO-8859-1')], default='utf-8', help_text='Encodage du jeu de données.', max_length=10)),
                 ('categories', models.ManyToManyField(blank=True, help_text='Catégories du jeu de données.', to='datasets.datasetcategory')),
             ],
