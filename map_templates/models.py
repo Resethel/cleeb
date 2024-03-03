@@ -12,8 +12,8 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from xyzservices import TileProvider
 
+from common.utils.tasks import TaskStatus
 from map_templates import tasks
-from map_templates.choices import GenerationStatus
 from map_templates.services.templates import MapTemplate as MapTemplateObject
 from map_templates.validators import validate_dash_array
 
@@ -730,27 +730,26 @@ class MapTemplate(models.Model):
     # Task specific fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    task_id = models.CharField(
-        verbose_name="ID de la tâche",
-        max_length=100,
+    task_id = models.UUIDField(
         blank=True,
         null=True,
         default=None,
-        help_text="ID de la tâche asynchrone utilisée pour générer le rendu de la carte."
+        verbose_name="ID de la tâche",
+        help_text="ID de la tâche de génération des entités géographiques."
     )
 
-    generation_status = models.CharField(
-        verbose_name="Statut de la génération",
-        max_length=10,
-        choices=GenerationStatus.choices,
-        default=GenerationStatus.PENDING,
-        help_text="Statut de la génération du rendu de la carte."
+    task_status = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+        default=None,
+        choices=TaskStatus,
+        help_text="Statut de la tâche de génération des entités géographiques."
     )
 
     regenerate = models.BooleanField(
-        verbose_name="Regénérer",
         default=False,
-        help_text="Relance la génération du rendu de la carte."
+        help_text="Indique si les entités géographiques doivent être régénérées."
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -779,19 +778,11 @@ class MapTemplate(models.Model):
 @receiver(post_save, sender=MapTemplate)
 def generate_map_render(sender, instance, created, **kwargs):
     """Generate the render of the map template."""
-    print(f"{instance}: {instance.generation_status}, {instance.task_id}")
-    if instance.generation_status in [None, GenerationStatus.PENDING]:
-        tasks.generate_map_render_from_map_template_task.delay(instance.id)
-
-    # Edge case where something went wrong and a task was killed midway
-    elif instance.generation_status == GenerationStatus.RUNNING:
-        if instance.task_id is None:
-            tasks.generate_map_render_from_map_template_task.delay(instance.id)
-
-    # In the case where the status is either COMPLETED or FAILED,
-    # only submit a task if the user has requested to regenerate the geometries
+    if created:
+        tasks.generate_maprender_from_maptemplate_task.delay(instance.id)
     elif instance.regenerate:
-        tasks.generate_map_render_from_map_template_task.delay(instance.id)
-        instance.regenerate = False
-        instance.save()
-# End def generate_map_layer_geometries
+        # Revoke the previous task to avoid multiple renders
+        if instance.task_id is not None:
+            tasks.generate_maprender_from_maptemplate_task.AsyncResult(instance.task_id).revoke()
+        tasks.generate_maprender_from_maptemplate_task.delay(instance.id)
+# End def generate_map_render

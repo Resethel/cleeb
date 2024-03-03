@@ -7,28 +7,30 @@ from __future__ import annotations
 from celery import shared_task
 from django.apps import apps
 
-from map_layers.choices import GenerationStatus
+from common.utils.tasks import TaskStatus
 from map_templates.services.processor import TemplateProcessor
 
 
-@shared_task(bind=True, throws=(ValueError, RuntimeError))
-def generate_map_render_from_map_template_task(self, map_template_id: int):
+# noinspection PyPep8Naming
+@shared_task(bind=True)
+def generate_maprender_from_maptemplate_task(self, map_template_id: int):
     """Generate geometries for a map layer."""
     # Get the models.
     # Uses apps.get_model to avoid circular imports.
-    map_template_model = apps.get_model("map_templates", "MapTemplate")
-    map_layer_model = apps.get_model("map_layers", "MapLayer")
+    MapTemplate = apps.get_model("map_templates", "MapTemplate")
 
     try:
-        map_template = map_template_model.objects.get(id=map_template_id)
-    except map_layer_model.DoesNotExist:
-        raise ValueError(f"MapTemplate with ID '{map_template_model}' does not exist.")
+        map_template = MapTemplate.objects.get(id=map_template_id)
+    except MapTemplate.DoesNotExist:
+        raise ValueError(f"MapTemplate with ID '{MapTemplate}' does not exist.")
 
     # Update the status of the template and its task ID
-    map_template.generation_status = GenerationStatus.RUNNING
-    map_template.task_id = self.request.id
-    map_template.save()
+    MapTemplate.objects.filter(id=map_template_id).update(task_status=TaskStatus.STARTED,
+                                                          task_id=self.request.id,
+                                                          regenerate=False)
 
+    request_id = self.request.id
+    task_status = TaskStatus.STARTED
     try:
         # 1. Create the processor
         try:
@@ -47,18 +49,18 @@ def generate_map_render_from_map_template_task(self, map_template_id: int):
         processor.save()
         print("Processor saved")
 
-    except Exception as e:
-        map_template.generation_status = GenerationStatus.FAILED
-        map_template.task_id = None
-        map_template.regenerate = False
-        map_template.save()
-        raise e
-
-    # Mark the layer as completed
-    map_template.generation_status = GenerationStatus.COMPLETED
-    map_template.task_id = None
-    map_template.regenerate = False
-    map_template.save()
+    except Exception:
+        # Mark the task as failed and keep the task ID for debugging
+        task_status = TaskStatus.FAILURE
+        raise
+    else:
+        # Remove the task ID
+        task_status = TaskStatus.SUCCESS
+        request_id = None
+    finally:
+        MapTemplate.objects.filter(id=map_template_id).update(task_status=task_status,
+                                                              task_id=request_id,
+                                                              regenerate=False)
 # End def generate_map_render_from_map_template_task
 
 
