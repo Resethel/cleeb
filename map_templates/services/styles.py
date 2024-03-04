@@ -156,16 +156,50 @@ class Style:
         raise NotImplementedError("This method has not been implemented yet")
     # End def to_model
 
+    # noinspection PyUnresolvedReferences
     @staticmethod
     def from_model(model: models.Style) -> Style:
+        # 1. Create the attributes for the style
         attributes = {attr: getattr(model, attr) for attr in STYLE_ATTRIBUTES if hasattr(model, attr)}
 
-        # TODO: The conversion of fill patterns is not yet supported
-        if hasattr(model, "fill_pattern"):
+        # 2. Handle the fill pattern
+        if model.fill_pattern:
+            # Modify the opacity to 1 if there is a pattern,
+            # otherwise the pattern will have the opacity of the fill times the opacity of the pattern
+            attributes["fill_opacity"] = 1
+
+            # Create the pattern
+            if isinstance(model.fill_pattern, models.StripePattern):
+                attributes["fill_pattern"] = StripePattern(
+                    color=model.fill_pattern.color,
+                    opacity=model.fill_pattern.opacity,
+                    space_color=model.fill_pattern.space_color,
+                    space_opacity=model.fill_pattern.space_opacity,
+                    weight=model.fill_pattern.weight,
+                    space_weight=model.fill_pattern.space_weight,
+                    angle=model.fill_pattern.angle
+                )
+
+            elif isinstance(model.fill_pattern, models.CirclePattern):
+                attributes["fill_pattern"] = CirclePattern(
+                    color=model.fill_pattern.color,
+                    opacity=model.fill_pattern.opacity,
+                    fill_opacity=model.fill_pattern.fill_opacity,
+                    width=model.fill_pattern.width,
+                    height=model.fill_pattern.height,
+                    radius=model.fill_pattern.radius,
+                    fill_color=model.fill_pattern.fill_color
+                )
+
+            else:
+                raise ValueError(f"Invalid pattern type '{model.fill_pattern.__class__.__name__}'")
+        else:
             attributes["fill_pattern"] = None
 
+        # 3. Create the style
         style = Style(**attributes)
 
+        # 4. Add the property styles to the style
         for property_style in model.property_styles.all():
             style.property_styles.append(PropertyStyle.from_model(property_style))
 
@@ -299,10 +333,46 @@ class PropertyStyle:
         raise NotImplementedError("This method has not been implemented yet")
     # End def to_model
 
+    # noinspection PyUnresolvedReferences
     @staticmethod
     def from_model(model: models.PropertyStyle) -> PropertyStyle:
         if not isinstance(model, models.PropertyStyle):
             raise ValueError(f"Expected 'model' to be of a 'PropertyStyle' model, not '{type(model)}'")
+
+        # Handle the fill pattern and opacity
+        fill_opacity = model.fill_opacity
+        fill_pattern = None
+        if model.fill_pattern:
+            # Modify the opacity to 1 if there is a pattern,
+            # otherwise the pattern will have the opacity of the fill times the opacity of the pattern
+            fill_opacity = 1
+
+            # Create the pattern
+            if isinstance(model.fill_pattern, models.StripePattern):
+                fill_pattern = StripePattern(
+                    color=model.fill_pattern.color,
+                    opacity=model.fill_pattern.opacity,
+                    space_color=model.fill_pattern.space_color,
+                    space_opacity=model.fill_pattern.space_opacity,
+                    weight=model.fill_pattern.weight,
+                    space_weight=model.fill_pattern.space_weight,
+                    angle=model.fill_pattern.angle
+                )
+
+            elif isinstance(model.fill_pattern, models.CirclePattern):
+                fill_pattern = CirclePattern(
+                    color=model.fill_pattern.color,
+                    opacity=model.fill_pattern.opacity,
+                    fill_opacity=model.fill_pattern.fill_opacity,
+                    width=model.fill_pattern.width,
+                    height=model.fill_pattern.height,
+                    radius=model.fill_pattern.radius,
+                    fill_color=model.fill_pattern.fill_color
+                )
+
+            else:
+                raise ValueError(f"Invalid pattern type '{model.fill_pattern.__class__.__name__}'")
+
 
         return PropertyStyle(
             key=model.key,
@@ -317,9 +387,9 @@ class PropertyStyle:
             dash_offset=model.dash_offset,
             fill=model.fill,
             fill_color=model.fill_color,
-            fill_opacity=model.fill_opacity,
+            fill_opacity=fill_opacity,
             fill_rule=model.fill_rule,
-            fill_pattern=None  # TODO: Implement the fill pattern once supported by the model
+            fill_pattern=fill_pattern
         )
     # End def from_model
 

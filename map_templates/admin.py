@@ -13,7 +13,9 @@ from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTab
 
 from common.utils.admin import get_clock_icon_html
 from common.utils.tasks import TaskStatus
-from map_templates.models import FeatureGroup, Filter, Layer, MapTemplate, Style, PropertyStyle, TileLayer
+from map_templates.models import CirclePattern, FeatureGroup, Filter, Layer, MapTemplate, StripePattern, Style, \
+    PropertyStyle, \
+    TileLayer
 
 # ======================================================================================================================
 # Constants
@@ -66,6 +68,58 @@ class TileLayerAdmin(NestedModelAdmin):
 # End class TileLayerAdmin
 
 # ======================================================================================================================
+# FillPattern
+# ======================================================================================================================
+
+@admin.register(CirclePattern)
+class CirclePatternAdmin(admin.ModelAdmin):
+    list_display = ('id', 'color', 'width', 'height', 'radius', 'fill_color')
+    list_display_links = ('id', 'color')
+    search_fields = ('color', 'fill_color')
+    list_per_page = 25
+    readonly_fields = ('id',)
+
+    fieldsets = (
+        ('ID', {
+            'classes': ('collapse',),
+            'fields': ('id',),
+        }),
+        ('Circle Pattern Details', {
+            'fields': (
+                ('color', 'fill_color'),
+                ('width', 'height'),
+                'radius',
+
+            )
+        }),
+    )
+# End class CirclePatternAdmin
+
+@admin.register(StripePattern)
+class StripePatternAdmin(admin.ModelAdmin):
+    list_display = ('id', 'color', 'space_color', 'weight', 'space_weight', 'angle')
+    list_display_links = ('id', 'color')
+    search_fields = ('color', 'space_color')
+    list_per_page = 25
+    readonly_fields = ('id',)
+
+    fieldsets = (
+        ('ID', {
+            'classes': ('collapse',),
+            'fields': ('id',),
+        }),
+        ('Stripe Pattern Details', {
+            'fields': (
+                ('color', 'space_color'),
+                ('weight', 'space_weight'),
+                'angle'
+            )
+        }),
+    )
+# End class StripePatternAdmin
+
+
+# ======================================================================================================================
 # Style
 # ======================================================================================================================
 
@@ -80,15 +134,33 @@ class PropertyStyleAdmin(NestedModelAdmin):
     ordering = ('style', 'key')
 
     fieldsets = (
-        ("Style lié", {
+        ("Appartenance", {
+            'classes': ('collapse',),  # Hide the fieldset by default
+            'description': "L'appartenance du style de propriété à un style global.",
             'fields': ('style',)
         }),
         ("Clé et valeur", {
-            'fields': (('key', 'value'),)
+            'fields': (
+                ('key', 'value'),
+            )
         }),
-        ("Style", {
-            'fields': ('color', 'weight', 'fill', 'fill_color', 'fill_rule', 'dash_array',
-                       'dash_offset', 'line_cap', 'line_join')
+        ("Bordures", {
+            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+            'classes': ('wide',),
+            'fields': (
+                'stroke',
+                ('color', 'weight'),
+                ('dash_array', 'dash_offset'),
+                ('line_cap', 'line_join')
+            )
+        }),
+        ("Remplissage", {
+            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+            'fields': (
+                'fill',
+                ('fill_color', 'fill_rule'),
+                ('circle_pattern', 'stripe_pattern')
+            )
         }),
     )
 # End class PropertyStyleAdmin
@@ -101,11 +173,28 @@ class PropertyStyleInline(NestedStackedInline):
 
     fieldsets = (
         ("Clé et valeur", {
-            'fields': (('key', 'value'),)
+            'classes': ('wide',),
+            'fields': (
+                ('key', 'value'),
+            )
         }),
-        ("Style", {
-            'fields': ('color', 'weight', 'fill', 'fill_color', 'fill_rule', 'dash_array',
-                       'dash_offset', 'line_cap', 'line_join')
+        ("Bordures", {
+            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+            'classes': ('wide',),
+            'fields': (
+                'stroke',
+                ('color', 'weight'),
+                ('dash_array', 'dash_offset'),
+                ('line_cap', 'line_join')
+            )
+        }),
+        ("Remplissage", {
+            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+            'fields': (
+                'fill',
+                ('fill_color', 'fill_rule'),
+                ('circle_pattern', 'stripe_pattern')
+            )
         }),
     )
 # End class PropertyStyleInline
@@ -114,9 +203,9 @@ class PropertyStyleInline(NestedStackedInline):
 @admin.register(Style)
 class StyleAdmin(NestedModelAdmin):
     list_display = (
+        'id',
         'style_type',
         'owning_layer',
-        'id',
         'color',
         'weight',
         'fill',
@@ -134,7 +223,7 @@ class StyleAdmin(NestedModelAdmin):
 
 
     inlines = [
-        PropertyStyleInline
+        PropertyStyleInline,
     ]
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -161,7 +250,8 @@ class StyleAdmin(NestedModelAdmin):
             'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
             'fields': (
                 'fill',
-                ('fill_color', 'fill_rule')
+                ('fill_color', 'fill_rule'),
+                ('circle_pattern', 'stripe_pattern')
             )
         }),
 

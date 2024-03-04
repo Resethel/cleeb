@@ -185,6 +185,187 @@ def fill_missing_verbose_name(sender, instance, **kwargs):
 # End def fill_missing_verbose_name
 
 # ======================================================================================================================
+# FillPatterns
+# ======================================================================================================================
+
+class FillPattern(models.Model):
+    """Represent a Leaflet pattern."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Identification fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(primary_key=True)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    color = ColorField(
+        default="#000000FF",
+        format="hexa",
+        verbose_name="Couleur des Bandes",
+        help_text="La couleur des bandes."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    @admin.display(description="Opacité")
+    def opacity(self) -> float:
+        return int(self.color[7:9], 16) / 255
+    # End def opacity
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        abstract = True
+    # End class Meta
+# End class FillPattern
+
+class StripePattern(FillPattern):
+    """ Represents a Leaflet stripe pattern. """
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    space_color = ColorField(
+        default="#FFFFFFFF",
+        format="hexa",
+        verbose_name="Couleur des Espaces",
+        help_text="La couleur de l'espace entre les bandes."
+    )
+
+    # Stripe width
+    weight = models.IntegerField(
+        default=4,
+        validators=[
+            MinValueValidator(0.0)
+        ],
+        verbose_name="Largeur",
+        help_text="La largeur des bandes (en pixels)."
+    )
+
+    space_weight = models.IntegerField(
+        default=4,
+        validators=[
+            MinValueValidator(0.0)
+        ],
+        verbose_name="Largeur des espaces",
+        help_text="La largeur de l'espace entre les bandes (en pixels)."
+    )
+
+    angle = models.FloatField(
+        default=0.5,
+        validators=[
+            MinValueValidator(-360.0),
+            MaxValueValidator(360.0)
+        ],
+        verbose_name="Angle",
+        help_text="L'angle des bandes (en degrés)."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    @admin.display(description="Opacité des espaces")
+    def space_opacity(self) -> float:
+        return int(self.space_color[7:9], 16) / 255
+    # End def space_opacity
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return f"StripePattern@{self.id}"
+    # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+    class Meta:
+        verbose_name = "Motif à rayures"
+        verbose_name_plural = "Motifs à rayures"
+    # End class Meta
+# End class StripePattern
+
+class CirclePattern(FillPattern):
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    width = models.IntegerField(
+        default=4,
+        validators=[
+            MinValueValidator(0.0)
+        ],
+        verbose_name="Distance horizontale",
+        help_text="Distance (horizontale) entre les cercles"
+    )
+
+    height = models.IntegerField(
+        default=4,
+        validators=[
+            MinValueValidator(0.0)
+        ],
+        verbose_name="Distance verticale",
+        help_text="Distance (verticale) entre les cercles"
+    )
+
+    radius = models.IntegerField(
+        default=12,
+        validators=[
+            MinValueValidator(0.0)
+        ],
+        verbose_name="Rayon",
+        help_text="Le rayon des cercles (en pixels)."
+    )
+
+    fill_color = ColorField(
+        default="#3388FF33",
+        format="hexa",
+        verbose_name="Couleur de remplissage",
+        help_text="La couleur de remplissage des cercles."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    @admin.display(description="Opacité de remplissage")
+    def fill_opacity(self) -> float:
+        return int(self.fill_color[7:9], 16) / 255
+    # End def fill_opacity
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return f"CirclePattern@{self.id}"
+    # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Motif en cercle"
+        verbose_name_plural = "Motifs en cercle"
+    # End class Meta
+# End class CirclePattern
+
+# ======================================================================================================================
 # Styles
 # ======================================================================================================================
 
@@ -300,7 +481,27 @@ class BaseStyle(models.Model):
         help_text="La règle de remplissage des formes."
     )
 
-    # TODO: Add fill patterns
+    # ------------------------------------------------------------------------------------------------------------------
+    # Pattern fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    circle_pattern = models.OneToOneField(
+        'CirclePattern',
+        related_name='%(class)s',
+        on_delete=models.SET_NULL,
+        default=None,
+        blank=True,
+        null=True
+    )
+
+    stripe_pattern = models.OneToOneField(
+        'StripePattern',
+        related_name='%(class)s',
+        on_delete=models.SET_NULL,
+        default=None,
+        blank=True,
+        null=True
+    )
 
     # ------------------------------------------------------------------------------------------------------------------
     # Non-persistent fields
@@ -318,12 +519,38 @@ class BaseStyle(models.Model):
         return int(self.fill_color[7:9], 16) / 255
     # End def fill_opacity
 
+    @property
+    @admin.display(description="Motif de remplissage")
+    def fill_pattern(self):
+        if self.circle_pattern is not None:
+            return self.circle_pattern
+        if self.stripe_pattern is not None:
+            return self.stripe_pattern
+        return None
+    # End def fill_pattern
+
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
         return f"Style@{self.id}"
+    # End def __str__
+
+    def clean(self):
+        super().clean()
+        if self.stroke is False and self.fill is False:
+            raise ValidationError("Le style ne peut pas être vide.")
+
+        if self.circle_pattern is not None and self.stripe_pattern is not None:
+            raise ValidationError(
+                "Le style ne peut être remplit à la fois par un motif en cercle et par un motif à rayures.",
+                params={
+                    "circle_pattern": self.circle_pattern,
+                    "stripe_pattern": self.stripe_pattern
+                }
+            )
+    # End def clean
 
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
@@ -335,8 +562,6 @@ class BaseStyle(models.Model):
 # End class BaseStyle
 
 class Style(BaseStyle):
-
-    id = models.AutoField(primary_key=True)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Admin display
@@ -361,17 +586,38 @@ class Style(BaseStyle):
 
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Meta
+    # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
         return f"Style@{self.id}"
     # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Style"
+        verbose_name_plural = "Styles"
 # End class LayerStyle
 
 class PropertyStyle(BaseStyle):
 
-    id = models.AutoField(primary_key=True)
+    # ------------------------------------------------------------------------------------------------------------------
+    # Parent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    style = models.ForeignKey(
+        'Style',
+        related_name='property_styles',
+        on_delete=models.CASCADE,
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Filter fields
+    # ------------------------------------------------------------------------------------------------------------------
+
     key = models.CharField(max_length=100)
     value = models.CharField(max_length=100)
     value_type = models.CharField(
@@ -384,24 +630,22 @@ class PropertyStyle(BaseStyle):
         default="string"
     )
 
-    style = models.ForeignKey(
-        'Style',
-        related_name='property_styles',
-        on_delete=models.CASCADE,
-    )
-
     # ------------------------------------------------------------------------------------------------------------------
-    # Meta
+    # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
         return f"PropertyStyle[{self.key}={self.value}]@{self.id}"
     # End def __str__
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
     class Meta:
         verbose_name = "Style de propriété"
         verbose_name_plural = "Styles des propriétés"
-# End class LayerPropertyStyle
+# End class PropertyStyle
 
 
 # ======================================================================================================================
