@@ -566,6 +566,18 @@ class Layer(models.Model):
         help_text="La délimitations de la couche cartographique. Tout ce qui est en dehors de cette zone ne sera pas utilisé."
     )
 
+    boundary_type = models.CharField(
+        max_length=15,
+        choices=[
+            ("intersect", "Intersection"),
+            ("strict", "Stricte"),
+            ("crop", "Recadrement"),
+        ],
+        default="intersect",
+        verbose_name="Type de délimitation",
+        help_text="Le type de délimitation de la couche cartographique."
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Style Fields
     # ------------------------------------------------------------------------------------------------------------------

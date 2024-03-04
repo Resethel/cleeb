@@ -18,7 +18,7 @@ from django.utils.text import slugify
 
 from datasets.models import DatasetLayer, Feature
 from interactive_maps.models import MapRender
-from map_templates.services.features import FeatureGroup as FeatureGroupObject, Layer as LayerObject
+from map_templates.services.features import BoundaryType, FeatureGroup as FeatureGroupObject, Layer as LayerObject
 from map_templates.services.filters import Filter
 from map_templates.services.templates import MapTemplate as MapTemplateObject
 
@@ -246,13 +246,21 @@ class TemplateProcessor:
         if layer.boundaries is None:
             features_query = Feature.objects.filter(layer=dataset_layer)
         # 3.2. Otherwise, fetch the features that intersect the boundaries
-        else:
+        elif layer.boundary_type == BoundaryType.INTERSECT or layer.boundary_type == BoundaryType.CROP:
             features_query = Feature.objects.filter(layer=dataset_layer, geometry__intersects=layer.boundaries)
+        # 3.3. Otherwise, fetch the features that are within the boundaries
+        elif layer.boundary_type == BoundaryType.STRICT:
+            features_query = Feature.objects.filter(layer=dataset_layer, geometry__within=layer.boundaries)
+        else:
+            raise ValueError(f"Invalid boundary type for layer {layer}")
 
         # 4. Convert the data into a geojson object
         features = []
         for feature in features_query:
-            geometry = GEOSGeometry(feature.geometry)
+            if layer.boundary_type == BoundaryType.CROP:
+                geometry = GEOSGeometry(feature.geometry.intersection(layer.boundaries))
+            else:
+                geometry = feature.geometry
             properties = feature.fields
             features.append(
                 geojson.Feature(

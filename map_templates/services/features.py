@@ -29,6 +29,13 @@ class FeatureType(enum.Enum):
     FEATURE_GROUP = enum.auto()
 # End class FeatureType
 
+class BoundaryType(enum.Enum):
+    """The type of the boundary."""
+    INTERSECT = "intersect"
+    STRICT = "strict"
+    CROP = "crop"
+# End class BoundaryType
+
 # ======================================================================================================================
 # Feature Base Class
 # ======================================================================================================================
@@ -103,6 +110,7 @@ class Layer(Feature):
             name : str,
             dataset_layer_id : int,
             boundaries : GEOSGeometry | None = None,
+            boundary_type : BoundaryType = BoundaryType.INTERSECT,
             style : Style | None = None,
             highlight : Style | None = None,
             filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
@@ -111,6 +119,7 @@ class Layer(Feature):
         super().__init__(name, FeatureType.LAYER)
         self.dataset_layer_id : int                 = dataset_layer_id
         self.boundaries       : GEOSGeometry | None = boundaries
+        self.boundary_type  : BoundaryType          = boundary_type
         self.filters          : list[Filter]        = []
         self.style            : Style | None        = style
         self.highlight        : Style | None        = highlight
@@ -140,6 +149,7 @@ class Layer(Feature):
             self.name             == other.name,
             self.dataset_layer_id == other.dataset_layer_id,
             self.boundaries       == other.boundaries,
+            self.boundary_type  == other.boundary_type,
             self.style            == other.style,
             self.highlight        == other.highlight,
             self.filters          == other.filters,
@@ -150,6 +160,7 @@ class Layer(Feature):
         return hash((self.name,
                      self.dataset_layer_id,
                      self.boundaries,
+                     self.boundary_type,
                      self.style,
                      self.highlight,
                      frozenset(self.filters),
@@ -181,6 +192,9 @@ class Layer(Feature):
         if self.highlight is not None:
             self.highlight.validate()
 
+        if not isinstance(self.boundary_type, BoundaryType):
+            raise ValueError(f"Invalid boundary type '{self.boundary_type}'")
+
         for idx, filter_ in enumerate(self.filters):
             if not isinstance(filter_, Filter):
                 raise ValueError(f"Expected 'filters@{idx}' to be of type 'Filter', not '{type(filter_)}'")
@@ -197,11 +211,13 @@ class Layer(Feature):
         if not isinstance(model, models.Layer):
             raise ValueError(f"Expected 'model' to be of a 'Layer' model, not '{type(model)}'")
 
+        boundary_type = BoundaryType(model.boundary_type) if model.boundary_type else BoundaryType.INTERSECT
 
         return Layer(
             name=model.name,
             dataset_layer_id=model.dataset_layer.id,
             boundaries=GEOSGeometry(model.boundaries) if model.boundaries else None,
+            boundary_type=boundary_type,
             style=Style.from_model(model.style) if model.style else None,
             highlight=Style.from_model(model.highlight) if model.highlight else None,
             filters=[Filter(key=f.key, operator=f.operator, value=f.value) for f in model.filters.all()],

@@ -91,8 +91,6 @@ class PropertyStyleAdmin(NestedModelAdmin):
                        'dash_offset', 'line_cap', 'line_join')
         }),
     )
-
-
 # End class PropertyStyleAdmin
 
 class PropertyStyleInline(NestedStackedInline):
@@ -223,8 +221,8 @@ class LayerAdmin(NestedModelAdmin, GISModelAdmin):
 class LayerInline(NestedStackedInline):
     model = Layer
     extra = 0
-    verbose_name = "Layer"
-    verbose_name_plural = "Layers"
+    verbose_name = "Couche"
+    verbose_name_plural = "Couches"
     formfield_overrides = {
         GeometryField: {'widget': OSMWidget}
     }
