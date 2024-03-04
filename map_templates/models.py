@@ -788,6 +788,6 @@ def generate_map_render(sender, instance, created, **kwargs):
     elif instance.regenerate:
         # Revoke the previous task to avoid multiple renders
         if instance.task_id is not None:
-            tasks.generate_maprender_from_maptemplate_task.AsyncResult(instance.task_id).revoke()
+            tasks.generate_maprender_from_maptemplate_task.AsyncResult(str(instance.task_id)).revoke()
         tasks.generate_maprender_from_maptemplate_task.delay(instance.id)
 # End def generate_map_render
