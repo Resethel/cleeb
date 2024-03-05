@@ -109,22 +109,38 @@ class TemplateProcessor:
             logger.debug(f"Adding tile '{tile.tile_name}' to the map...")
             tile.add_to(map_)
 
-        # 2. Build the feature groups of the map
-        for feature in self.template.features:
+        # 2. Build the feature of the map
+        # 2.1. Sort the features by their z-index.
+        #      Lower z-index means the features are added first.
+        #      If two features have the same z_index, then the order is undefined.
+        sorted_features = sorted(self.template.features, key=lambda f: f.z_index)
+        keep_in_front = []
+        # 2.2. Add the features to the map
+        for feature in sorted_features:
+            # 2.2.1. If the feature is a layer, add it to the map
             if isinstance(feature, LayerObject):
                 logger.debug(f"Adding layer '{feature.name}' to the map...")
-                self.__generate_layer(feature).add_to(map_)
+                feature = self.__generate_layer(feature)
+                keep_in_front.append(feature)
+                feature.add_to(map_)
 
+            # 2.2.2. If the feature is a feature group, process its sub-features
             elif isinstance(feature, FeatureGroupObject):
+                # 2.2.2.1. Create a feature group
                 logger.debug(f"Adding feature group '{feature.name}' to the map...")
                 feature_group = folium.FeatureGroup(
                     name=feature.name,
                     show=feature.show_on_startup
                 )
 
-                for sub_feature in feature:
-                    self.__generate_layer(sub_feature).add_to(feature_group)
+                # 2.2.2.2. Process the sub-features by their z-index
+                sorted_sub_features = sorted(feature, key=lambda f: f.z_index)
+                for sub_feature in sorted_sub_features:
+                    sub_feature = self.__generate_layer(sub_feature)
+                    keep_in_front.append(sub_feature)
+                    sub_feature.add_to(feature_group)
 
+                # 2.2.2.3. Add the feature group to the map
                 feature_group.add_to(map_)
 
         # 3. Create a layer control
@@ -132,7 +148,10 @@ class TemplateProcessor:
         if self.template.layer_control:
             folium.LayerControl().add_to(map_)
 
-        # 4. Return the folium map object
+        # 4. Set the layer order
+        map_.keep_in_front(*keep_in_front)
+
+        # 5. Return the folium map object
         self.map = map_
         logger.info(f"Map '{self.template.name}' generated successfully.")
     # End def build

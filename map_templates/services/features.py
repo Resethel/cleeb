@@ -45,19 +45,26 @@ class Feature(ABC):
 
     May be a Layer, a FeatureGroup, or a Marker.
     """
-    def __init__(self, name : str, type_ : FeatureType) -> None:
+    def __init__(self, name : str, type_ : FeatureType, *, z_index : int = 0) -> None:
         if not isinstance(name, str):
             raise TypeError(f"Expected 'name' to be of type 'str', not '{type(name)}'")
         if not isinstance(type_, FeatureType):
             raise TypeError(f"Expected 'type' to be of type 'FeatureType', not '{type(type_)}'")
         self.name : str = name
         self.type : FeatureType = type_
+        self.z_index : int = z_index
     # End def __init__
 
-    @abstractmethod
     def validate(self):
         """Validate the shape."""
-        pass
+        if not isinstance(self.name, str):
+            raise ValueError(f"Expected 'name' to be of type 'str', not '{type(self.name)}'")
+        if not isinstance(self.type, FeatureType):
+            raise ValueError(f"Expected 'type' to be of type 'FeatureType', not '{type(self.type)}'")
+        if not isinstance(self.z_index, int):
+            raise ValueError(f"Expected 'z_index' to be of type 'int', not '{type(self.z_index)}'")
+        if self.z_index < 0:
+            raise ValueError(f"Expected 'z_index' to be greater than or equal to 0, not '{self.z_index}'")
     # End def validate
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -109,6 +116,8 @@ class Layer(Feature):
             self,
             name : str,
             dataset_layer_id : int,
+            *,
+            z_index : int = 0,
             boundaries : GEOSGeometry | None = None,
             boundary_type : BoundaryType = BoundaryType.INTERSECT,
             style : Style | None = None,
@@ -116,7 +125,7 @@ class Layer(Feature):
             filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
             show_on_startup : bool = True
     ) -> None:
-        super().__init__(name, FeatureType.LAYER)
+        super().__init__(name, FeatureType.LAYER, z_index=z_index)
         self.dataset_layer_id : int                 = dataset_layer_id
         self.boundaries       : GEOSGeometry | None = boundaries
         self.boundary_type  : BoundaryType          = boundary_type
@@ -186,7 +195,10 @@ class Layer(Feature):
 
     def validate(self):
         """Validate the layer."""
-        # Validate that the zoom start is valid
+        # 1. Call the parent validate method
+        super().validate()
+
+        # 3. Validate that the zoom start is valid
         if self.style is not None:
             self.style.validate()
         if self.highlight is not None:
@@ -216,6 +228,7 @@ class Layer(Feature):
         return Layer(
             name=model.name,
             dataset_layer_id=model.dataset_layer.id,
+            z_index=model.z_index,
             boundaries=GEOSGeometry(model.boundaries) if model.boundaries else None,
             boundary_type=boundary_type,
             style=Style.from_model(model.style) if model.style else None,
@@ -262,6 +275,7 @@ class Layer(Feature):
             "__type__"         : "__Layer__",
             "name"             : self.name,
             "dataset_layer_id" : self.dataset_layer_id,
+            "z_index"         : self.z_index,
             "style"            : self.style.serialize('dict') if self.style else None,
             "highlight"        : self.highlight.serialize('dict') if self.highlight else None,
             "filters"          : [f.serialize('dict') for f in self.filters],
@@ -276,6 +290,7 @@ class Layer(Feature):
         return Layer(
             name=data["name"],
             dataset_layer_id=data["dataset_layer_id"],
+            z_index=data["z_index"],
             style=Style.deserialize(data["style"], 'dict') if data["style"] else None,
             highlight=Style.deserialize(data["highlight"], 'dict') if data["highlight"] else None,
             filters=[Filter.deserialize(f, 'dict') for f in data["filters"]],
@@ -297,9 +312,10 @@ class FeatureGroup(MutableSet, Feature):
             name : str,
             show_on_startup : bool = True,
             *,
+            z_index : int = 0,
             features : Collection[Feature] | Iterable[Feature] | None = None
     ) -> None:
-        super().__init__(name, FeatureType.FEATURE_GROUP)
+        super().__init__(name, FeatureType.FEATURE_GROUP, z_index=z_index)
         self.name : str | None = name
         self.show_on_startup : bool = show_on_startup
         self.__features : set[Feature] = set()
@@ -380,6 +396,10 @@ class FeatureGroup(MutableSet, Feature):
 
     def validate(self):
         """Validate the feature group."""
+        # 1. Call the parent validate method
+        super().validate()
+
+        # 2. Validate the layers
         for feature in self.__features:
             feature.validate()
     # End def validate
@@ -396,6 +416,7 @@ class FeatureGroup(MutableSet, Feature):
 
         return FeatureGroup(
             name=model.name,
+            z_index=model.z_index,
             show_on_startup=model.show_on_startup,
             features=[Layer.from_model(layer) for layer in model.layers.all()]
         )
@@ -436,6 +457,7 @@ class FeatureGroup(MutableSet, Feature):
         return {
             "__type__" : "__FeatureGroup__",
             "name" : self.name,
+            "z_index" : self.z_index,
             "show_on_startup" : self.show_on_startup,
             "features" : [feature.serialize('dict') for feature in self.__features]
         }
@@ -458,6 +480,7 @@ class FeatureGroup(MutableSet, Feature):
 
         return FeatureGroup(
             name=data["name"],
+            z_index=data["z_index"],
             show_on_startup=data["show_on_startup"],
             features=features
         )

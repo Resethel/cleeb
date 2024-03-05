@@ -723,8 +723,10 @@ class Filter(models.Model):
 # End class Filter
 
 # ======================================================================================================================
-# Layer
+# MapFeatures
 # ======================================================================================================================
+
+# TODO: Add an abstract class for the map features
 
 class Layer(models.Model):
     """Represents a map layer.
@@ -786,6 +788,16 @@ class Layer(models.Model):
         default=False,
         verbose_name="Afficher au démarrage",
         help_text="Si la couche doit être affichée au démarrage."
+    )
+
+    z_index = models.IntegerField(
+        default=0,
+        verbose_name="z-index",
+        help_text="Index definissant l'ordre d'affichage des couches. "
+                  "Plus l'index est élevé, plus la couche est affichée en premier plan.",
+        validators=[
+            MinValueValidator(0)
+        ]
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -869,11 +881,6 @@ class Layer(models.Model):
         verbose_name_plural = "Couches"
 # End class Layer
 
-
-# ======================================================================================================================
-# Feature groups
-# ======================================================================================================================
-
 class FeatureGroup(models.Model):
     """Represents a group of features on the map.
 
@@ -914,6 +921,16 @@ class FeatureGroup(models.Model):
     show_on_startup = models.BooleanField(
         default=False,
         help_text="Si le groupe de fonctionnalités doit être affiché au démarrage."
+    )
+
+    z_index = models.IntegerField(
+        default=0,
+        verbose_name="z-index",
+        help_text="Index definissant l'ordre d'affichage des couches. "
+                   "Plus l'index est élevé, plus la couche est affichée en premier plan.",
+        validators=[
+            MinValueValidator(0)
+        ]
     )
 
     # ------------------------------------------------------------------------------------------------------------------
