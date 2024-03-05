@@ -67,9 +67,9 @@
                 <!-- Interactive Map -->
                 <section class="interactive-map">
                     <h3>Carte interactive</h3>
-                    {% if map_embed_html %}
-                        <div class="map-render">{{ map_embed_html | safe }}</div>
-                        <a class="fullscreen-link" href="{{ map_fs_url }}">Ouvrir la carte en plein écran &gt</a>
+                    {% if map_embed %}
+                        <div class="map-render">{{ map_embed | safe }}</div>
+                        <a class="fullscreen-link" href="{{ map_fs_link }}">Ouvrir la carte en plein écran &gt</a>
                     {% else %}
                         <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
                     {%  endif %}
