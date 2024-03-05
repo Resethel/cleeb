@@ -157,19 +157,29 @@ a:visited {
 
 a.btn-white-large {
     display: inline-block;
-    text-decoration: none;
-    color: var(--verdant-green);
-    background-color: #fff;
-    border-radius: 4px;
-    font-size: 1.2rem;
+
     padding: 1.5rem 2rem;
+
+    border-radius: 4px;
+
+    background-color: #fff;
+
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: var(--verdant-green);
+
     cursor: pointer;
     transition: all 0.1s ease-in-out;
+}
+
+a.btn-white-large:disabled {
+    cursor: default;
 }
 
 a.btn-white-large:hover {
     background-color: var(--verdant-green);
     color: #fff;
+    cursor: pointer;
 }
 
 /* ================================================================================================================== */

@@ -1,0 +1,71 @@
+/* CSS for the error pages */
+
+.error {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: calc(100vh - var(--topbar-height));
+    width: 100%;
+
+    background-image:
+        linear-gradient(rgb(0, 0, 0, 0.5), rgb(0, 0, 0, 0.25)),
+        url('/static/assets/images/error-background.webp');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* fallback for old browsers */
+    background-color: var(--verdant-green);
+}
+
+.error .background-attributions {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-left: auto;
+    padding: 0 0.5rem;
+    text-align: right;
+    font-size: 0.5rem;
+    background-color: #444;
+}
+
+.error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: calc(var(--text-max-width)*0.8);
+    margin-bottom: 5rem;
+}
+
+.error-content h1 {
+    margin: 0;
+
+    color: var(--eco-emerald);
+    text-align: center;
+    text-shadow: 12px 10px 6px rgba(0, 0, 0, 0.5);
+
+    font-size: 14rem;
+    line-height: 14rem;
+    font-weight: 700;
+}
+
+.error-content p {
+    margin: 30px 0 0;
+    padding: 0;
+    color: white;
+    text-align: justify;
+}
+
+.error-content a {
+    /* Center the text */
+    display: flex;
+    justify-content: center;
+
+    margin-top: 30px;
+    padding-left: 0;
+    padding-right: 0;
+    width: 300px;
+}
