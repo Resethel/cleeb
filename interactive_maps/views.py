@@ -4,7 +4,10 @@ Views for the interactive maps application.
 from __future__ import annotations
 
 from bs4 import BeautifulSoup
-from django.shortcuts import render
+from django import urls
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.generic import DetailView
 
 from core.models import Person
@@ -13,10 +16,10 @@ from map_thematics.models import Thematic
 
 
 # ======================================================================================================================
-# Interactive maps detail view
+# Maps detail view
 # ======================================================================================================================
 
-class InteractiveMapDetailView(DetailView):
+class MapDetailView(DetailView):
     """Detail view for the interactive maps."""
     model = Map
     template_name = 'interactive_maps/interactive_map.html'
@@ -33,25 +36,25 @@ class InteractiveMapDetailView(DetailView):
         authors        : set[Person]   = self.object.authors.all()
         title          : str           = self.object.title
         try:
-            map_embed_html : str | None = self.object.map_render.embed_html.read().decode('utf-8')
-            map_fs_url     : str | None = self.object.map_render.full_html.url
+            map_embed_html : str | None = self.object.render.embed_html.read().decode('utf-8')
+            map_fs_link     : str | None = urls.reverse('map_fullscreen', kwargs={'slug': self.object.slug})
         except AttributeError:
             # If the map_render is None, then the map has not been generated yet
             map_embed_html = None
-            map_fs_url     = None
+            map_fs_link     = None
 
         # Add the text and sections to the context
-        context['title']           = title
-        context['thematics']       = thematics
-        context['created_at']      = self.object.created_at
-        context['last_modified']   = self.object.last_modified
-        context['authors']         = authors
+        context['title']         = title
+        context['thematics']     = thematics
+        context['created_at']    = self.object.created_at
+        context['last_modified'] = self.object.last_modified
+        context['authors']       = authors
 
-        context['introduction']    = None if introduction is None else self.__format_introduction(introduction)
-        context['sections']        = None if text is None else self.__split_text_sections(text)
+        context['introduction']  = None if introduction is None else self.__format_introduction(introduction)
+        context['sections']      = None if text is None else self.__split_text_sections(text)
 
-        context['map_embed_html']  = map_embed_html
-        context['map_fs_url']      = map_fs_url
+        context['map_embed']     = map_embed_html
+        context['map_fs_link']   = map_fs_link
 
         return context
     # End def get_context_data
@@ -94,13 +97,31 @@ class InteractiveMapDetailView(DetailView):
 
         return sections
     # End def __split_text_sections
-# End class InteractiveMapDetailView
+# End class MapDetailView
+
+# ======================================================================================================================
+# Interactive maps' full screen view
+# ======================================================================================================================
+
+def map_fullscreen_view(request, slug):
+    # Get the map
+    map_instance = get_object_or_404(Map, slug=slug)
+
+    # Get the map's render
+    map_render = map_instance.render
+
+    if map_render is None or map_render.full_html is None:
+        raise Http404(f"La vue plein écran de la carte '{map_instance.title}' n'est pas disponible.")
+
+    # Return the html of the map's full screen view
+    return FileResponse(map_render.full_html, as_attachment=False)
+# End def interactive_map_fullscreen_view
 
 # ======================================================================================================================
 # Interactive maps' catalog view
 # ======================================================================================================================
 
-def interactive_maps_catalog_view(request):
+def maps_catalog_view(request):
     # List all the available maps
     map_objects  = Map.objects.all()
 

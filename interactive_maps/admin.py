@@ -13,7 +13,7 @@ class MapRenderAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'linked_template', 'has_full_html', 'has_embed_html')
     search_fields = ('id', 'name')
 
-    readonly_fields = ('id', 'slug', 'template')
+    readonly_fields = ('id', 'slug', 'template', 'map')
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldset
@@ -22,7 +22,10 @@ class MapRenderAdmin(admin.ModelAdmin):
     fieldsets = (
         ('ID', {
             'classes': ('collapse',),
-            'fields': (('id','slug',), 'template'),
+            'fields': (
+                ('id','slug',),
+                ('template', 'map')
+            ),
         }),
         ('Description', {
             'fields': ('name',),
@@ -60,19 +63,50 @@ class MapRenderAdmin(admin.ModelAdmin):
 # Admin classes for the Map model
 # ======================================================================================================================
 
-class AuthorInline(admin.TabularInline):
-    """Inline class for the Person model."""
-    model = Map.authors.through
-    extra = 1
-
-    show_change_link = True
-# End class AuthorInline
-
 @admin.register(Map)
 class MapAdmin(admin.ModelAdmin):
     """Admin class for ThematicMap model."""
+    list_display = ('id', 'title', 'authors_', 'has_render', 'created_at', 'last_modified')
+    search_fields = ('id', 'title', 'slug')
+    list_display_links = ('id', 'title')
 
-    inlines = [
-        AuthorInline, # Inline for the Person model
-    ]
+    readonly_fields = ('id', 'slug', 'created_at', 'last_modified')
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fieldset
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        ('Informations', {
+            'classes': ('collapse',),
+            'fields': (
+                ('id', 'slug'),
+                ('created_at', 'last_modified'),
+            ),
+        }),
+        ('Metadonnées', {
+            'fields': ('title', 'authors', 'thematics'),
+        }),
+        ('Rendu', {
+            'fields': ('render',),
+        }),
+        ('Contenu', {
+            'fields': ('introduction', 'text'),
+        })
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def authors_(self, obj: Map):
+        if obj.authors.count() == 0:
+            return "-"
+        return ", ".join([author.display_name for author in obj.authors.all()])
+    authors_.short_description = "Auteur.ice.s"
+
+    def has_render(self, obj: Map):
+        return obj.render is not None
+    has_render.boolean = True
+    has_render.short_description = "Possède un rendu?"
 # End class MapAdmin

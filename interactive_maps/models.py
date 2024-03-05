@@ -1,12 +1,10 @@
-from uuid import uuid4
-
+from django import urls
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 
 from core.models import Organization
 from map_thematics.models import Thematic
+
 
 # ======================================================================================================================
 # Rendered Map
@@ -30,10 +28,8 @@ class MapRender(models.Model):
     """This class represents a map render."""
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Fields
+    # ID fields
     # ------------------------------------------------------------------------------------------------------------------
-
-    # ----- Identification -----
 
     id = models.AutoField(
         primary_key=True,
@@ -48,7 +44,23 @@ class MapRender(models.Model):
         default=None,
     )
 
-    # ------ Description ------
+    # ------------------------------------------------------------------------------------------------------------------
+    # Template
+    # ------------------------------------------------------------------------------------------------------------------
+
+    template = models.OneToOneField(
+        to='map_templates.MapTemplate',
+        related_name='render',
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+        verbose_name='Modèle',
+        help_text="Le modèle utilisé pour générer le rendu de la carte."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Description
+    # ------------------------------------------------------------------------------------------------------------------
 
     name = models.CharField(
         unique=True,
@@ -57,7 +69,9 @@ class MapRender(models.Model):
         help_text="Le nom du rendu."
     )
 
-    # ----- Maps Render -----
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rendered files
+    # ------------------------------------------------------------------------------------------------------------------
 
     embed_html = models.FileField(
         name="embed_html",
@@ -77,17 +91,6 @@ class MapRender(models.Model):
         default=None,
     )
 
-    # ----- Reference to MapTemplate (Optional) -----
-
-    template = models.OneToOneField(
-        to='map_templates.MapTemplate',
-        related_name='render',
-        on_delete=models.CASCADE,
-        null=True,
-        default=None,
-        verbose_name='Modèle',
-    )
-
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
@@ -95,6 +98,7 @@ class MapRender(models.Model):
     class Meta:
         verbose_name = "Rendu de carte"
         verbose_name_plural = "Rendus de carte"
+    # End class Meta
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -108,6 +112,19 @@ class MapRender(models.Model):
         super().clean()
         self.slug = slugify(self.name)
     # End def clean_fields
+
+    def get_absolute_url(self):
+        # If the template is linked to a map, then the map is supposed to be displayed.
+        if self.is_linked_to_map():
+            return urls.reverse('map_fullscreen', kwargs={'slug': self.map.slug})
+        # If the template is not linked, then the map is not supposed to be displayed.
+        # Therefore, return None
+        return None
+    # End def get_absolute_url
+
+    def is_linked_to_map(self):
+        return hasattr(self, 'map') and self.map is not None
+    # End def is_linked_to_map
 # End class MapRender
 
 # ======================================================================================================================
@@ -116,8 +133,23 @@ class MapRender(models.Model):
 
 class Map(models.Model):
 
-    # ID of the thematic map
+    # ------------------------------------------------------------------------------------------------------------------
+    # ID fields
+    # ------------------------------------------------------------------------------------------------------------------
+
     id = models.AutoField(primary_key=True)
+
+    slug = models.SlugField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None,
+        help_text="Le slug de la carte interactive. S'il n'est pas renseigné, il sera généré automatiquement."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Metadata fields
+    # ------------------------------------------------------------------------------------------------------------------
 
     # Title of the thematic map
     title = models.CharField(max_length=100)
@@ -127,6 +159,12 @@ class Map(models.Model):
         'core.Person',
         blank=True,
         help_text="Les auteur.ice.s de la carte interactive."
+    )
+
+    thematics = models.ManyToManyField(
+        'map_thematics.Thematic',
+        blank=True,
+        help_text="Les thématiques de la carte interactive."
     )
 
     created_at = models.DateField(
@@ -141,21 +179,23 @@ class Map(models.Model):
         editable=False
     )
 
-    # Themes of the thematic map
-    thematics = models.ManyToManyField(
-        'map_thematics.Thematic',
-        blank=True,
-        help_text="Les thématiques de la carte interactive."
-    )
+    # ------------------------------------------------------------------------------------------------------------------
+    # Rendered map
+    # ------------------------------------------------------------------------------------------------------------------
 
-    map_render = models.ForeignKey(
-        MapRender,
+    render = models.OneToOneField(
+        'MapRender',
+        related_name='map',
         verbose_name="Rendu de carte",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        help_text="Le rendu de carte généré par le serveur."
+        help_text="Le rendu de la carte."
     )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Content
+    # ------------------------------------------------------------------------------------------------------------------
 
     introduction = models.TextField(
         blank=True,
@@ -173,22 +213,33 @@ class Map(models.Model):
         help_text="Le texte de la carte interactive. Formaté en HTML."
     )
 
-    slug = models.SlugField(
-        max_length=100,
-        blank=True,
-        null=True,
-        default=None,
-        help_text="Le slug de la carte interactive. S'il n'est pas renseigné, il sera généré automatiquement."
-    )
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+    class Meta:
+        ordering = ['id',]  # Order Thematic maps by 'title' field
+        verbose_name = "Carte interactive"
+        verbose_name_plural = "Cartes interactives"
+    # End class Meta
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Magic methods
+    # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
         return f"{self.title}"
+    # End def __str__
 
-    class Meta:
-        ordering = ['id',]  # Order Thematic maps by 'title' field
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def clean(self, exclude=None):
+        super().clean()
+        self.slug = slugify(self.title)
+    # End def clean_fields
+
+    def get_absolute_url(self):
+        return urls.reverse('interactive_map_detail', kwargs={'slug': self.slug})
+    # End def get_absolute_url
 # End class Map
-
-@receiver(pre_save, sender=Map)
-def generate_slug(sender, instance, **kwargs):
-    if not instance.slug is None or instance.slug is None or instance.slug == "":
-        instance.slug = slugify(instance.title)

@@ -144,6 +144,13 @@ class Person(models.Model):
         return f"{self.lastname} {self.firstname} (alias {self.pseudonym})"
     # End def full_name
 
+    @property
+    def display_name(self):
+        if self.pseudonym:
+            return self.pseudonym
+        return f"{self.firstname} {self.lastname}"
+    # End def display_name
+
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
