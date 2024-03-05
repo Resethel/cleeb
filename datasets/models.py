@@ -208,6 +208,14 @@ class DatasetLayerField(models.Model):
         verbose_name_plural = "Champs de couche de jeu de données"
         unique_together = ['name', 'layer']
     # End class Meta
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return f"{self.layer} -> {self.name}"
+    # End def __str__
 # End class DatasetLayerField
 
 class DatasetLayer(models.Model):

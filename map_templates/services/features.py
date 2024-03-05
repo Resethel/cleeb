@@ -37,6 +37,100 @@ class BoundaryType(enum.Enum):
 # End class BoundaryType
 
 # ======================================================================================================================
+# ToolTip and Popup Class
+# ======================================================================================================================
+
+class ToolTip:
+    """Represents a tooltip of a Layer or a Marker."""
+    def __init__(self, fields : Iterable[str], aliases : Iterable[str], sticky : bool = False) -> None:
+        self.fields  : list[str] = list(fields)
+        self.aliases : list[str] = list(aliases)
+        self.sticky  : bool      = sticky
+    # End def __init__
+
+    def validate(self):
+        """Validate the tooltip."""
+        for idx, field in enumerate(self.fields):
+            if not isinstance(field, str):
+                raise ValueError(f"Expected 'fields@{idx}' to be of type 'str', not '{type(field)}'")
+        for idx, alias in enumerate(self.aliases):
+            if not isinstance(alias, str):
+                raise ValueError(f"Expected 'aliases@{idx}' to be of type 'str', not '{type(alias)}'")
+
+        if len(self.fields) != len(self.aliases):
+            raise ValueError(f"Expected 'fields' and 'aliases' to have the same length")
+
+        if not isinstance(self.sticky, bool):
+            raise ValueError(f"Expected 'sticky' to be of type 'bool', not '{type(self.sticky)}'")
+    # End def validate
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Serialization
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def serialize(self, method: Literal['json', 'dict'] = 'json', **kwargs) -> str | dict:
+        """Serialize the tooltip."""
+        if method == 'json':
+            return json.dumps(self._to_dict(), **kwargs)
+        if method == 'dict':
+            return self._to_dict()
+        raise ValueError(f"Invalid method '{method}'")
+    # End def serialize
+
+    @staticmethod
+    def deserialize(data: str | dict, method: Literal['json', 'dict'] = 'json', **kwargs) -> ToolTip:
+        """Deserialize the tooltip."""
+        if method == 'json':
+            return ToolTip._from_dict(json.loads(data, **kwargs))
+        if method == 'dict':
+            return ToolTip._from_dict(data)
+        raise ValueError(f"Invalid method '{method}'")
+    # End def deserialize
+
+    def _to_dict(self) -> dict:
+        return {
+            "__type__" : "__ToolTip__",
+            "fields"   : self.fields,
+            "aliases"  : self.aliases,
+            "sticky"   : self.sticky
+        }
+
+    @staticmethod
+    def _from_dict(data: dict) -> ToolTip:
+        if data.get("__type__", None) != "__ToolTip__":
+            raise ValueError(f"Invalid type '{data.get('__type__', None)}'")
+        return ToolTip(
+            fields=data["fields"],
+            aliases=data["aliases"]
+        )
+    # End def from_dict
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Model conversion
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def from_model(model : models.Tooltip) -> ToolTip:
+        """Convert a model to a ToolTip object"""
+        if not isinstance(model, models.Tooltip):
+            raise ValueError(f"Expected 'model' to be of a 'ToolTip' model, not '{type(model)}'")
+
+        fields = []
+        aliases = []
+        for field in model.fields.all().order_by('index'):
+            fields.append(field.field.name)
+            aliases.append(field.alias)
+
+
+        return ToolTip(
+            fields=fields,
+            aliases=aliases,
+            sticky=model.sticky
+        )
+    # End def from_model
+# End class ToolTip
+
+# ======================================================================================================================
 # Feature Base Class
 # ======================================================================================================================
 
@@ -118,17 +212,20 @@ class Layer(Feature):
             dataset_layer_id : int,
             *,
             z_index : int = 0,
+            tooltip : ToolTip | None = None,
             boundaries : GEOSGeometry | None = None,
             boundary_type : BoundaryType = BoundaryType.INTERSECT,
             style : Style | None = None,
             highlight : Style | None = None,
             filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
             show_on_startup : bool = True
+
     ) -> None:
         super().__init__(name, FeatureType.LAYER, z_index=z_index)
         self.dataset_layer_id : int                 = dataset_layer_id
+        self.tooltip          : ToolTip | None      = tooltip
         self.boundaries       : GEOSGeometry | None = boundaries
-        self.boundary_type  : BoundaryType          = boundary_type
+        self.boundary_type    : BoundaryType        = boundary_type
         self.filters          : list[Filter]        = []
         self.style            : Style | None        = style
         self.highlight        : Style | None        = highlight
@@ -211,6 +308,9 @@ class Layer(Feature):
             if not isinstance(filter_, Filter):
                 raise ValueError(f"Expected 'filters@{idx}' to be of type 'Filter', not '{type(filter_)}'")
             filter_.validate()
+
+        if self.tooltip is not None:
+            self.tooltip.validate()
     # End def validate
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -229,6 +329,7 @@ class Layer(Feature):
             name=model.name,
             dataset_layer_id=model.dataset_layer.id,
             z_index=model.z_index,
+            tooltip=ToolTip.from_model(model.tooltip) if model.tooltip else None,
             boundaries=GEOSGeometry(model.boundaries) if model.boundaries else None,
             boundary_type=boundary_type,
             style=Style.from_model(model.style) if model.style else None,
@@ -275,7 +376,8 @@ class Layer(Feature):
             "__type__"         : "__Layer__",
             "name"             : self.name,
             "dataset_layer_id" : self.dataset_layer_id,
-            "z_index"         : self.z_index,
+            "z_index"          : self.z_index,
+            "tooltip"          : self.tooltip.serialize('dict') if self.tooltip else None,
             "style"            : self.style.serialize('dict') if self.style else None,
             "highlight"        : self.highlight.serialize('dict') if self.highlight else None,
             "filters"          : [f.serialize('dict') for f in self.filters],
@@ -291,6 +393,7 @@ class Layer(Feature):
             name=data["name"],
             dataset_layer_id=data["dataset_layer_id"],
             z_index=data["z_index"],
+            tooltip=ToolTip.deserialize(data["tooltip"], 'dict') if data["tooltip"] else None,
             style=Style.deserialize(data["style"], 'dict') if data["style"] else None,
             highlight=Style.deserialize(data["highlight"], 'dict') if data["highlight"] else None,
             filters=[Filter.deserialize(f, 'dict') for f in data["filters"]],

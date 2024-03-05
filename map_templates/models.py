@@ -723,6 +723,126 @@ class Filter(models.Model):
 # End class Filter
 
 # ======================================================================================================================
+# Tooltip
+# ======================================================================================================================
+
+class TooltipField(models.Model):
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Ownership field
+    # ------------------------------------------------------------------------------------------------------------------
+
+    tooltip = models.ForeignKey(
+        'Tooltip',
+        on_delete=models.CASCADE,
+        related_name='fields'
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    field = models.ForeignKey(
+        'datasets.DatasetLayerField',
+        on_delete=models.CASCADE
+    )
+
+    alias = models.CharField(
+        max_length=255,
+        help_text="L'alias du champ dans l'infobulle."
+    )
+
+    index = models.IntegerField(
+        default=0,
+        verbose_name="Index",
+        help_text="L'index de l'infobulle.",
+        validators=[
+            MinValueValidator(0)
+        ]
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Champ d'infobulle"
+        verbose_name_plural = "Champs d'infobulles"
+        unique_together = ('tooltip', 'field')
+    # End class Meta
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def clean(self):
+        super().clean()
+        if self.tooltip.layer.dataset_layer != self.field.layer:
+            raise ValidationError(
+                "Le champ de l'infobulle doit appartenir à la même couche de jeu de données que l'infobulle.",
+                params={
+                    "tooltip_layer": self.tooltip.layer,
+                    "field_layer": self.field.layer
+                }
+            )
+    # End def clean
+# End class TooltipField
+
+class Tooltip(models.Model):
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Identification and ownership fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    id = models.AutoField(primary_key=True)
+
+    layer = models.OneToOneField(
+        'Layer',
+        on_delete=models.CASCADE,
+        related_name='tooltip'
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Relation to `TooltipField` is defined in the `TooltipField` model
+
+    sticky = models.BooleanField(
+        default=True,
+        verbose_name="Collant",
+        help_text="Si le tooltip doit suivre le curseur de la souris."
+    )
+
+    style = models.TextField(
+        default=None,
+        blank=True,
+        null=True,
+        verbose_name="Style",
+        help_text="Le style du tooltip, défini en CSS."
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Methods
+    # ------------------------------------------------------------------------------------------------------------------
+
+    def __str__(self):
+        return f"Tooltip@{self.id}"
+    # End def __str__
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Infobulle"
+        verbose_name_plural = "Infobulles"
+    # End class Meta
+# End class Tooltip
+
+
+
+# ======================================================================================================================
 # MapFeatures
 # ======================================================================================================================
 

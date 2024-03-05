@@ -3,8 +3,9 @@
 Admin module for the `map_templates` application.
 """
 from __future__ import annotations
-from django.contrib import admin
+
 from django import forms
+from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.gis.db.models import GeometryField
 from django.contrib.gis.forms import OSMWidget
@@ -13,9 +14,8 @@ from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTab
 
 from common.utils.admin import get_clock_icon_html
 from common.utils.tasks import TaskStatus
-from map_templates.models import CirclePattern, FeatureGroup, Filter, Layer, MapTemplate, StripePattern, Style, \
-    PropertyStyle, \
-    TileLayer
+from map_templates.models import CirclePattern, FeatureGroup, Filter, Layer, MapTemplate, PropertyStyle, StripePattern, \
+    Style, TileLayer, Tooltip, TooltipField
 
 # ======================================================================================================================
 # Constants
@@ -293,6 +293,50 @@ class FilterInline(NestedTabularInline):
 # End class FilterInline
 
 # ======================================================================================================================
+# Tooltip
+# ======================================================================================================================
+
+class TooltipFieldInline(NestedTabularInline):
+    model = TooltipField
+    extra = 0
+
+    def get_formset(self, request, obj=None, **kwargs):
+        request._obj_ = obj
+        return super().get_formset(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "field":
+            if request._obj_ is not None:
+                field.queryset = field.queryset.filter(layer=request._obj_.layer.dataset_layer)
+            else:
+                field.queryset = field.queryset.none()
+        return field
+    # End def formfield_for_foreignkey
+
+# End class TooltipFieldInline
+
+@admin.register(Tooltip)
+class TooltipAdmin(NestedModelAdmin):
+    inlines = [TooltipFieldInline]
+
+    def get_form(self, request, obj=None, **kwargs):
+        request._obj_ = obj
+        return super().get_form(request, obj, **kwargs)
+
+# End class TooltipAdmin
+
+class TooltipInline(NestedStackedInline):
+    model = Tooltip
+    extra = 0
+    inlines = [TooltipFieldInline]
+
+    def get_formset(self, request, obj=None, **kwargs):
+        request._obj_ = obj
+        return super().get_formset(request, obj, **kwargs)
+# End class TooltipInline
+
+# ======================================================================================================================
 # Layer
 # ======================================================================================================================
 
@@ -304,6 +348,7 @@ class LayerAdmin(NestedModelAdmin, GISModelAdmin):
     list_per_page = 25
 
     inlines = [
+        TooltipInline,
         FilterInline,
     ]
 # End class LayerAdmin
@@ -318,6 +363,7 @@ class LayerInline(NestedStackedInline):
     }
 
     inlines = [
+        TooltipInline,
         FilterInline,
     ]
 

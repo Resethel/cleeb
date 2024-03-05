@@ -239,14 +239,24 @@ class TemplateProcessor:
         if map_layer.filters is not None and len(map_layer.filters) > 0:
             feature_collection = self.__filter_geojson(feature_collection, map_layer.filters)
 
-        # 2.2.3. Add the feature group to the map
+        # 2.2.2. Create a tooltip for the layer if it exists
+        tooltip = None
+        if map_layer.tooltip is not None:
+            tooltip = folium.GeoJsonTooltip(
+                fields=map_layer.tooltip.fields,
+                aliases=map_layer.tooltip.aliases,
+                labels=True,
+                sticky=map_layer.tooltip.sticky,
+            )
+
+        # 2.2.3. Create the layer
         return folium.GeoJson(
             feature_collection.__geo_interface__,
             name=map_layer.name,
             style_function=map_layer.style.function if map_layer.style is not None else None,
             highlight_function=map_layer.highlight.function if map_layer.highlight is not None else None,
             # TODO: Add the popup once the template class for a popup is implemented
-            tooltip=None,
+            tooltip=tooltip,
             show=map_layer.show_on_startup,
         )
     # End def __generate_layer
