@@ -20,11 +20,13 @@ class TileLayer:
                  control: bool = True,
                  type: Literal['builtin', 'xyz'] = 'builtin',
                  *,
+                 display_name: str | None = None,
                  url: str | None = None,
                  access_token: str | None = None,
                  attribution: str | None = None
                  ):
         self.name = name
+        self.display_name : str | None = display_name if display_name is not None else name
         self.type : Literal['builtin', 'xyz'] = type
 
         # Display fields
@@ -51,15 +53,16 @@ class TileLayer:
     # Model conversion
     # ------------------------------------------------------------------------------------------------------------------
     @staticmethod
-    def from_model(model: models.TileLayer) -> TileLayer:
+    def from_model(tile_layer: models.TileLayer) -> TileLayer:
         return TileLayer(
-                name=model.name,
-                transparent=model.transparent,
-                overlay=model.overlay,
-                control=model.control,
-                type=model.type,
-                url=model.url,
-                attribution=model.attribution
+                name=tile_layer.name,
+                display_name=tile_layer.verbose_name,
+                transparent=tile_layer.transparent,
+                overlay=tile_layer.overlay,
+                control=tile_layer.control,
+                type=tile_layer.type,
+                url=tile_layer.url,
+                attribution=tile_layer.attribution
         )
     # End def from_model
 
@@ -101,6 +104,7 @@ class TileLayer:
         return {
             "__type__" : "__TileLayer__",
             "name" : self.name,
+            "display_name" : self.display_name,
             "type" : self.type,
             "transparent" : self.transparent,
             "overlay" : self.overlay,
@@ -119,6 +123,7 @@ class TileLayer:
 
         return TileLayer(
             name=data["name"],
+            display_name=data["display_name"],
             type=data["type"],
             transparent=data["transparent"],
             overlay=data["overlay"],

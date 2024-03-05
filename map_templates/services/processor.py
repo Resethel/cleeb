@@ -208,7 +208,7 @@ class TemplateProcessor:
         for tile in self.template.tiles:
             if tile.type == 'builtin':
                 yield folium.TileLayer(
-                    name=tile.name,
+                    name=tile.display_name,
                     tiles=tile.name,
                     attr=f"(c) {tile.name.title()}",
                     overlay=False,
@@ -216,7 +216,7 @@ class TemplateProcessor:
                 )
             else:
                 yield folium.TileLayer(
-                    name=tile.name,
+                    name=tile.display_name,
                     tiles=xyzservices.TileProvider(
                         name=tile.name,
                         url=tile.url,
