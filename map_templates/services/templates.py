@@ -8,20 +8,32 @@ import builtins
 import json
 from typing import Collection, Iterable, Literal
 
+from django.contrib.gis.geos import Point
+
 from map_templates import models
 from map_templates.services.features import Feature, FeatureGroup, FeatureType, Layer
 from map_templates.services.tiles import TileLayer
 from map_templates.utils import repr_str
 
+# ======================================================================================================================
+# Constants
+# ======================================================================================================================
+
 MIN_ZOOM = 5
 MAX_ZOOM = 18
+# Default center of any map is Metz, France (6.175715, 49.119308)
+DEFAULT_CENTER = Point(6.175715, 49.119308, srid=4326)
 
+# ======================================================================================================================
+# MapTemplate
+# ======================================================================================================================
 
 class MapTemplate:
     """Represents a map template."""
     def __init__(self,
                  name : str = None,
                  *,
+                 center : Point = DEFAULT_CENTER,
                  zoom_start : int | None = None,
                  layer_control : bool = True,
                  zoom_control : bool = True,
@@ -29,6 +41,7 @@ class MapTemplate:
                  features : Collection[Feature] | None = None) -> None:
 
         self.name          : str = name
+        self.center        : Point = center
         self.zoom_start    : int = zoom_start if zoom_start is not None else MIN_ZOOM + (MAX_ZOOM - MIN_ZOOM)*(2/3)
         self.layer_control : bool = layer_control
         self.zoom_control  : bool = zoom_control
@@ -178,6 +191,7 @@ class MapTemplate:
 
         template = MapTemplate(
             name=model.name,
+            center=model.center,
             zoom_start=model.zoom_start,
             layer_control=model.layer_control,
             zoom_control=model.zoom_control,
@@ -192,7 +206,6 @@ class MapTemplate:
 
         # Return the template
         return template
-
     # End def from_model
 
     def to_model(self) -> models.MapTemplate:
@@ -234,13 +247,13 @@ class MapTemplate:
         return {
             "__type__" : "__MapTemplate__",
             "name" : self.name,
+            "center" : {"long": self.center.x, "lat": self.center.y, "srid": self.center.srid},
             "zoom_start" : self.zoom_start,
             "layer_control" : self.layer_control,
             "zoom_control" : self.zoom_control,
             "tiles" : [tile.serialize(method='dict') for tile in self.__tiles],
             "features" : [feature.serialize(method='dict') for feature in self.__features]
         }
-
     # End def to_json
 
     @staticmethod
@@ -249,8 +262,12 @@ class MapTemplate:
         if data.get("__type__", None) != "__MapTemplate__":
             raise ValueError(f"Invalid type '{data.get('__type__', None)}'")
 
-        return MapTemplate(name=data["name"], zoom_start=data["zoom_start"], layer_control=data["layer_control"],
-                           zoom_control=data["zoom_control"],
-                           tiles=[TileLayer.deserialize(tile, method='dict') for tile in data["tiles"]],
-                           features=[Layer.deserialize(feature, method='dict') for feature in data["features"]])
+        return MapTemplate(
+            name=data["name"],
+            center=Point(data["center"]["long"], data["center"]["lat"], srid=data["center"].get("srid", 4326)),
+            zoom_start=data["zoom_start"],
+            layer_control=data["layer_control"],
+            zoom_control=data["zoom_control"],
+            tiles=[TileLayer.deserialize(tile, method='dict') for tile in data["tiles"]],
+            features=[Layer.deserialize(feature, method='dict') for feature in data["features"]])
     # End def to_json

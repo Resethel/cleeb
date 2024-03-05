@@ -5,6 +5,7 @@ Models for the `map_templates` application.
 from colorfield.fields import ColorField
 from django.contrib import admin
 from django.contrib.gis.db import models as gis_models
+from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -964,6 +965,15 @@ class MapTemplate(models.Model):
         ],
         help_text="Le niveau de zoom initial de la carte.",
         verbose_name="Niveau de zoom initial"
+    )
+
+    # Center of the map template
+    # Defaults to Metz, France: lat=49.119308, lon=6.175715 (because why not?)
+    center = gis_models.PointField(
+        default=Point(6.175715, 49.119308, srid=4326),
+        srid=4326, # Keep the SRID to 4326 for compatibility with Leaflet
+        verbose_name="Centre",
+        help_text="Le centre de la carte."
     )
 
     # Enable layer control of the map template

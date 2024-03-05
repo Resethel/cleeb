@@ -26,7 +26,6 @@ from map_templates.services.templates import MapTemplate as MapTemplateObject
 # Constants
 # ======================================================================================================================
 
-LOCATION_OF_METZ = (49.119309, 6.175716) # TODO: Replace by start location defined in a MapTemplate
 logger = logging.getLogger(__name__)
 MAX_ZOOM = 18
 MIN_ZOOM = 1
@@ -87,17 +86,18 @@ class TemplateProcessor:
         """Generate the map data from the template."""
         logger.info(f"Generating map '{self.template.name}'...")
 
-        # noinspection PyTypeChecker
+        # 0. Create the folium map object
         map_ = folium.Map(
             tiles=None,
-            location=LOCATION_OF_METZ,
+            # Invert the coordinates as folium uses (lat, lon) and not (lon, lat)
+            location=(self.template.center.y, self.template.center.x),
             zoom_start=self.template.zoom_start,
             min_zoom=MIN_ZOOM,
             max_zoom=MAX_ZOOM,
-            min_lat=LOCATION_OF_METZ[0] - 1.5,
-            max_lat=LOCATION_OF_METZ[0] + 1.5,
-            min_lon=LOCATION_OF_METZ[1] - 1.5,
-            max_lon=LOCATION_OF_METZ[1] + 1.5,
+            min_lat=self.template.center.y - 1.5,
+            max_lat=self.template.center.y + 1.5,
+            min_lon=self.template.center.x - 1.5,
+            max_lon=self.template.center.x + 1.5,
             max_bounds_viscosity=2.0,
             max_bounds=True,
             control_scale=True,
@@ -226,7 +226,7 @@ class TemplateProcessor:
             name=map_layer.name,
             style_function=map_layer.style.function if map_layer.style is not None else None,
             highlight_function=map_layer.highlight.function if map_layer.highlight is not None else None,
-            # TODO: Add the popup once the template class for a tooltip is implemented
+            # TODO: Add the popup once the template class for a popup is implemented
             tooltip=None,
             show=map_layer.show_on_startup,
         )

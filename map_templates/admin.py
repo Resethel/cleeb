@@ -362,7 +362,7 @@ class FeatureGroupInline(NestedStackedInline):
 # ======================================================================================================================
 
 @admin.register(MapTemplate)
-class MapTemplateAdmin(NestedModelAdmin):
+class MapTemplateAdmin(NestedModelAdmin, GISModelAdmin):
     list_display = ('id', 'name', 'generation_status', 'child_map_render')
     list_display_links = ('id', 'name',)
     search_fields = ('id', 'name',)
@@ -395,7 +395,12 @@ class MapTemplateAdmin(NestedModelAdmin):
             'fields': ('name',)
         }),
         ('Tiles and Controls', {
-            'fields': ('tiles','zoom_start', 'layer_control', 'zoom_control')
+            'fields': (
+                'tiles',
+                'zoom_start',
+                ('layer_control', 'zoom_control'),
+                'center',
+            )
         }),
     )
 
