@@ -318,24 +318,24 @@ class Layer(Feature):
     # ------------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def from_model(model: models.Layer) -> Layer:
+    def from_model(layer: models.Layer) -> Layer:
         """Convert a model to a Layer object"""
-        if not isinstance(model, models.Layer):
-            raise ValueError(f"Expected 'model' to be of a 'Layer' model, not '{type(model)}'")
+        if not isinstance(layer, models.Layer):
+            raise ValueError(f"Expected 'model' to be of a 'Layer' model, not '{type(layer)}'")
 
-        boundary_type = BoundaryType(model.boundary_type) if model.boundary_type else BoundaryType.INTERSECT
+        boundary_type = BoundaryType(layer.boundary_type) if layer.boundary_type else BoundaryType.INTERSECT
 
         return Layer(
-            name=model.name,
-            dataset_layer_id=model.dataset_layer.id,
-            z_index=model.z_index,
-            tooltip=ToolTip.from_model(model.tooltip) if model.tooltip else None,
-            boundaries=GEOSGeometry(model.boundaries) if model.boundaries else None,
+            name=layer.name,
+            dataset_layer_id=layer.dataset_layer.id,
+            z_index=layer.z_index,
+            tooltip=ToolTip.from_model(layer.tooltip) if layer.has_tooltip() is True else None,
+            boundaries=GEOSGeometry(layer.boundaries) if layer.boundaries else None,
             boundary_type=boundary_type,
-            style=Style.from_model(model.style) if model.style else None,
-            highlight=Style.from_model(model.highlight) if model.highlight else None,
-            filters=[Filter(key=f.key, operator=f.operator, value=f.value) for f in model.filters.all()],
-            show_on_startup=model.show
+            style=Style.from_model(layer.style) if layer.style else None,
+            highlight=Style.from_model(layer.highlight) if layer.highlight else None,
+            filters=[Filter(key=f.key, operator=f.operator, value=f.value) for f in layer.filters.all()],
+            show_on_startup=layer.show
         )
 
     def to_model(self) -> models.Layer:
@@ -512,16 +512,16 @@ class FeatureGroup(MutableSet, Feature):
     # ------------------------------------------------------------------------------------------------------------------
 
     @staticmethod
-    def from_model(model: models.FeatureGroup) -> FeatureGroup:
+    def from_model(feature_group: models.FeatureGroup) -> FeatureGroup:
         """Convert a model to a FeatureGroup object"""
-        if not isinstance(model, models.FeatureGroup):
-            raise ValueError(f"Expected 'model' to be of a 'FeatureGroup' model, not '{type(model)}'")
+        if not isinstance(feature_group, models.FeatureGroup):
+            raise ValueError(f"Expected 'model' to be of a 'FeatureGroup' model, not '{type(feature_group)}'")
 
         return FeatureGroup(
-            name=model.name,
-            z_index=model.z_index,
-            show_on_startup=model.show_on_startup,
-            features=[Layer.from_model(layer) for layer in model.layers.all()]
+            name=feature_group.name,
+            z_index=feature_group.z_index,
+            show_on_startup=feature_group.show_on_startup,
+            features=[Layer.from_model(layer) for layer in feature_group.layers.all()]
         )
     # End def from_model
 

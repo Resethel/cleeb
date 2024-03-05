@@ -978,6 +978,14 @@ class Layer(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Meta
+    # ------------------------------------------------------------------------------------------------------------------
+
+    class Meta:
+        verbose_name = "Couche"
+        verbose_name_plural = "Couches"
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Methods
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -992,13 +1000,12 @@ class Layer(models.Model):
             raise ValidationError("La couche ne peut appartenir à la fois à un groupe de fonctionnalités et à un modèle de carte.")
     # End def clean
 
-    # ------------------------------------------------------------------------------------------------------------------
-    # Meta
-    # ------------------------------------------------------------------------------------------------------------------
+    def has_tooltip(self) -> bool:
+        """Returns True if the layer has a tooltip, False otherwise."""
+        return hasattr(self, "tooltip") and self.tooltip is not None
+    # End def has_tooltip
 
-    class Meta:
-        verbose_name = "Couche"
-        verbose_name_plural = "Couches"
+
 # End class Layer
 
 class FeatureGroup(models.Model):
