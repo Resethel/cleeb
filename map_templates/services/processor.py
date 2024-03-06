@@ -14,12 +14,14 @@ import xyzservices
 from django.apps import apps
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.files.base import ContentFile
+from django.templatetags.static import static
 from django.utils.text import slugify
 
 from datasets.models import DatasetLayer, Feature
 from interactive_maps.models import MapRender
 from map_templates.services.features import BoundaryType, FeatureGroup as FeatureGroupObject, Layer as LayerObject
 from map_templates.services.filters import Filter
+from map_templates.services.styles import Style
 from map_templates.services.templates import MapTemplate as MapTemplateObject
 
 # ======================================================================================================================
@@ -115,11 +117,13 @@ class TemplateProcessor:
         #      If two features have the same z_index, then the order is undefined.
         sorted_features = sorted(self.template.features, key=lambda f: f.z_index)
         keep_in_front = []
+        legend_entries = []
         # 2.2. Add the features to the map
         for feature in sorted_features:
             # 2.2.1. If the feature is a layer, add it to the map
             if isinstance(feature, LayerObject):
                 logger.debug(f"Adding layer '{feature.name}' to the map...")
+                legend_entries.append((feature.name, feature.style))
                 feature = self.__generate_layer(feature)
                 keep_in_front.append(feature)
                 feature.add_to(map_)
@@ -136,6 +140,7 @@ class TemplateProcessor:
                 # 2.2.2.2. Process the sub-features by their z-index
                 sorted_sub_features = sorted(feature, key=lambda f: f.z_index)
                 for sub_feature in sorted_sub_features:
+                    legend_entries.append((sub_feature.name, sub_feature.style))
                     sub_feature = self.__generate_layer(sub_feature)
                     keep_in_front.append(sub_feature)
                     sub_feature.add_to(feature_group)
@@ -150,6 +155,10 @@ class TemplateProcessor:
 
         # 4. Set the layer order
         map_.keep_in_front(*keep_in_front)
+
+        # 5. Generate the legend
+        #    Reverse the legend entries to have the lowest z-index at the bottom
+        generate_legend(map_, reversed(legend_entries))
 
         # 5. Return the folium map object
         self.map = map_
@@ -339,3 +348,80 @@ class TemplateProcessor:
         return geojson.FeatureCollection(features=filtered_features)
     # End def __filter_geojson
 # End class MapBuilder
+
+
+# ======================================================================================================================
+# Legend Generation
+# ======================================================================================================================
+
+LEGEND_TEMPLATE = """
+    <div class="legend --collapsed">
+        <img class="collapsed-icon" src="{icon}" alt="Collapse icon"></img>
+        {entries}
+    </div>
+"""
+
+ENTRY_TEMPLATE = """
+    <div class="legend-entry">
+        <div class="square" style="--fill-color: {fill_color}; --stroke-color: {stroke_color};"></div>
+        <p>{label}</p>
+    </div>
+"""
+
+
+def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) -> None:
+    """Generate a legend from the entries provided."""
+    # Fill the template with the entries
+    legend_html = LEGEND_TEMPLATE
+
+    # Add the entries
+    html_entries = []
+    for entry in entries:
+        stroke_color, fill_color = convert_style_color_to_legend_colors(entry[1])
+        html_entries.append(ENTRY_TEMPLATE.format(
+            fill_color=fill_color,
+            stroke_color=stroke_color,
+            label=entry[0]
+        ))
+
+    # Add the entries and the icon to the legend
+    legend_html = legend_html.format(
+        icon=static('assets/icons/help_FILL0_wght500_GRAD200_opsz24.svg'),
+        entries="".join(html_entries)
+    )
+
+    # Add the legend to the map
+    map_.get_root().html.add_child(folium.CssLink(static('map_templates/css/legend.css')))
+    map_.get_root().html.add_child(folium.Element(legend_html))
+    map_.get_root().html.add_child(folium.JavascriptLink(static('map_templates/js/legend-toggle.js')))
+# End def generate_legend
+
+
+def convert_style_color_to_legend_colors(style: Style) -> tuple[str, str]:
+    fill_color_hex = style.fill_color
+    fill_color_opacity = style.fill_opacity
+    stroke_color_hex = style.color
+    stroke_color_opacity = style.opacity
+
+    stroke_color = (f"rgba("
+                    f"{int(stroke_color_hex[1:3], 16)},"  # Red
+                    f"{int(stroke_color_hex[3:5], 16)},"  # Green
+                    f"{int(stroke_color_hex[5:7], 16)},"  # Blue
+                    f"{stroke_color_opacity})")  # Opacity
+
+    fill_color = (f"rgba("
+                  f"{int(fill_color_hex[1:3], 16)},"  # Red
+                  f"{int(fill_color_hex[3:5], 16)},"  # Green
+                  f"{int(fill_color_hex[5:7], 16)},"  # Blue
+                  f"{fill_color_opacity})")  # Opacity
+
+    return stroke_color, fill_color
+# End def convert_style_color_to_legend_colors
+
+
+
+
+
+
+
+    
