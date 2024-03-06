@@ -4,7 +4,6 @@ Processor service module for the `map_templates` application.
 """
 from __future__ import annotations
 
-import copy
 import json
 import logging
 from typing import Iterable, Iterator
@@ -15,6 +14,7 @@ import xyzservices
 from django.apps import apps
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.files.base import ContentFile
+from django.templatetags.static import static
 from django.utils.text import slugify
 
 from datasets.models import DatasetLayer, Feature
@@ -354,56 +354,11 @@ class TemplateProcessor:
 # Legend Generation
 # ======================================================================================================================
 
-LEGEND_STYLE = """
-<style>
-    .legend { 
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        
-        position : absolute;
-        bottom: 50px;
-        left: 5px;
-        z-index: 10000;
-        
-        max-width: 150px;
-        
-        background-color: white;
-        
-        border: 2px solid rgba(0, 0, 0, 0.2);;
-        padding: 6px 10px 6px 6px;
-        border-radius: 5px;
-    }
-        
-    .legend-entry {
-        display: flex;
-        align-items: center;
-        height: 17px;
-    }
-        
-    .legend-entry .square {
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        padding: 0;
-        margin: 1px 0;
-        
-        border: 2px solid var(--stroke-color); 
-        background-color: var(--fill-color);
-    }
-        
-    .legend-entry p {
-        display: inline-block;
-        margin: 0;
-        margin-left: 5px;
-        
-        font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-        font-size: 1rem;
-        font-weight: bold;
-        line-height: 15px;
-        color: #333;
-    }
-</style>
+LEGEND_TEMPLATE = """
+    <div class="legend --collapsed">
+        <img class="collapsed-icon" src="{icon}" alt="Collapse icon"></img>
+        {entries}
+    </div>
 """
 
 ENTRY_TEMPLATE = """
@@ -417,19 +372,28 @@ ENTRY_TEMPLATE = """
 def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) -> None:
     """Generate a legend from the entries provided."""
     # Fill the template with the entries
-    legend_html = LEGEND_STYLE + "<div class=\"legend\">"
-    # For now, it's just a test
+    legend_html = LEGEND_TEMPLATE
+
+    # Add the entries
+    html_entries = []
     for entry in entries:
         stroke_color, fill_color = convert_style_color_to_legend_colors(entry[1])
-        legend_html += ENTRY_TEMPLATE.format(
+        html_entries.append(ENTRY_TEMPLATE.format(
             fill_color=fill_color,
             stroke_color=stroke_color,
             label=entry[0]
-        )
-    legend_html += "</div>"
+        ))
+
+    # Add the entries and the icon to the legend
+    legend_html = legend_html.format(
+        icon=static('assets/icons/help_FILL0_wght500_GRAD200_opsz24.svg'),
+        entries="".join(html_entries)
+    )
 
     # Add the legend to the map
+    map_.get_root().html.add_child(folium.CssLink(static('map_templates/css/legend.css')))
     map_.get_root().html.add_child(folium.Element(legend_html))
+    map_.get_root().html.add_child(folium.JavascriptLink(static('map_templates/js/legend-toggle.js')))
 # End def generate_legend
 
 
