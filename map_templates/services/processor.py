@@ -16,6 +16,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.files.base import ContentFile
 from django.templatetags.static import static
 from django.utils.text import slugify
+from folium.plugins import CirclePattern, StripePattern
 
 from datasets.models import DatasetLayer, Feature
 from interactive_maps.models import MapRender
@@ -363,11 +364,16 @@ LEGEND_TEMPLATE = """
 
 ENTRY_TEMPLATE = """
     <div class="legend-entry">
-        <div class="square" style="--fill-color: {fill_color}; --stroke-color: {stroke_color};"></div>
+        <div class="square" style="{style}"></div>
         <p>{label}</p>
     </div>
 """
 
+SOLID_STROKE = "border: 2px solid {color};"
+DASHED_STROKE = "border: 2px dashed {color};"
+STRIP_FILL = "background: repeating-linear-gradient({angle}deg, {color} 0, {color} 3px, {space_color} 3px, {space_color} 6px);"
+DOTTED_FILL = "background: radial-gradient({color} 3px, {fill_color} 3px);"
+SOLID_FILL = "background-color: {color};"
 
 def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) -> None:
     """Generate a legend from the entries provided."""
@@ -377,10 +383,38 @@ def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) ->
     # Add the entries
     html_entries = []
     for entry in entries:
-        stroke_color, fill_color = convert_style_color_to_legend_colors(entry[1])
+        entry_style : Style = entry[1]
+        style_str = ""
+
+        # First, take care of the fill
+        if entry_style.fill is True:
+            if isinstance(entry_style.fill_pattern, StripePattern):
+                style_str = STRIP_FILL.format(
+                    angle=entry_style.fill_pattern.options['angle'],
+                    color=entry_style.fill_pattern.options['color'],
+                    space_color=entry_style.fill_pattern.options['spaceColor']
+                )
+            elif isinstance(entry_style.fill_pattern, CirclePattern):
+                style_str = DOTTED_FILL.format(
+                    color=entry_style.fill_pattern.options_pattern_circle['color'],
+                    fill_color=entry_style.fill_pattern.options_pattern_circle['fillColor']
+                )
+            else:
+                style_str = SOLID_FILL.format(color=convert_style_color_to_css(entry_style)[1])
+
+        # Then, take care of the stroke
+        if entry_style.stroke is True:
+            if entry_style.dash_array is not None:
+                style_str += DASHED_STROKE.format(color=convert_style_color_to_css(entry_style)[0])
+            else:
+                style_str += SOLID_STROKE.format(color=convert_style_color_to_css(entry_style)[0])
+
+        # if there is no fill or stroke, the entry is not added to the legend
+        if style_str == "":
+            continue
+
         html_entries.append(ENTRY_TEMPLATE.format(
-            fill_color=fill_color,
-            stroke_color=stroke_color,
+            style=style_str,
             label=entry[0]
         ))
 
@@ -397,7 +431,7 @@ def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) ->
 # End def generate_legend
 
 
-def convert_style_color_to_legend_colors(style: Style) -> tuple[str, str]:
+def convert_style_color_to_css(style: Style) -> tuple[str, str]:
     fill_color_hex = style.fill_color
     fill_color_opacity = style.fill_opacity
     stroke_color_hex = style.color
