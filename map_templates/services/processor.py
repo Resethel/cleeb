@@ -4,6 +4,7 @@ Processor service module for the `map_templates` application.
 """
 from __future__ import annotations
 
+import copy
 import json
 import logging
 from typing import Iterable, Iterator
@@ -20,6 +21,7 @@ from datasets.models import DatasetLayer, Feature
 from interactive_maps.models import MapRender
 from map_templates.services.features import BoundaryType, FeatureGroup as FeatureGroupObject, Layer as LayerObject
 from map_templates.services.filters import Filter
+from map_templates.services.styles import Style
 from map_templates.services.templates import MapTemplate as MapTemplateObject
 
 # ======================================================================================================================
@@ -115,11 +117,13 @@ class TemplateProcessor:
         #      If two features have the same z_index, then the order is undefined.
         sorted_features = sorted(self.template.features, key=lambda f: f.z_index)
         keep_in_front = []
+        legend_entries = []
         # 2.2. Add the features to the map
         for feature in sorted_features:
             # 2.2.1. If the feature is a layer, add it to the map
             if isinstance(feature, LayerObject):
                 logger.debug(f"Adding layer '{feature.name}' to the map...")
+                legend_entries.append((feature.name, feature.style))
                 feature = self.__generate_layer(feature)
                 keep_in_front.append(feature)
                 feature.add_to(map_)
@@ -136,6 +140,7 @@ class TemplateProcessor:
                 # 2.2.2.2. Process the sub-features by their z-index
                 sorted_sub_features = sorted(feature, key=lambda f: f.z_index)
                 for sub_feature in sorted_sub_features:
+                    legend_entries.append((sub_feature.name, sub_feature.style))
                     sub_feature = self.__generate_layer(sub_feature)
                     keep_in_front.append(sub_feature)
                     sub_feature.add_to(feature_group)
@@ -150,6 +155,10 @@ class TemplateProcessor:
 
         # 4. Set the layer order
         map_.keep_in_front(*keep_in_front)
+
+        # 5. Generate the legend
+        #    Reverse the legend entries to have the lowest z-index at the bottom
+        generate_legend(map_, reversed(legend_entries))
 
         # 5. Return the folium map object
         self.map = map_
@@ -339,3 +348,116 @@ class TemplateProcessor:
         return geojson.FeatureCollection(features=filtered_features)
     # End def __filter_geojson
 # End class MapBuilder
+
+
+# ======================================================================================================================
+# Legend Generation
+# ======================================================================================================================
+
+LEGEND_STYLE = """
+<style>
+    .legend { 
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        
+        position : absolute;
+        bottom: 50px;
+        left: 5px;
+        z-index: 10000;
+        
+        max-width: 150px;
+        
+        background-color: white;
+        
+        border: 2px solid rgba(0, 0, 0, 0.2);;
+        padding: 6px 10px 6px 6px;
+        border-radius: 5px;
+    }
+        
+    .legend-entry {
+        display: flex;
+        align-items: center;
+        height: 17px;
+    }
+        
+    .legend-entry .square {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        padding: 0;
+        margin: 1px 0;
+        
+        border: 2px solid var(--stroke-color); 
+        background-color: var(--fill-color);
+    }
+        
+    .legend-entry p {
+        display: inline-block;
+        margin: 0;
+        margin-left: 5px;
+        
+        font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+        font-size: 1rem;
+        font-weight: bold;
+        line-height: 15px;
+        color: #333;
+    }
+</style>
+"""
+
+ENTRY_TEMPLATE = """
+    <div class="legend-entry">
+        <div class="square" style="--fill-color: {fill_color}; --stroke-color: {stroke_color};"></div>
+        <p>{label}</p>
+    </div>
+"""
+
+
+def generate_legend(map_ : folium.Map, entries : Iterable[tuple[str, Style]]) -> None:
+    """Generate a legend from the entries provided."""
+    # Fill the template with the entries
+    legend_html = LEGEND_STYLE + "<div class=\"legend\">"
+    # For now, it's just a test
+    for entry in entries:
+        stroke_color, fill_color = convert_style_color_to_legend_colors(entry[1])
+        legend_html += ENTRY_TEMPLATE.format(
+            fill_color=fill_color,
+            stroke_color=stroke_color,
+            label=entry[0]
+        )
+    legend_html += "</div>"
+
+    # Add the legend to the map
+    map_.get_root().html.add_child(folium.Element(legend_html))
+# End def generate_legend
+
+
+def convert_style_color_to_legend_colors(style: Style) -> tuple[str, str]:
+    fill_color_hex = style.fill_color
+    fill_color_opacity = style.fill_opacity
+    stroke_color_hex = style.color
+    stroke_color_opacity = style.opacity
+
+    stroke_color = (f"rgba("
+                    f"{int(stroke_color_hex[1:3], 16)},"  # Red
+                    f"{int(stroke_color_hex[3:5], 16)},"  # Green
+                    f"{int(stroke_color_hex[5:7], 16)},"  # Blue
+                    f"{stroke_color_opacity})")  # Opacity
+
+    fill_color = (f"rgba("
+                  f"{int(fill_color_hex[1:3], 16)},"  # Red
+                  f"{int(fill_color_hex[3:5], 16)},"  # Green
+                  f"{int(fill_color_hex[5:7], 16)},"  # Blue
+                  f"{fill_color_opacity})")  # Opacity
+
+    return stroke_color, fill_color
+# End def convert_style_color_to_legend_colors
+
+
+
+
+
+
+
+    
