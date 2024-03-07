@@ -3,6 +3,7 @@
 Service module for the `datasets` application.
 It contains the business logic for the application needed to process the datasets.
 """
+import datetime
 import tempfile
 import zipfile
 from pathlib import Path
@@ -54,7 +55,14 @@ def generate_features(dataset_version_id: int) -> None:
                     # Convert the feature's geometry to a GEOSGeometry instance
                     geometry = GEOSGeometry(feature.geom.wkt, srid = dataset_layer.srid)
 
-                    fields = {field: feature.get(field) for field in feature.fields}
+                    fields = {}
+                    for field in feature.fields:
+                        in_field = feature.get(field)
+                        # Convert date and time fields to ISO format
+                        if isinstance(in_field, (datetime.date, datetime.time, datetime.datetime)):
+                            fields[field] = in_field.isoformat()
+                        else:
+                            fields[field] = feature.get(field)
 
                     # Create a Feature instance for the feature and save it to the database
                     # immediately so that memory is not exhausted
