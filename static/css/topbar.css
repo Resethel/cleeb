@@ -150,3 +150,183 @@
 .topbar-tools a:hover > span {
     display: block;
 }
+
+/* ================================================================================================================== */
+/* Hamburger                                                                                                          */
+/* ================================================================================================================== */
+
+.hamburger {
+    display: none; /* Hide the hamburger by default, it will be shown on small screens */
+    flex-direction: column;
+    align-items: flex-start;
+
+    position: fixed;
+    top: 0;
+    z-index: 100;
+
+    width: 100vw;
+    height: 100vh;
+}
+
+.hamburger input[type="checkbox"] {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+
+    z-index: 1;
+
+    height: calc(var(--topbar-height) * 0.33);
+    width: calc(var(--topbar-height) * 0.40);
+
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* ------ Hamburger topbar ------ */
+
+.hamburger-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: var(--topbar-height);
+    width: 100%;
+
+    margin: 0;
+    padding: 0 50px;
+
+    background-color: white;
+    border-bottom: 1px solid black;
+    box-shadow: 0 1px 4px rgb(146 161 176 / 15%);
+}
+
+/* ------ Hamburger button ------ */
+
+.hamburger-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: calc(var(--topbar-height) * 0.33);
+    width: calc(var(--topbar-height) * 0.40);
+}
+
+.hamburger-button__line {
+    display: block;
+    height: 4px;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--verdant-green);
+}
+
+.hamburger-button__line#top {
+    transform-origin: 0 0;
+    transition: all 0.4s ease-in-out;
+}
+
+.hamburger-button__line#middle {
+    transition: all 0.2s ease-in-out;
+}
+
+.hamburger-button__line#bottom {
+    transform-origin: 0 100%;
+    transition: all 0.4s ease-in-out;
+}
+
+/* ------ Hamburger menu ------ */
+
+.hamburger-menu {
+    position: absolute;
+    top: var(--topbar-height);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    height: calc(100vh - var(--topbar-height));
+    width: 100%;
+
+    margin: 0 auto;
+    padding: 20px;
+
+    background-color: rgba(255, 255, 255, 0.66);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    transform: translateX(200%);
+    transition: transform 0.4s ease-in-out;
+}
+
+.hamburger-menu__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    padding: 25px;
+
+    border-radius: 50px;
+
+    color: var(--verdant-green);
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    text-decoration: none;
+    text-align: center;
+
+    transition: all 0.1s ease-in-out;
+}
+
+.hamburger-menu__item:not(first-child){
+    margin-top: 10px;
+}
+
+.hamburger-menu__item:hover, .hamburger-menu__item:active {
+    color: white;
+    background-color: var(--verdant-green);
+    text-decoration: none;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+/* ================================================================================================================== */
+/* Hamburger animation                                                                                                */
+/* ================================================================================================================== */
+
+.hamburger input[type="checkbox"]:checked ~ .hamburger-menu {
+    transform: translateX(0);
+}
+
+.hamburger input[type="checkbox"]:checked ~ .hamburger-topbar .hamburger-button .hamburger-button__line#top {
+    background: black;
+    transform: rotate(45deg);
+}
+
+.hamburger input[type="checkbox"]:checked ~ .hamburger-topbar .hamburger-button .hamburger-button__line#middle {
+    background: black;
+    transform: scale(0);
+}
+
+.hamburger input[type="checkbox"]:checked ~ .hamburger-topbar .hamburger-button .hamburger-button__line#bottom {
+    background: black;
+    transform: rotate(-45deg);
+}
+
+
+/* ================================================================================================================== */
+/* Responsive style                                                                                                   */
+/* ================================================================================================================== */
+
+
+/* max-width 1024px */
+@media only screen and (max-width: 1024px) {
+
+    /* Disable the desktop topbar */
+    .topbar {
+        display: none;
+    }
+
+    /* Show the hamburger */
+    .hamburger {
+        display: flex;
+    }
+}
