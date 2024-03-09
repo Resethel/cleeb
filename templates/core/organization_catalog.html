@@ -48,51 +48,46 @@
                 <!-- Section block with a list of organizations -->
                 <section class="content-section__panel" id="organizations-card-list">
                     <h3>Groupes et Organisations</h3>
-                    <div class="card-container">
-                        <div class="card-row">
-                            <!-- Render a list of organizations with cards -->
-                            {% for organization in organizations %}
-                                <div class="card-col">
-                                    <a class="org-card-link" href="{% url 'organization_detail' organization.slug %}">
-                                        <div class="card org-card">
-                                            <h5>{{ organization.name }}</h5>
-                                            <div class="card-socials">
-                                                {% if organization.contact %}
-                                                    <a href="mailto:{{ organization.contact }}" target="_blank">
-                                                        <img src="{% static 'assets/icons/envelop.svg' %}" alt="email">
-                                                    </a>
-                                                {% endif %}
-                                                {% if organization.website %}
-                                                    <a href="{{ organization.website }}" target="_blank">
-                                                        <img src="{% static 'assets/icons/link.svg' %}" alt="website">
-                                                    </a>
-                                                {% endif %}
-                                                {% if organization.facebook %}
-                                                    <a href="{{ organization.facebook }}" target="_blank">
-                                                        <img src="{% static 'assets/icons/facebook.svg' %}" alt="facebook">
-                                                    </a>
-                                                {% endif %}
-                                                {% if organization.instagram %}
-                                                    <a href="{{ organization.instagram }}" target="_blank">
-                                                        <img src="{% static 'assets/icons/instagram.svg' %}" alt="instagram">
-                                                    </a>
-                                                {% endif %}
-                                                {% if organization.twitter %}
-                                                    <a href="{{ organization.twitter }}" target="_blank">
-                                                        <img src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter">
-                                                    </a>
-                                                {% endif %}
-                                            </div>
-                                            <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
+                    <ul class="card-container">
+                        <!-- Render a list of organizations with cards -->
+                        {% for organization in organizations %}
+                            <li class="card-grid__container">
+                                <a class="org-card-link" href="{% url 'organization_detail' organization.slug %}">
+                                    <div class="card-grid__card org">
+                                        <h5>{{ organization.name }}</h5>
+                                        <div class="card-socials">
+                                            {% if organization.contact %}
+                                                <a href="mailto:{{ organization.contact }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/envelop.svg' %}" alt="email">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.website %}
+                                                <a href="{{ organization.website }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/link.svg' %}" alt="website">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.facebook %}
+                                                <a href="{{ organization.facebook }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/facebook.svg' %}" alt="facebook">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.instagram %}
+                                                <a href="{{ organization.instagram }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/instagram.svg' %}" alt="instagram">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.twitter %}
+                                                <a href="{{ organization.twitter }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter">
+                                                </a>
+                                            {% endif %}
                                         </div>
-                                    </a>
-                                </div>
-                                {% if forloop.counter|divisibleby:4 and not forloop.last %}
-                                    </div><div class="card-row">
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
+                                        <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </section>
             </div>
         </div>
