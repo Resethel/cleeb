@@ -46,4 +46,4 @@ class OrganizationDetailView(DetailView):
 
 def organizations_list(request):
     organizations = Organization.objects.all()
-    return render(request, 'core/organizations_list.html', {'organizations': organizations})
+    return render(request, 'core/organization_catalog.html', {'organizations': organizations})

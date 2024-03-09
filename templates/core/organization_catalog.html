@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
 </head>
 <body class="page">
@@ -23,35 +22,31 @@
 
     <!-- Main Content Section -->
     <main class="main">
-        <div class="content-header">
-            <div class="header-container">
-                <div class="header-content">
-                    <h1>Organismes Partenaires: un travail collaboratif</h1>
-                </div>
+        <div class="content">
+            <div class="content-title">
+                Organisations participants à la cartographie
             </div>
-        </div>
 
-        <!-- Section block with the introduction to the organization's list -->
-        <div class="content-wrapper">
-            <div class="content content--with-header">
-                <section class="introduction">
+            <!-- Section block with the introduction to the organization's list -->
+            <div class="content-section">
+                <div class="content-section__intro">
                     <h3>Introduction</h3>
                     <div class="introduction-text">
                         <p>
-                            Nous sommes fiers de présenter cette carte interactive des actions militantes et d'éducation sur les
-                            effets des décisions de la métropole de Metz concernant l'environnement.
-                            Cette initiative collaborative a été rendue possible grâce à un partenariat dynamique avec plusieurs
-                            associations engagées et des représentants de divers partis politiques soucieux de promouvoir la
-                            protection de notre environnement. Ensemble, nous avons travaillé main dans la main pour rassembler
-                            et cartographier les actions et initiatives qui visent à sensibiliser, éduquer et agir en faveur
-                            d'un avenir plus durable pour la métropole de Metz. Cette carte représente ainsi l'effort collectif
-                            et l'engagement commun envers la préservation de notre cadre de vie pour les générations futures.
+                            Les cartes interactives présentées sur ce site sont le fruit d'une collaboration entre
+                            divers associations, collectifs et partis politiques centrés sur la protection de
+                            l'environnement.
+                            Ensemble, nous avons travaillé à rassembler et cartographier les actions et initiatives
+                            qui visent à sensibiliser, éduquer et agir en faveur d'un avenir plus durable pour nos
+                            territoires et communautés.
+                            Ci-dessous, vous trouverez une liste des organisations qui ont participé à cette initiative
+                            et qui sont engagées dans la protection de notre environnement.
                         </p>
                     </div>
-                </section>
+                </div>
 
                 <!-- Section block with a list of organizations -->
-                <section class="panel" id="organizations-card-list">
+                <section class="content-section__panel" id="organizations-card-list">
                     <h3>Groupes et Organisations</h3>
                     <div class="card-container">
                         <div class="card-row">

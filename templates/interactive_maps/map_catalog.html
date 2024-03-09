@@ -1,5 +1,5 @@
-<!-- theme_detail.html -->
-{% load static %} 
+{% load static %}
+<!-- map_catalog.html -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,46 +7,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Thématique: {{ thematic_name }}</title>
+    <title>Catalogue des cartes</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
-
 </head>
 <body class="page">
 
-    <!-- Header Topbar -->
+    <!-- Header Section -->
     {% include 'core/topbar.html' %}
 
     <!-- Main Content Section -->
     <main class="main">
-
-        <!-- Hero part of the page -->
-        <div class="content-header">
-            <div class="header-container">
-                <div class="header-content">
-                    <h1>{{ thematic_name }}</h1>
-                </div>
+        <div class="content">
+            <div class="content-title">
+                Catalogue des cartes
             </div>
-        </div>
-
-        <!-- Main content of the page -->
-        <div class="content-wrapper">
-            <div class="content content--with-header">
-                <!-- Description of the theme -->
-                <section class="reading-section" id="description">
-                    <h3>Description de la thématique</h3>
-                    <article class="section-article">
-                        {{ thematic_desc | safe }}
-                    </article>
+            <div class="content-section">
+                <section class="content-section__intro">
+                    <h3>Introduction</h3>
+                    <div class="introduction-text">
+                        <p>
+                            Retrouvez ici toutes les cartes interactives disponibles sur le site.
+                            Vous pouvez les consulter, les partager et les intégrer dans vos propres sites web
+                            (sous réserve de respecter les conditions d'utilisation, d'attribution
+                            et de partage définies par les auteurs).
+                        </p>
+                    </div>
                 </section>
-
-                <section class="panel" id="map_list">
-                    <h3>Cartes interactives sur cette thématique:</h3>
+                <section class="content-section__panel">
+                    <h3>Cartes Interactives</h3>
                     <div class="card-container">
                         <div class="card-row">
                             {% for map in maps %}
@@ -101,6 +94,5 @@
 
     <!-- Footer -->
     {% include 'core/footer.html' %}
-
 </body>
 </html>

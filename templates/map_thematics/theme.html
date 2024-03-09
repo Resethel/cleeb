@@ -1,5 +1,5 @@
-{% load static %}
-<!-- map_catalog.html -->
+<!-- theme_detail.html -->
+{% load static %} 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,34 +7,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Catalogue des cartes</title>
+    <title>Thématique: {{ thematic_name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
+
 </head>
 <body class="page">
 
-    <!-- Header Section -->
+    <!-- Header Topbar -->
     {% include 'core/topbar.html' %}
 
     <!-- Main Content Section -->
     <main class="main">
+        <div class="content">
+            <div class="content-title">{{ thematic_name }}</div>
 
-        <sec class="content-header">
-            <div class="header-container">
-                <div class="header-content">
-                    <h1>Catalogue des cartes</h1>
-                </div>
-            </div>
-        </sec>
 
-        <div class="content-wrapper">
-            <div class="content content--with-header">
-                <section class="panel" id="thematic-cards-list">
+            <!-- Main content of the page -->
+            <div class="content-section">
+                <section class="content-section__intro">
+                    <h3>Description de la thématique</h3>
+                    <div class="introduction-text">
+                        {{ thematic_desc | safe }}
+                    </div>
+                </section>
+
+                <section class="content-section__panel" id="map_list">
+                    <h3>Cartes interactives sur cette thématique:</h3>
                     <div class="card-container">
                         <div class="card-row">
                             {% for map in maps %}
@@ -89,5 +92,6 @@
 
     <!-- Footer -->
     {% include 'core/footer.html' %}
+
 </body>
 </html>

@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/datasets_detail.css' %}">
 </head>
@@ -23,46 +22,38 @@
 
     <!-- Main Content Section -->
     <main class="main">
-
-        <section class="content-header">
-            <div class="header-container">
-                <div class="header-content">
-
-                    <h1><img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset_icon"></img>{{ dataset.name }}</h1>
-                </div>
+        <div class="content">
+            <div class="content-title">
+                <img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset_icon">
+                {{ dataset.name }}
             </div>
-        </section>
-
-        <div class="content-wrapper">
-            <div class="content content--with-header">
-                <section class="introduction">
-                    <div class="introduction-text">
-                        {{ dataset.description | safe }}
-                    </div>
-                </section>
-                <section class="table-section">
+            <div class="content-tags">
+                {% for category in dataset.categories.all %}
+                    <a href="{% url 'datasets-search' %}?category={{ category.slug }}" class="category-tag">
+                        {{ category.name }}
+                        {% if category.icon %}
+                            <img src="{{ category.icon.url }}" alt="{{ category.name }}_icon" class="verdant-green-filter">
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="content-section">
+                {% if dataset.description %}
+                    <section class="content-section__intro">
+                        <h3>Description</h3>
+                        <div class="introduction-text">{{ dataset.description | safe }}</div>
+                    </section>
+                {% endif %}
+                <section class="content-section__table">
                     <h3>À propos de ce jeux de données</h3>
-                    <table class="table--no-header">
+                    <table class="--no-header">
                         <tr>
-                            <td>Catégories</td>
-                            <td class="td--flex">
-                                {% for category in dataset.categories.all %}
-                                    <a href="{% url 'datasets-search' %}?category={{ category.slug }}" class="category-tag">
-                                        <span>{{ category.name }}</span>
-                                        {% if category.icon %}
-                                            <img src="{{ category.icon.url }}" alt="{{ category.name }}_icon" class="verdant-green-filter">
-                                        {% endif %}
-                                    </a>
-                                {% endfor %}
-                            </td>
+                            <td>Source</td>
+                            <td>{{ dataset.source }}</td>
                         </tr>
                         <tr>
                             <td>Langue</td>
                             <td>{{ dataset.language }}</td>
-                        </tr>
-                        <tr>
-                            <td>Source</td>
-                            <td>{{ dataset.source }}</td>
                         </tr>
                         <tr>
                             <td>License</td>
@@ -74,9 +65,9 @@
                         </tr>
                     </table>
                 </section>
-                <section class="table-section">
+                <section class="content-section__table">
                     <h3>Informations techniques</h3>
-                    <table class="table--no-header">
+                    <table class="--no-header">
                         <tr>
                             <td>Format</td>
                             <td>{{ dataset.format }}</td>
@@ -93,7 +84,7 @@
                         {% endfor %}
                     </table>
                 </section>
-                <section class="table-section">
+                <section class="content-section__table">
                     <h3>Téléchargements</h3>
                     <table>
                         <thead>
