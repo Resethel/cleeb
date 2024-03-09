@@ -165,7 +165,7 @@
     z-index: 100;
 
     width: 100vw;
-    height: 100vh;
+    height: var(--topbar-height);
 }
 
 .hamburger input[type="checkbox"] {
