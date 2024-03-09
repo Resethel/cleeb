@@ -1,0 +1,92 @@
+{% load static %}
+<!-- map_catalog.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Catalogue des cartes</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
+</head>
+<body class="page">
+
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <div class="content">
+            <div class="content-title">
+                Catalogue des cartes
+            </div>
+            <div class="content-section">
+                <section class="content-section__intro">
+                    <h3>Introduction</h3>
+                    <div class="introduction-text">
+                        <p>
+                            Retrouvez ici toutes les cartes interactives disponibles sur le site.
+                            Vous pouvez les consulter, les partager et les intégrer dans vos propres sites web
+                            (sous réserve de respecter les conditions d'utilisation, d'attribution
+                            et de partage définies par les auteurs).
+                        </p>
+                    </div>
+                </section>
+                <section class="content-section__panel">
+                    <h3>Cartes Interactives</h3>
+                    <ul class="card-grid">
+                        {% for map in maps %}
+                            <li class="card-grid__container">
+                                <a href="{% url 'interactive_map_detail' map.slug %}">
+                                    <div class="card-grid__card map">
+                                        {% if map.thumbnail %}
+                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
+                                        {% else %}
+                                            <img src="{% static 'assets/images/placeholder/map.png' %}" alt="{{ map.name }}">
+                                        {% endif %}
+                                        <div class="card-content">
+                                            <div class="card-metadata">
+                                                {% for author in map.authors.all %}
+                                                    <div class="card-metadata__authors">
+                                                        {% if author.picture %}
+                                                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                                                        {% else %}
+                                                            <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
+                                                        {% endif %}
+                                                        <a href="#{{ author.lastname }}-{{ author.firstname }}">
+                                                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                                                        </a>
+                                                    </div>
+                                                    {% if not forloop.last %}
+                                                        <span class="card-metadata__divider">·</span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {%  if map.published_at %}
+                                                    <span class="card-metadata__divider">·</span>
+                                                    <div class="metadata-dates">
+                                                        <span>{{ map.published_at }}</span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <h5 class="card-title">{{ map.title }}</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

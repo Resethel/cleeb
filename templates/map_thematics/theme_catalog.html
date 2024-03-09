@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/content_header.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
 </head>
@@ -23,18 +22,14 @@
 
     <!-- Main Content Section -->
     <main class="main">
-
-        <sec class="content-header">
-            <div class="header-container">
-                <div class="header-content">
-                    <h1>Thématiques de la Cartographie</h1>
-                </div>
+        <div class="content">
+            <div class="content-title">
+                Thématiques de la Cartographie
             </div>
-        </sec>
 
-        <div class="content-wrapper">
-            <div class="content content--with-header">
-                <section class="introduction">
+
+            <div class="content-section">
+                <section class="content-section__intro">
                     <h3>Introduction</h3>
                     <div class="introduction-text">
                         <p>
@@ -56,27 +51,26 @@
                     </div>
                 </section>
 
-                <section class="panel" id="thematic-cards-list">
+                <section class="content-section__panel">
                     <h3>Ensemble des thématiques</h3>
-                    <div class="card-container">
-                        <div class="card-row">
-                            <!-- Render a list of themes with cards linking to individual theme pages -->
-                            {% for thematic in thematics %}
-                                <div class="card-col">
-                                    <a href="{% url 'thematic_detail' thematic.id %}">
-                                        <div class="card thematic-card" style="--back-img: url('{{ thematic.splash_img.url }}')">
-                                            <h5>{{ thematic.name }}</h5>
-                                            <p>{{ thematic.short_desc }}</p>
-                                        </div>
-                                    </a>
-                                </div>
-                                {% if forloop.counter|divisibleby:3 and not forloop.last %}
+                    <ul class="card-grid">
+                        <!-- Render a list of themes with cards linking to individual theme pages -->
+                        {% for theme in thematics %}
+                            <li class="card-grid__container">
+                                <a href="{% url 'thematic_detail' theme.id %}">
+                                    {% if theme.splash_img %}
+                                        <div class="card-grid__card theme" style="--back-img: url('{{ theme.splash_img.url }}')">
+                                    {% else %}
+                                        <div class="card-grid__card theme" style="--back-img: url('{% static 'assets/images/placeholder/theme.webp' %}')">
+                                    {% endif %}
+                                    <h5>{{ theme.name }}</h5>
+                                    <p>{{ theme.short_desc }}</p>
+
                                     </div>
-                                    <div class="card-row">
-                                {% endif %}
-                            {% endfor %}
-                            </div>
-                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                   </ul>
                 </section>
             </div>
         </div>

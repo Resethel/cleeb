@@ -1,42 +1,60 @@
 {% load static %}
 
 <header class="topbar">
-
     <div class="topbar-logo">
-        <a href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
-        </a>
+    <a href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
+    </a>
     </div>
-
     <nav class="topbar-nav">
-        <ul>
-            <li>
-                <a href="{% url 'interactive_maps_catalog' %}" class="nav-link">
-                    <h4>Index des cartes</h4>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'thematic_list' %}" class="nav-link">
-                    <h4>Thématiques de la cartographie</h4>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'organizations_list' %}" class="nav-link">
-                    <h4>Organisations participantes</h4>
-                </a>
-            </li>
-        </ul>
+    <ul>
+        <li>
+            <a href="{% url 'interactive_maps_catalog' %}" class="nav-link">
+                <h4>Index des cartes</h4>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'thematic_list' %}" class="nav-link">
+                <h4>Thématiques de la cartographie</h4>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'organizations_list' %}" class="nav-link">
+                <h4>Organisations participantes</h4>
+            </a>
+        </li>
+    </ul>
     </nav>
-
     <div class="topbar-tools">
-        <a href="#recherche">
-            <span>Recherche</span>
-            <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search">
-        </a>
-        <a href="{% url 'datasets-search' %}">
-            <span>Jeux de données</span>
-            <img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset-catalog">
-        </a>
+    <a href="#recherche">
+        <span>Recherche</span>
+        <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search">
+    </a>
+    <a href="{% url 'datasets-search' %}">
+        <span>Jeux de données</span>
+        <img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset-catalog">
+    </a>
     </div>
-
+</header>
+<header class="hamburger">
+    <input class="checkbox" type="checkbox" name="" id=""/>
+    <div class="hamburger-topbar">
+        <div class="hamburger-logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
+            </a>
+        </div>
+        <div class="hamburger-button">
+            <span class="hamburger-button__line" id="top"></span>
+            <span class="hamburger-button__line" id="middle"></span>
+            <span class="hamburger-button__line" id="bottom"></span>
+        </div>
+    </div>
+    <nav class="hamburger-menu">
+        <a class="hamburger-menu__item" href="{% url 'interactive_maps_catalog' %}">Index des cartes</a>
+        <a class="hamburger-menu__item" href="{% url 'thematic_list' %}">Thématiques de la cartographie</a>
+        <a class="hamburger-menu__item" href="{% url 'organizations_list' %}">Organisations participantes</a>
+        <a class="hamburger-menu__item" href="#recherche">Recherche</a>
+        <a class="hamburger-menu__item" href="{% url 'datasets-search' %}">Jeux de données</a>
+    </nav>
 </header>

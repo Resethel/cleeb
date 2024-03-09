@@ -1,0 +1,87 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Carte interactive: {{ title }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+
+</head>
+<body class="page">
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Section -->
+    <main class="main">
+        <div class="content">
+            <div class="content-title">
+                {{ title }}
+            </div>
+            <div class="content-metadata">
+                <div class="content-metadata__dates">
+                    <span>Créer le: {{ created_at }}</span>
+                    <span>Dernière modification: {{ last_modified }}</span>
+                </div>
+                <div class="content-metadata__authors">
+                    {% for author in authors %}
+                        <a class="" href="{{ author.url }}">
+                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                            {% if author.picture %}
+                                <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                            {% else %}
+                                <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="content-tags">
+                {% for thematic in thematics %}
+                    <a href="{% url 'thematic_detail' thematic.id %}">
+                        <span>{{ thematic.short_name }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+            <article class="content-section">
+                {% if introduction %}
+                    <section class="content-section__intro">
+                        <h3>Introduction</h3>
+                        <div class="introduction-text">{{ introduction | safe }}</div>
+                    </section>
+                {% endif %}
+                <section class="content-section__map">
+                    <h3>Carte interactive</h3>
+                    {% if map_embed %}
+                        <div class="map-render">{{ map_embed | safe }}</div>
+                        <a class="fullscreen-link" href="{{ map_fs_link }}">Ouvrir la carte en plein écran &gt</a>
+                    {% else %}
+                        <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
+                    {%  endif %}
+                </section>
+                {% if sections %}
+                    <section class="content-section__text">
+                        <h3>Informations complémentaires</h3>
+                        <article class="section-article">
+                            {% for section in sections %}
+                                <section>
+                                    {{ section | safe }}
+                                </section>
+                            {% endfor %}
+                        </article>
+                    </section>
+                {% endif %}
+            </article>
+        </div>
+    </main>
+    <!-- Footer Section -->
+    {% include 'core/footer.html' %}
+
+</body>
+</html>

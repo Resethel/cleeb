@@ -1,36 +1,199 @@
 /* content.css */
-/* CSS for the content of a page */
+/* CSS for a content page */
 
-.content-wrapper {
-    max-width: var(--content-max-width);
-    margin: auto;
-    width: 100%;
+:root {
+    --content-gutter: 3.125rem;
 }
 
-.content-wrapper .content {
+/* ================================================================================================================== */
+/* Content Page
+/* ================================================================================================================== */
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+
+    min-height: calc(100vh - var(--topbar-height) - var(--footer-height));
+    width: 100%;
+
+    /**
+     * Calculate the padding based on the gutter and the content max width.
+     * It ensures that the content takes at most `--content-max-width` and the padding is at least `--gutter-x`
+    **/
+    padding: 2% max(calc((100% - var(--content-max-width)) / 2), var(--gutter-x));
+
+    background: linear-gradient(90deg, var(--verdant-green), var(--eco-emerald));
+    overflow-y: clip;
+}
+
+/* ================================================================================================================== */
+/* Content Title
+/* ================================================================================================================== */
+
+.content-title {
+    width: 100%;
+    color: white;
+    font-size: 5rem;
+    font-weight: bolder;
+    line-height: 6rem;
+
+    padding: 0 0 2rem 0;
+}
+
+/* ================================================================================================================== */
+/* Content Metadata
+/* ================================================================================================================== */
+
+.content-metadata {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.content-metadata__dates {
+    display: flex;
+    color: white;
+
+    /* Font adjustment */
+    font-size: 1rem;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.content-metadata__dates span {
+    margin-right: 10px;
+}
+
+.content-metadata__authors {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap:10px;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    margin-left: 5px;
+    margin-right: unset;
+}
+
+.content-metadata__authors a {
+    color: #166a5d;
+    background-color: #e8f0ef;
+    text-decoration: none;
+    padding-left: 5px;
+    border-radius: 4px 14px 14px 4px;
+    transition: all .3s;
+}
+
+.content-metadata__authors a:hover {
+    color: #e8f0ef;
+    background-color: #166a5d;
+}
+
+.content-metadata__authors a>img {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    margin-bottom: 1px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Adjust the metadata for mobile-screens */
+@media only screen and (max-width: 480px) {
+    .content-metadata {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .content-metadata > *:not(:first-child) {
+        margin-top: 5px;
+    }
+
+    .content-metadata__dates {
+        flex-direction: column;
+    }
+
+    .content-metadata__authors {
+        margin: 0;
+    }
+
+    .content-metadata__authors a:first-child {
+        margin-left: 0px;
+    }
+}
+
+
+/* ================================================================================================================== */
+/* Content Tags
+/* ================================================================================================================== */
+
+.content-tags {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    max-width: 100%;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.content-tags a {
+    border-radius: 14px;
+    background-color: white;
+    padding: 1rem;
+    margin-right: 1rem;
+    text-align: center;
+    color: var(--verdant-green);
+
+    /* Font adjustment */
+    font-size: 1rem;
+    font-weight: 400;
+    text-decoration: none;
+    transition: all .3s;
+
+    /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.content-tags a:hover {
+    color: white;
+    background-color: var(--verdant-green);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================================================================== */
+/* Content Section
+/* ================================================================================================================== */
+
+.content-section {
     display: flex;
     flex-direction: column;
     min-height: 600px;
     background-color: #ffffff;
-    margin: 150px 0;
-    padding: 40px;
+    padding: var(--content-gutter) 0;
     border-radius: 15px;
     /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
     box-shadow: 0 6px 12px -2px rgba(50, 50, 93, 0.25), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
 }
 
-.content-wrapper .content.content--with-header {
-    margin-top: 0;
-    padding-top: 0;
-    border-radius: 0 0 15px 15px;
+/* Assign the padding to the children of `content-section` so some of them can override it if needed */
+.content-section > * {
+    padding: 0 var(--content-gutter);
+
 }
 
 /* ================================================================================================================== */
-/* Introduction
+/* Content Section - Introduction
 /* ================================================================================================================== */
 
 /* Style for the Introduction of a content page */
-.content .introduction {
+.content-section__intro {
     display: flex;
     flex-direction: column;
     /* Bottom margin and border */
@@ -38,27 +201,27 @@
     margin-bottom: 10px;
 }
 
-.content .introduction > h1,
-.content .introduction > h2,
-.content .introduction > h3,
-.content .introduction > h4,
-.content .introduction > h5,
-.content .introduction > h6 {
+.content-section__intro > h1,
+.content-section__intro > h2,
+.content-section__intro > h3,
+.content-section__intro > h4,
+.content-section__intro > h5,
+.content-section__intro > h6 {
     margin-top: 0;
     margin-bottom: 30px;
     font-weight: 700;
     border-bottom: 2px solid var(--verdant-green);
 }
 
-.content .introduction .introduction-text {
+.content-section__intro .introduction-text {
     max-width: var(--text-max-width);
     margin-left: auto;
     margin-right: auto;
 
      /* Adjust the fonts */
     text-align: justify; /* Align the text */
-    text-transform: uppercase;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+    /*text-transform: uppercase;*/
+    /*text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); !* Add text shadow *!*/
     letter-spacing: 1px; /* Adjust space between letters */
 }
 
@@ -67,7 +230,7 @@
 /* ================================================================================================================== */
 
 /* Style for a generic content block of a content page */
-.content .panel {
+.content-section__panel {
     display: flex;
     flex-direction: column;
     /* Bottom margin and border */
@@ -75,12 +238,12 @@
     margin-bottom: 10px;
 }
 
-.content .panel > h1,
-.content .panel > h2,
-.content .panel > h3,
-.content .panel > h4,
-.content .panel > h5,
-.content .panel > h6 {
+.content-section__panel > h1,
+.content-section__panel > h2,
+.content-section__panel > h3,
+.content-section__panel > h4,
+.content-section__panel > h5,
+.content-section__panel > h6 {
     margin-top: 0;
     margin-bottom: 30px;
     font-weight: 700;
@@ -88,29 +251,91 @@
 }
 
 /* ================================================================================================================== */
-/* Reading Section
+/* Content Section - Map
+/* ================================================================================================================== */
+
+.content-section__map {
+    width: 100%;
+    /* No padding, the map will take the whole width, the padding will be restored for the children that need it */
+    padding: 0;
+}
+.content-section__map > *:not(.map-render) {
+    margin-left: var(--content-gutter);
+    margin-right: var(--content-gutter);
+}
+
+.content-section__map > h1,
+.content-section__map > h2,
+.content-section__map > h3,
+.content-section__map > h4,
+.content-section__map > h5,
+.content-section__map > h6 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--verdant-green);
+}
+
+.content-section__map .map-render {
+    height: 100%;
+    width: 100%;
+}
+
+.content-section__map a.fullscreen-link {
+    margin-top:0.66em;
+    border: none;
+    background: none;
+
+    display: flex;
+    text-decoration: none;
+
+    /* Adjust the fonts */
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: black;
+    text-align: justify; /* Align the text */
+    line-height: 1.5; /* Adjust line height */
+    letter-spacing: 1px; /* Adjust space between letters */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add text shadow */
+}
+
+.content-section__map a.fullscreen-link:hover {
+    color: var(--verdant-green);
+}
+
+/* Used for the placeholder image */
+.content-section__map > img.placeholder {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+/* ================================================================================================================== */
+/* Content Section - Text
 /* ================================================================================================================== */
 
 /* Style for the Reading Section of a content page */
-.content .reading-section {
+.content-section__text {
     /* Bottom margin and border */
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.content .reading-section > h1,
-.content .reading-section > h2,
-.content .reading-section > h3,
-.content .reading-section > h4,
-.content .reading-section > h5,
-.content .reading-section > h6 {
+.content-section__text > h1,
+.content-section__text > h2,
+.content-section__text > h3,
+.content-section__text > h4,
+.content-section__text > h5,
+.content-section__text > h6 {
     margin-top: 0;
     margin-bottom: 30px;
     font-weight: 700;
     border-bottom: 2px solid var(--verdant-green);
 }
 
-.content .reading-section .section-article {
+.content-section__text article {
     max-width: var(--text-max-width);
     margin-left: auto;
     margin-right: auto;
@@ -119,12 +344,12 @@
     word-wrap: anywhere;
 }
 
-.content .reading-section .section-article h1,
-.content .reading-section .section-article h2,
-.content .reading-section .section-article h3,
-.content .reading-section .section-article h4,
-.content .reading-section .section-article h5,
-.content .reading-section .section-article h6 {
+.content-section__text article h1,
+.content-section__text article h2,
+.content-section__text article h3,
+.content-section__text article h4,
+.content-section__text article h5,
+.content-section__text article h6 {
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 10px;
@@ -132,14 +357,14 @@
     color: var(--eco-emerald);
 }
 
-.content .reading-section .section-article ul {
+.content-section__text article ul {
     background-color: var(--eco-emerald);
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
 }
 
-.content .reading-section .section-article ul li {
+.content-section__text article ul li {
     margin-bottom: 5px;
     list-style-type: circle;
     list-style-position: inside;
@@ -147,64 +372,64 @@
 }
 
 /* ================================================================================================================== */
-/* Table section
+/* Content Section - Table
 /* ================================================================================================================== */
 
 /* Style for a table of a content page */
-.content .table-section {
+.content-section__table {
     /* Bottom margin and border */
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.content .table-section > h1,
-.content .table-section > h2,
-.content .table-section > h3,
-.content .table-section > h4,
-.content .table-section > h5,
-.content .table-section > h6 {
+.content-section__table > h1,
+.content-section__table > h2,
+.content-section__table > h3,
+.content-section__table > h4,
+.content-section__table > h5,
+.content-section__table > h6 {
     margin-top: 0;
     margin-bottom: 30px;
     font-weight: 700;
     border-bottom: 2px solid var(--verdant-green);
 }
 
-.content .table-section table {
+.content-section__table table {
     width: var(--text-max-width);
     border-collapse: collapse;
     margin: 10px auto;
 }
 
-.content .table-section table.table--no-header th {
+.content-section__table table.table .--no-header th {
     display: none;
 }
 
-.content .table-section table tr {
+.content-section__table table tr {
     border-bottom: 1px solid var(--eco-emerald);
 }
 
 
 /* Draw a line at the top of the table as there is no header */
-.content .table-section table.table--no-header tr {
+.content-section__table table.table--no-header tr {
     border-top: 1px solid var(--eco-emerald);
 }
 
-.content .table-section table th {
+.content-section__table table th {
     background-color: var(--eco-emerald);
     color: #ffffff;
     padding: 10px;
     text-align: left;
 }
 
-.content .table-section table tr:nth-child(even) {
+.content-section__table table tr:nth-child(even) {
     background-color: var(--pale-aqua);
 }
 
-.content .table-section table td {
+.content-section__table table td {
     padding: 10px;
 }
 
-.content .table-section table td.td--flex {
+.content-section__table table td.td--flex {
     display: flex;
     flex-direction: row;
 }

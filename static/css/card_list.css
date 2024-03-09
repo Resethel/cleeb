@@ -5,104 +5,97 @@ They are typically used display a list of items to select, such as a list of org
 The card are arranged in a grid, with each row containing a maximum of X cards, where X is the number of cards that can fit in a row.
 */
 
-.card-container {
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 20px;
-    padding-right: 20px;
-    width: 100%;
-}
+/* ================================================================================================================== */
+/* General Style for the Card grid                                                                                    */
+/* ================================================================================================================== */
 
-/* Container for the thematic items on a row */
-.card-row {
+.card-grid {
     display: flex;
-}
-.card-col {
-    display: inline-block;
-    vertical-align: top;
-    text-decoration: none;
-}
-.card-col a {
-    text-decoration: none;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-@media (min-width: 1280px) {
-    .card-col {
-        flex: 0 0 33.3333333%;
-        max-width: 33.3333333%;
-        padding-left: 15px;
-        padding-right: 15px;
+.card-grid__container {
+    display: block;
+    padding: 1rem;
+}
+
+@media only screen and (min-width: 40rem) {
+    .card-grid__container {
+        width: 50%;
     }
 }
 
-/* Individual Theme Item */
-.card {
-    position: relative;
-    margin: 0 0 40px;
-    border-radius: 20px;
+@media only screen and (min-width: 56rem) {
+    .card-grid__container {
+        width: 33.3333%;
+    }
+}
+
+.card-grid__card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    width: 100%;
+
     background: var(--eco-emerald);
     color: white;
-    cursor: pointer;
-    transition: all .8s;
+    border-radius: 20px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-@media (min-width:1280px) {
-    .card {
-        height: calc(100% - 40px);
-    }
+
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .8s;
 }
 
-/* Responsive adjustment for smaller screens */
-@media screen and (max-width: 768px) {
-    .card {
-        width: calc(50% - 20px); /* Adjust card width for smaller screens */
-    }
-}
-
-.card:hover {
+.card-grid__card:hover {
     transform: translateY(-5px);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
 }
 
 
 /* ================================================================================================================== */
-/* Style for the Thematic cards                                                                                       */
+/* Style for the cards of map theme                                                                                   */
 /* ================================================================================================================== */
 
-.card.thematic-card {
-    padding: 40px;
-    min-height: 300px;
-    background: /* background is defined with the variable --back-img */
-        linear-gradient(rgba(0,0,0,0.445),rgba(0,0,0,0.1)),
-        var(--back-img) no-repeat center / cover;
+.card-grid__card.theme {
+   padding: 2rem;
+   min-height: 300px;
+   background: /* background is defined with the variable --back-img */
+       linear-gradient(rgba(0,0,0,0.445),rgba(0,0,0,0.1)),
+       var(--back-img) no-repeat center / cover;
 
-    /* Fonts & colors */
-    text-align: left;
-    color: #ffffff;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
+   /* Fonts & colors */
+   text-align: left;
+   color: #ffffff;
+   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+   text-decoration: none;
 }
 
-.card.thematic-card h5 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 1.8rem;
-    max-width: 100%;
+.card-grid__card.theme h5 {
+   font-size: 1.2rem;
+   font-weight: 600;
+   text-transform: uppercase;
+   margin-bottom: 1.8rem;
+   max-width: 100%;
 }
 
-.card.thematic-card p {
-    font-size: 1rem;
-    line-height: 1.618rem;
-    font-weight: 400;
-    max-width: 90%;
+.card-grid__card.theme p {
+   font-size: 1rem;
+   line-height: 1.618rem;
+   font-weight: 400;
+   max-width: 90%;
 }
 
 /* ================================================================================================================== */
 /* Style for the Organization cards
 /* ================================================================================================================== */
 
-.card.org-card {
+.card-grid__card.org {
     overflow: hidden;
     max-height: 300px;
     /* Fonts & colors */
@@ -114,14 +107,14 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     padding-bottom: 20px;
 }
 
-.card.org-card h5 {
+.card-grid__card.org h5 {
     display: block;
     margin: 20px;
     text-align: center;
     color: #ffff;
 }
 
-.card.org-card img {
+.card-grid__card.org img {
     height: 50%;
     width: 100%;
     object-fit: contain;
@@ -130,7 +123,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     background-color: #ffff;
 }
 
-.card.org-card .card-socials {
+.card-grid__card.org .card-socials {
     width: 100%;
     display: flex;
     align-items: center;
@@ -140,7 +133,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     padding-right: 10px;
 }
 
-.card.org-card .card-socials a {
+.card-grid__card.org .card-socials a {
     text-decoration: none;
     color: #ffffff;
     padding-left: 5px;
@@ -148,7 +141,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     transition: all .3s
 }
 
-.card.org-card .card-socials a>img {
+.card-grid__card.org .card-socials a>img {
     margin: auto;
     width: 35px;
     height: auto;
@@ -160,7 +153,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 /* Style for the Map Cards
 /* ================================================================================================================== */
 
-.card.map-card {
+.card-grid__card.map {
     overflow: hidden;
     /* Fonts & colors */
     text-align: left;
@@ -169,42 +162,42 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     text-decoration: none;
 }
 
-.card.map-card img {
+.card-grid__card.map img {
     height: auto;
     width: 100%;
     object-fit: cover;
 }
 
-.card.map-card .card-content {
+.card-grid__card.map .card-content {
     padding: 15px 25px 33px;
     display:flex;
     flex-direction: column;
 }
 
 
-.card.map-card .card-content .card-metadata {
+.card-grid__card.map .card-metadata {
     font-size: 12px;
     display:flex;
     width: 100%;
     padding-bottom: 1em;
 }
 
-.card.map-card .card-content .card-metadata .metadata-divider {
+.card-grid__card.map .card-metadata__divider {
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
 
-.card.map-card .card-content .card-metadata .metadata-authors {
+.card-grid__card.map .card-metadata__authors {
     display: flex;
     align-items: center;
 }
 
-.card.map-card .card-content .card-metadata .metadata-authors a {
+.card-grid__card.map .card-metadata__authors a {
     text-decoration: none;
     color:#fff;
 }
 
-.card.map-card .card-content .card-metadata .metadata-authors img {
+.card-grid__card.map .card-metadata__authors img {
     height: 24px;
     width: 24px;
     border-radius: 50%;
@@ -212,6 +205,6 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
     vertical-align: middle;
 }
 
-.card.map-card .card-content .card-metadata .metadata-authors a:hover {
+.card-grid__card.map .card-metadata__authors a:hover {
     text-decoration: underline;
 }

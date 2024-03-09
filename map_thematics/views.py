@@ -12,7 +12,7 @@ from map_thematics.models import Thematic
 class MapThematicDetailView(DetailView):
 
     model = Thematic
-    template_name = 'map_thematics/thematic_detail.html'
+    template_name = 'map_thematics/theme.html'
     context_object_name = 'thematic'
 
     def get_context_data(self, **kwargs):
@@ -38,5 +38,5 @@ class MapThematicDetailView(DetailView):
 
 def thematic_list(request):
     thematics = Thematic.objects.all()
-    return render(request, 'map_thematics/thematic_list.html', {'thematics': thematics})
+    return render(request, 'map_thematics/theme_catalog.html', {'thematics': thematics})
 

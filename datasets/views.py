@@ -14,7 +14,7 @@ from datasets.models import Dataset, DatasetCategory, DatasetVersion
 class DatasetsSearchView(ListView):
 
     model = Dataset
-    template_name = 'datasets/datasets_search.html'
+    template_name = 'datasets/dataset_search.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -60,7 +60,7 @@ class DatasetsSearchView(ListView):
 
 class DatasetDetailView(DetailView):
     model = Dataset
-    template_name = 'datasets/datasets_detail.html'
+    template_name = 'datasets/dataset.html'
     context_object_name = 'dataset'
 
     def get_context_data(self, **kwargs):

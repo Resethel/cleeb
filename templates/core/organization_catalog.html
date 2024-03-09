@@ -1,0 +1,99 @@
+<!-- organizations_list.html -->
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Organismes Partenaires</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_list.css' %}">
+</head>
+<body class="page">
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <div class="content">
+            <div class="content-title">
+                Organisations participants à la cartographie
+            </div>
+
+            <!-- Section block with the introduction to the organization's list -->
+            <div class="content-section">
+                <div class="content-section__intro">
+                    <h3>Introduction</h3>
+                    <div class="introduction-text">
+                        <p>
+                            Les cartes interactives présentées sur ce site sont le fruit d'une collaboration entre
+                            divers associations, collectifs et partis politiques centrés sur la protection de
+                            l'environnement.
+                            Ensemble, nous avons travaillé à rassembler et cartographier les actions et initiatives
+                            qui visent à sensibiliser, éduquer et agir en faveur d'un avenir plus durable pour nos
+                            territoires et communautés.
+                            Ci-dessous, vous trouverez une liste des organisations qui ont participé à cette initiative
+                            et qui sont engagées dans la protection de notre environnement.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section block with a list of organizations -->
+                <section class="content-section__panel" id="organizations-card-list">
+                    <h3>Groupes et Organisations</h3>
+                    <ul class="card-container">
+                        <!-- Render a list of organizations with cards -->
+                        {% for organization in organizations %}
+                            <li class="card-grid__container">
+                                <a class="org-card-link" href="{% url 'organization_detail' organization.slug %}">
+                                    <div class="card-grid__card org">
+                                        <h5>{{ organization.name }}</h5>
+                                        <div class="card-socials">
+                                            {% if organization.contact %}
+                                                <a href="mailto:{{ organization.contact }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/envelop.svg' %}" alt="email">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.website %}
+                                                <a href="{{ organization.website }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/link.svg' %}" alt="website">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.facebook %}
+                                                <a href="{{ organization.facebook }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/facebook.svg' %}" alt="facebook">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.instagram %}
+                                                <a href="{{ organization.instagram }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/instagram.svg' %}" alt="instagram">
+                                                </a>
+                                            {% endif %}
+                                            {% if organization.twitter %}
+                                                <a href="{{ organization.twitter }}" target="_blank">
+                                                    <img src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter">
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                        <img src="{{ organization.logo.url }}" alt="{{ organization.name }}">
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

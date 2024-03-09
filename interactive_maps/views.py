@@ -22,7 +22,7 @@ from map_thematics.models import Thematic
 class MapDetailView(DetailView):
     """Detail view for the interactive maps."""
     model = Map
-    template_name = 'interactive_maps/interactive_map.html'
+    template_name = 'interactive_maps/map.html'
     context_object_name = 'interactive_maps'
 
     def get_context_data(self, **kwargs):
@@ -136,4 +136,4 @@ def maps_catalog_view(request):
         sub_context['authors']       = m.authors
         context.append(context)
 
-    return render(request, 'interactive_maps/catalog.html', context={'maps' : map_objects})
+    return render(request, 'interactive_maps/map_catalog.html', context={'maps' : map_objects})
