@@ -63,7 +63,7 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 /* ================================================================================================================== */
 
 .card-grid__card.theme {
-   padding: 2rem;
+   padding: var(--content-gutter);
    min-height: 300px;
    background: /* background is defined with the variable --back-img */
        linear-gradient(rgba(0,0,0,0.445),rgba(0,0,0,0.1)),
@@ -71,13 +71,13 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 
    /* Fonts & colors */
    text-align: left;
-   color: #ffffff;
+   color: white;
    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
    text-decoration: none;
 }
 
 .card-grid__card.theme h5 {
-   font-size: 1.2rem;
+   font-size: calc(var(--fs-dflt) * 1.2);
    font-weight: 600;
    text-transform: uppercase;
    margin-bottom: 1.8rem;
@@ -85,10 +85,16 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 }
 
 .card-grid__card.theme p {
-   font-size: 1rem;
+   font-size: var(--fs-dflt);
    line-height: 1.618rem;
    font-weight: 400;
    max-width: 90%;
+}
+
+@media only screen and (max-width: 40rem) {
+   .card-grid__card.theme {
+       padding: calc(var(--content-gutter) / 1.5);
+   }
 }
 
 /* ================================================================================================================== */

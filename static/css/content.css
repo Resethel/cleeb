@@ -1,10 +1,6 @@
 /* content.css */
 /* CSS for a content page */
 
-:root {
-    --content-gutter: 3.125rem;
-}
-
 /* ================================================================================================================== */
 /* Content Page
 /* ================================================================================================================== */
@@ -35,9 +31,9 @@
 .content-title {
     width: 100%;
     color: white;
-    font-size: 5rem;
+    font-size: calc(var(--fs-h1) * 1.18421053255);
     font-weight: bolder;
-    line-height: 6rem;
+    line-height: calc(var(--lh-h1) * 1.18421053255);
 
     padding: 0 0 2rem 0;
 }
@@ -124,7 +120,7 @@
     }
 
     .content-metadata__authors a:first-child {
-        margin-left: 0px;
+        margin-left: 0;
     }
 }
 
@@ -151,7 +147,7 @@
     color: var(--verdant-green);
 
     /* Font adjustment */
-    font-size: 1rem;
+    font-size: var(--fs-dflt);
     font-weight: 400;
     text-decoration: none;
     transition: all .3s;
@@ -282,7 +278,7 @@
 }
 
 .content-section__map a.fullscreen-link {
-    margin-top:0.66em;
+    margin-top: 0.66em;
     border: none;
     background: none;
 
