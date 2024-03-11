@@ -4,6 +4,7 @@ Management command to manage the datasets.
 """
 from django.core.management.base import BaseCommand
 
+from datasets import services
 from datasets.models import Dataset, DatasetVersion
 
 
@@ -38,6 +39,21 @@ class Command(BaseCommand):
             action='store_true',
             help="Skip the confirmation prompt."
         )
+
+        # --------------------------------------------------------------------------------------------------------------
+        # parser for the 'sanitize' action
+        # --------------------------------------------------------------------------------------------------------------
+
+        sanitize_parser = action_parser.add_parser('sanitize', help="Sanitize the datasets.")
+
+        sanitize_parser.add_argument(
+            '--dataset', '-d',
+            nargs='+', # 1 or more arguments
+            type=str,
+            help="The name of the dataset to sanitize."
+                 "A specific version can be specified by appending the version number after a colon."
+                 "For example: 'my_dataset:1'."
+        )
     # End def add_arguments
 
 
@@ -48,6 +64,8 @@ class Command(BaseCommand):
             self.list_datasets(**options)
         elif action == 'regen-features':
             self.regenerate_features(**options)
+        elif action == 'sanitize':
+            self.sanitize(**options)
     # End def handle
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -99,3 +117,34 @@ class Command(BaseCommand):
             self.stdout.write(f"The regeneration of the features of the dataset '{dataset_version}' has been scheduled.")
     # End def regenerate_features
 
+    def sanitize(self, **options):
+        dataset_args = options.pop('dataset') if options.get('dataset') else []
+        versions_to_sanitize = []
+        for dataset_arg in dataset_args:
+            if ':' in dataset_arg:
+                dataset_name, dataset_version = dataset_arg.split(':')[:2] if dataset_args else (None, None)
+            else:
+                dataset_name, dataset_version = dataset_arg, None
+            # Fetch the versions of the dataset
+            if dataset_name is not None:
+                if dataset_version is not None:
+                    versions_to_sanitize.append(Dataset.objects.get(name=dataset_name).get_version(int(dataset_version)))
+                else:
+                    dataset = Dataset.objects.get(name=dataset_name)
+                    versions_to_sanitize.extend(dataset.versions.all())
+
+        if not versions_to_sanitize:
+            versions_to_sanitize = DatasetVersion.objects.all()
+
+
+        # Sanitize the datasets
+        for dataset_version in versions_to_sanitize:
+            self.stdout.write(f"Sanitizing the dataset '{dataset_version}'... ", ending='')
+            try:
+                n_removal = services.sanitize_shapefile_archive(dataset_version.id)
+                self.stdout.write(self.style.SUCCESS(f"Removed {n_removal} unwanted files and folders."))
+            except Exception as e:
+                self.stdout.write(self.style.NOTICE(f"An error occurred while sanitizing the dataset '{dataset_version}': {e}"))
+        self.stdout.write(f"Done.")
+    # End def sanitize
+# End class Command
