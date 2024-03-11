@@ -161,6 +161,7 @@ admin.site.register(DatasetVersion, DatasetVersionAdmin)
 class DatasetVersionInline(admin.TabularInline):
     model = DatasetVersion
     list_display = ('date', 'file')
+    fields = ('date', 'file', 'encoding')
     extra = 0
 # End class DatasetVersionInline
 

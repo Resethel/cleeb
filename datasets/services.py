@@ -67,6 +67,9 @@ def generate_features(dataset_version_id: int) -> None:
 
                 # 4.3 Iterate over all features in the layer and save them to the database
                 for feature in layer:
+                    # Enforce the encoding of the feature according to the dataset
+                    # This is necessary because the encoding of the shapefile is not always correct
+                    feature._layer._ds.encoding = dataset_layer.dataset.encoding
                     # Convert the feature's geometry to a GEOSGeometry instance
                     geometry = GEOSGeometry(feature.geom.wkt, srid = dataset_layer.srid)
 
