@@ -21,6 +21,17 @@
 
 .topbar-logo {
     flex: 1;
+    cursor: default;
+}
+
+.topbar-logo:hover {
+    cursor: pointer;
+}
+
+.topbar-logo > img {
+    display: inline-block;
+    align-items: center;
+    height: calc(var(--topbar-height) - 20px);
 }
 
 /* ================================================================================================================== */
@@ -200,6 +211,23 @@
     box-shadow: 0 1px 4px rgb(146 161 176 / 15%);
 }
 
+.hamburger-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    transition: all 0.4s ease-in-out;
+}
+
+.hamburger-logo > img {
+    height: calc(var(--topbar-height) - 20px);
+}
+
+.hamburger-logo:hover {
+    cursor: pointer;
+}
+
 /* ------ Hamburger button ------ */
 
 .hamburger-button {
@@ -310,7 +338,6 @@
     background: black;
     transform: rotate(-45deg);
 }
-
 
 /* ================================================================================================================== */
 /* Responsive style                                                                                                   */

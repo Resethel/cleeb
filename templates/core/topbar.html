@@ -1,11 +1,9 @@
 {% load static %}
 
 <header class="topbar">
-    <div class="topbar-logo">
-    <a href="{% url 'home' %}">
-        <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
+    <a class="topbar-logo" href="{% url 'home' %}">
+        <img src="{% static 'assets/images/logo/topbar.svg' %}" alt="logo" class="nav-logo-image">
     </a>
-    </div>
     <nav class="topbar-nav">
     <ul>
         <li>
@@ -39,11 +37,9 @@
 <header class="hamburger">
     <input class="checkbox" type="checkbox" name="" id=""/>
     <div class="hamburger-topbar">
-        <div class="hamburger-logo">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'images/logo.png' %}" alt="logo" class="nav-logo-image">
-            </a>
-        </div>
+        <a class="hamburger-logo" href="{% url 'home' %}">
+            <img src="{% static 'assets/images/logo/topbar.svg' %}" alt="logo" class="nav-logo-image">
+        </a>
         <div class="hamburger-button">
             <span class="hamburger-button__line" id="top"></span>
             <span class="hamburger-button__line" id="middle"></span>
