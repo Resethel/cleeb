@@ -1,0 +1,75 @@
+<!-- organization_detail.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Organisation: {{ title }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/resume.css' %}">
+</head>
+<body class="page">
+    <!-- Topbar Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="resume">
+        <div class="resume-title">Organisation</div>
+        <article class="resume-card">
+            <div class="resume-card__header">
+                <div class="resume-card__header__image">
+                    {% if logo %}
+                        <img src="{{ logo.url }}" alt="logo de l'organisation {{ title }}">
+                    {% else %}
+                        <img src="{% static 'assets/images/placeholder/theme.webp' %}" alt="placeholder">
+                    {% endif %}
+                </div>
+                <div class="resume-card__header__content">
+                    <div class="categories">
+                        {% for category in categories %}
+                            <span>{{ category }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="socials">
+                        {% for social in socials %}
+                            {% if social.name == 'email' %}
+                                <a href="mailto:{{ organization.contact }}" target="_blank">
+                                    <img class="--filter-white" src="{% static 'assets/icons/envelop.svg' %}" alt="email" width="25px" height="25px">
+                                </a>
+                            {% elif social.name == 'website' %}
+                                <a href="{{ organization.website }}" target="_blank">
+                                    <img class="--filter-white" src="{% static 'assets/icons/link.svg' %}" alt="website" width="25px" height="25px">
+                                </a>
+                            {% elif social.name == 'facebook' %}
+                                <a href="{{ organization.facebook }}" target="_blank">
+                                    <img class="--filter-white" src="{% static 'assets/icons/facebook.svg' %}" alt="facebook" width="25px" height="25px">
+                                </a>
+                            {% elif social.name == 'instagram' %}
+                                <a href="{{ organization.instagram }}" target="_blank">
+                                    <img class="--filter-white" src="{% static 'assets/icons/instagram.svg' %}" alt="instagram" width="25px" height="25px">
+                                </a>
+                            {% elif social.name == 'twitter' %}
+                                <a href="{{ organization.twitter }}" target="_blank">
+                                    <img class="--filter-white" src="{% static 'assets/icons/twitterx.svg' %}" alt="twitter" width="25px" height="25px">
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <h2>{{ title }}</h2>
+                </div>
+            </div>
+            <section class="resume-card__content">
+                {{ description|safe }}
+            </section>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

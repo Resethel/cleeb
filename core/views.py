@@ -21,7 +21,7 @@ def home(request):
 
 class OrganizationDetailView(DetailView):
     model = Organization
-    template_name = 'core/resume.html'
+    template_name = 'core/organization_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,20 +29,20 @@ class OrganizationDetailView(DetailView):
         org_obj : Organization = self.object
 
         context['title']       = org_obj.name
-        context['photo']       = org_obj.logo
+        context['logo']        = org_obj.logo
         context['categories']  = [org_obj.type]
-        context['body']        = org_obj.description
-        context['social_links'] = []
+        context['description'] = org_obj.description
+        context['socials']     = []
         if org_obj.email:
-            context['social_links'].append({'name': 'email', 'url': org_obj.email})
+            context['socials'].append({'name': 'email', 'url': org_obj.email})
         if org_obj.website:
-            context['social_links'].append({'name': 'website', 'url': org_obj.website})
+            context['socials'].append({'name': 'website', 'url': org_obj.website})
         if org_obj.facebook:
-            context['social_links'].append({'name': 'facebook', 'url': org_obj.facebook})
+            context['socials'].append({'name': 'facebook', 'url': org_obj.facebook})
         if org_obj.twitter_x:
-            context['social_links'].append({'name': 'twitter', 'url': org_obj.twitter_x})
+            context['socials'].append({'name': 'twitter', 'url': org_obj.twitter_x})
         if org_obj.instagram:
-            context['social_links'].append({'name': 'instagram', 'url': org_obj.instagram})
+            context['socials'].append({'name': 'instagram', 'url': org_obj.instagram})
 
         return context
 # End class OrganizationDetailView

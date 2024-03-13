@@ -79,6 +79,10 @@
     filter: brightness(0) saturate(100%) invert(56%) sepia(30%) saturate(761%) hue-rotate(83deg) brightness(101%) contrast(88%);
 }
 
+.--filter-white {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+}
+
 /* ================================================================================================================== */
 /* Global styles */
 /* ================================================================================================================== */
