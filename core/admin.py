@@ -91,6 +91,9 @@ class OrganizationAdmin(admin.ModelAdmin):
         ('Contact et réseaux sociaux', {
             'fields': ('email', 'facebook', 'instagram', 'twitter_x', 'website')
         }),
+        ('Description', {
+            'fields': ('type', 'description')
+        }),
     )
 
 
