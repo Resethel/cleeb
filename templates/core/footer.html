@@ -1,11 +1,23 @@
-<footer>
-    <div class="copyright">
-        <p>&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</p>
-    </div>
-    <div class="social">
-      <a href="#" class="support">Restons en contact</a>
-      <a href="https://www.facebook.com/eelvmetz/?locale=fr_FR" class="face">f</a>
-      <a href="#" class="tweet">t</a>
-      <a href="#" class="linked">in</a>
+{% load static %}
+<footer class="footer">
+    <ul class="footer-menu">
+        <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
+        <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
+        <li><a href="#">Contactez-nous</a></li>
+        <li><a href="#">Données personnelles</a></li>
+        <li><a href="#">Conditions d'utilisation</a></li>
+    </ul>
+    <a href="https://lesecologistes.fr" class="footer-logo">
+        <img src="{% static 'assets/images/logo/footer.svg' %}" alt="logo Les Écologistes">
+    </a>
+    <div class="footer-credits">
+        <a class="footer-credits__link">Mentions Légales</a>
+        <span class="footer-credits__text">&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
+        <div class="footer-credits__socials">
+            <span>Suivez-nous !</span>
+            <a href="https://www.facebook.com/eelvmetz/"><img src="{% static 'assets/icons/facebook.svg' %}" alt="logo facebook"></a>
+            <a href="https://twitter.com/EelvMetz"><img src="{% static 'assets/icons/twitterx.svg' %}" alt="logo twitter/x"></a>
+            <a href="https://www.instagram.com/eelvmetz"><img src="{% static 'assets/icons/instagram.svg' %}" alt="logo instagram"></a>
+        </div>
     </div>
 </footer>
