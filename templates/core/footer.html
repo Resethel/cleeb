@@ -21,3 +21,33 @@
         </div>
     </div>
 </footer>
+<footer class="mobile-footer">
+    <button onclick="backToTop()" class="mobile-footer__totop" id="backToTopButton">
+        <img src="{% static 'assets/icons/keyboard_arrow_up_FILL0_wght500_GRAD200_opsz24.svg' %}" alt="flèche vers le haut">
+    </button>
+    <ul class="mobile-footer__menu">
+        <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
+        <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
+        <li><a href="#">Contactez-nous</a></li>
+        <li><a href="#">Données personnelles</a></li>
+        <li><a href="#">Conditions d'utilisation</a></li>
+    </ul>
+    <div class="mobile-footer__socials">
+        <span>Suivez-nous !</span>
+        <a href="#"><img src="{% static 'assets/icons/facebook.svg' %}" alt="logo facebook"></a>
+        <a href="#"><img src="{% static 'assets/icons/twitterx.svg' %}" alt="logo twitter/x"></a>
+        <a href="#"><img src="{% static 'assets/icons/instagram.svg' %}" alt="logo instagram"></a>
+    </div>
+    <div class="mobile-footer__logo">
+        <img src="{% static 'assets/images/logo/footer.svg' %}" alt="logo Les Écologistes">
+    </div>
+    <div class="mobile-footer__credits">
+        <span>&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
+    </div>
+    <script>
+        function backToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</footer>

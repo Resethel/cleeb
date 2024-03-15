@@ -68,7 +68,7 @@
         --fs-h4  : 1rem;
         --fs-h5  : 1rem;
         --fs-dflt: 1rem;
-        --fs-small: 0.8888889rem;
+        --fs-small: 0.8rem;
 
         --lh-h1  : 2.7rem;
         --lh-h2  : 1.87rem;
@@ -76,7 +76,7 @@
         --lh-h4  : 1.5rem;
         --lh-h5  : 1.5rem;
         --lh-dflt: 1.333rem;
-        --lh-small: 1.1111111rem;
+        --lh-small: 1rem;
 
         --content-gutter: 2rem;
         --gutter-x: 1rem;
