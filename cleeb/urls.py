@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('interactive_maps.urls')),
     path('', include('map_thematics.urls')),
     path('', include('datasets.urls')),
+    path('', include('article.urls')),
 ]
 
 if settings.DEBUG:

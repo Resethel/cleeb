@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Article: {{ title }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+
+</head>
+<body class="page">
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Section -->
+    <main class="main">
+        <div class="content --article">
+            <div class="content-title">
+                {{ title }}
+            </div>
+            <div class="content-metadata">
+                <div class="content-metadata__dates">
+                    <span>Publié le {{ created_at }}</span>
+                </div>
+                <div class="content-metadata__authors">
+                    {% for author in authors %}
+                        <a class="" href="{{ author.url }}">
+                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                            {% if author.picture %}
+                                <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                            {% else %}
+                                <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <article class="content-article">
+                {% if cover_image %}
+                    <img src="{{ cover_image.url }}" alt="{{ title }} cover" class="content-article__cover">
+                {% endif %}
+                <div class="content-article__body">
+                    {{ body | safe }}
+                </div>
+            </article>
+        </div>
+    </main>
+    <!-- Footer Section -->
+    {% include 'core/footer.html' %}
+
+</body>
+</html>

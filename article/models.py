@@ -7,6 +7,9 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+# ======================================================================================================================
+# Article
+# ======================================================================================================================
 
 def get_cover_image_upload_path(instance, filename):
     # Get the extension of the file
@@ -105,4 +108,7 @@ class Article(models.Model):
     def clean(self):
         self.slug = slugify(self.title)
     # End def clean
+
+    def get_absolute_url(self):
+        return reverse('article_view', args=[self.slug])
 # End class Article

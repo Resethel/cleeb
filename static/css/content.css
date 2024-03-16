@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    gap: 20px;
 
     min-height: calc(100vh - var(--topbar-height) - var(--footer-height));
     width: 100%;
@@ -24,6 +25,12 @@
     overflow-y: clip;
 }
 
+/* Make the content page slightly narrower for articles */
+.content.--article {
+    background: var(--pale-aqua);
+    padding: 2% max(calc((100% - var(--text-max-width) - var(--content-gutter)) / 2), var(--gutter-x));
+}
+
 /* ================================================================================================================== */
 /* Content Title
 /* ================================================================================================================== */
@@ -34,8 +41,10 @@
     font-size: calc(var(--fs-h1) * 1.18421053255);
     font-weight: bolder;
     line-height: calc(var(--lh-h1) * 1.18421053255);
+}
 
-    padding: 0 0 2rem 0;
+.content.--article .content-title {
+    color: var(--verdant-green);
 }
 
 /* ================================================================================================================== */
@@ -78,8 +87,8 @@
 }
 
 .content-metadata__authors a {
-    color: #166a5d;
-    background-color: #e8f0ef;
+    color: var(--verdant-green);
+    background-color: white;
     text-decoration: none;
     padding-left: 5px;
     border-radius: 4px 14px 14px 4px;
@@ -98,6 +107,12 @@
     margin-bottom: 1px;
     margin-left: 5px;
     vertical-align: middle;
+}
+
+/* Adjust styles for the article content */
+
+.content.--article .content-metadata__dates {
+    color: var(--verdant-green);
 }
 
 /* Adjust the metadata for mobile-screens */
@@ -134,8 +149,6 @@
     flex-wrap: wrap;
     row-gap: 10px;
     max-width: 100%;
-    margin-top: 20px;
-    margin-bottom: 10px;
 }
 
 .content-tags a {
@@ -164,6 +177,71 @@
 }
 
 /* ================================================================================================================== */
+/* Content Article
+/* ================================================================================================================== */
+
+.content-article {
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    background-color: #ffffff;
+    padding: 0;
+    border-radius: 15px;
+    /* Box Shadow from https://getcssscan.com/css-box-shadow-examples (#22) */
+    box-shadow: 0 6px 12px -2px rgba(50, 50, 93, 0.25), 0 3px 7px -3px rgba(0, 0, 0, 0.3);
+}
+
+.content-article__cover {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 15px 15px 0 0;
+}
+
+.content-article__body {
+    padding: var(--content-gutter);
+}
+
+.content-article__body h1,
+.content-article__body h2,
+.content-article__body h3,
+.content-article__body h4,
+.content-article__body h5,
+.content-article__body h6 {
+    color: var(--verdant-green);
+    letter-spacing: 0;
+}
+
+.content-article__body ul,
+.content-article__body ol {
+    border-radius: 20px;
+    background: rgba(75,177,102,.2);
+    padding: var(--lh-dflt) 40px ;
+}
+
+.content-article__body ul li,
+.content-article__body ol li {
+    list-style: none;
+    padding: 0 0 0 10px;
+}
+
+.content-article__body ul li:before,
+.content-article__body ol li:before {
+    display: inline-block;
+
+    width: 30px;
+    margin-left: -30px;
+
+    content: "●";
+    color: var(--eco-emerald);
+    font-weight: 700;
+}
+
+/* For ordered lists, modify the content to display the number */
+.content-article__body ol li:before {
+    content: counter(list-item) ".";
+}
+
+/* ================================================================================================================== */
 /* Content Section
 /* ================================================================================================================== */
 
@@ -181,7 +259,6 @@
 /* Assign the padding to the children of `content-section` so some of them can override it if needed */
 .content-section > * {
     padding: 0 var(--content-gutter);
-
 }
 
 /* ================================================================================================================== */
@@ -222,7 +299,7 @@
 }
 
 /* ================================================================================================================== */
-/* Generic Content Block
+/* Content Section - Panel (for displaying general content i.e. text, images, etc.)
 /* ================================================================================================================== */
 
 /* Style for a generic content block of a content page */
