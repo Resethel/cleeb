@@ -110,5 +110,5 @@ class Article(models.Model):
     # End def clean
 
     def get_absolute_url(self):
-        return reverse('article_view', args=[self.slug])
+        return reverse('article', args=[self.slug])
 # End class Article

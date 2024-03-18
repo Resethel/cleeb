@@ -2,10 +2,49 @@
 """
 Views for the `article` application.
 """
-from django.views.generic import DetailView
+from django.db.models import Q
+from django.views.generic import DetailView, ListView
 
 from article.models import Article
 
+
+# ======================================================================================================================
+# Index view
+# ======================================================================================================================
+
+class ArticleIndexView(ListView):
+    """View for the index of the `article` application."""
+    model = Article
+    template_name = "article/article_index.html"
+    context_object_name = "articles"
+    paginate_by = 10
+
+    def get_queryset(self):
+        articles = Article.objects.order_by('-created_at')
+        # Filter by search query
+        search = self.request.GET.get('search')
+        if search:
+            articles = articles.filter(
+                Q(title__icontains=search) |
+                Q(authors__firstname__icontains=search) |
+                Q(authors__lastname__icontains=search)
+            ).distinct()
+        print(articles)
+        return articles
+    # End def get_queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add to the context the search query
+        search = self.request.GET.get('search')
+        context['search'] = search if search else None
+        return context
+    # End def get_context_data
+# End class ArticleIndexView
+
+# ======================================================================================================================
+# Article view
+# ======================================================================================================================
 
 class ArticleView(DetailView):
     """View for the `Article` model."""

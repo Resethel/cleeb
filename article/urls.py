@@ -7,5 +7,6 @@ from django.urls import path
 from article import views
 
 urlpatterns = [
-    path('article/<slug:slug>', views.ArticleView.as_view(), name='article_view'),
+    path('articles/', views.ArticleIndexView.as_view(), name='article-index'),
+    path('article/<slug:slug>', views.ArticleView.as_view(), name='article'),
 ]

@@ -6,20 +6,10 @@
     </a>
     <nav class="topbar-nav">
     <ul>
-        <li>
-            <a href="{% url 'interactive_maps_catalog' %}" class="nav-link">
-                <h4>Index des cartes</h4>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'thematic_list' %}" class="nav-link">
-                <h4>Thématiques de la cartographie</h4>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'organizations_list' %}" class="nav-link">
-                <h4>Organisations participantes</h4>
-            </a>
+        <li><a href="{% url 'interactive_maps_catalog' %}" class="nav-link"><h4>Cartes</h4></a></li>
+        <li><a href="{% url 'article-index' %}" class="nav-link"><h4>Articles</h4></a></li>
+        <li><a href="{% url 'thematic_list' %}" class="nav-link"><h4>Thématique</h4></a></li>
+        <li><a href="{% url 'organizations_list' %}" class="nav-link"><h4>Organisations participantes</h4></a>
         </li>
     </ul>
     </nav>
@@ -47,8 +37,9 @@
         </div>
     </div>
     <nav class="hamburger-menu">
-        <a class="hamburger-menu__item" href="{% url 'interactive_maps_catalog' %}">Index des cartes</a>
-        <a class="hamburger-menu__item" href="{% url 'thematic_list' %}">Thématiques de la cartographie</a>
+        <a class="hamburger-menu__item" href="{% url 'interactive_maps_catalog' %}">Cartes</a>
+        <a class="hamburger-menu__item" href="{% url 'article-index' %}">Articles</a>
+        <a class="hamburger-menu__item" href="{% url 'thematic_list' %}">Thématique</a>
         <a class="hamburger-menu__item" href="{% url 'organizations_list' %}">Organisations participantes</a>
         <a class="hamburger-menu__item" href="#recherche">Recherche</a>
         <a class="hamburger-menu__item" href="{% url 'datasets-search' %}">Jeux de données</a>
