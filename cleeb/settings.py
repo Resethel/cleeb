@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "map_thematics.apps.MapThematicsConfig",
     "datasets.apps.DatasetsConfig",
     "map_templates.apps.MapTemplatesConfig",
-    "article.apps.ArticleConfig"
+    "articles.apps.ArticleConfig"
 ]
 
 MIDDLEWARE = [

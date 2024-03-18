@@ -5,7 +5,7 @@ Views for the `article` application.
 from django.db.models import Q
 from django.views.generic import DetailView, ListView
 
-from article.models import Article
+from .models import Article
 
 
 # ======================================================================================================================
@@ -15,7 +15,7 @@ from article.models import Article
 class ArticleIndexView(ListView):
     """View for the index of the `article` application."""
     model = Article
-    template_name = "article/article_index.html"
+    template_name = "articles/article_index.html"
     context_object_name = "articles"
     paginate_by = 10
 
@@ -50,7 +50,7 @@ class ArticleView(DetailView):
     """View for the `Article` model."""
     object: Article
     model = Article
-    template_name = "article/article.html"
+    template_name = "articles/article.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
