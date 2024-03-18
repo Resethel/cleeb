@@ -18,7 +18,7 @@
         <span>Recherche</span>
         <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search">
     </a>
-    <a href="{% url 'datasets-search' %}">
+    <a href="{% url 'datasets-index' %}">
         <span>Jeux de données</span>
         <img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset-catalog">
     </a>
@@ -42,6 +42,6 @@
         <a class="hamburger-menu__item" href="{% url 'thematic_list' %}">Thématique</a>
         <a class="hamburger-menu__item" href="{% url 'organizations_list' %}">Organisations participantes</a>
         <a class="hamburger-menu__item" href="#recherche">Recherche</a>
-        <a class="hamburger-menu__item" href="{% url 'datasets-search' %}">Jeux de données</a>
+        <a class="hamburger-menu__item" href="{% url 'datasets-index' %}">Jeux de données</a>
     </nav>
 </header>
