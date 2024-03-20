@@ -3,12 +3,23 @@
 Admin for the `article` application.
 """
 from django.contrib import admin
-from .models import Article
+from .models import Article, Attachment
 from django.utils.translation import gettext_lazy as _
+
+# ======================================================================================================================
+# Article
+# ======================================================================================================================
+
+class AttachmentInline(admin.TabularInline):
+    """Inline for the `Attachment` model."""
+    model = Attachment
+    extra = 0
+    exclude = ('slug', 'type')
+# End class AttachmentInline
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    """Admin for the `article` application."""
+    """Admin for the `article` model."""
 
     # ------------------------------------------------------------------------------------------------------------------
     # Configuration
@@ -19,6 +30,8 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display_links = ("id", "title")
     readonly_fields = ("id", "slug", "created_at", "last_modified_at")
 
+    inlines = (AttachmentInline,)
+
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets
     # ------------------------------------------------------------------------------------------------------------------
@@ -26,14 +39,11 @@ class ArticleAdmin(admin.ModelAdmin):
     fieldsets = (
         (_("ID"), {
             "classes": ("collapse",),
-            "fields": ("id", "slug"),
+            "fields": (("id", "slug"),),
         }),
         (_("Metadata"), {
             "classes": ("collapse",),
-            "fields": (
-                "created_at",
-                "last_modified_at",
-            ),
+            "fields": (("created_at", "last_modified_at"),),
         }),
         (_("Article"), {
             "fields": (
@@ -45,4 +55,40 @@ class ArticleAdmin(admin.ModelAdmin):
         }),
     )
 # End class ArticleAdmin
+
+# ======================================================================================================================
+# AttachmentAdmin
+# ======================================================================================================================
+
+@admin.register(Attachment)
+class Attachment(admin.ModelAdmin):
+    """Admin for the `Attachment` model."""
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Configuration
+    # ------------------------------------------------------------------------------------------------------------------
+
+    list_display = ("id", "name", "article", "type")
+    search_fields = ("id", "name", "article")
+    list_display_links = ("id", "name")
+    readonly_fields = ("id", "slug")
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Fieldsets
+    # ------------------------------------------------------------------------------------------------------------------
+
+    fieldsets = (
+        (_("ID"), {
+            "classes": ("collapse",),
+            "fields": (("id", "slug"),)
+        }),
+        (_("Attachment"), {
+            "fields": (
+                "name",
+                "type",
+                "article",
+                "file"
+            ),
+        }),
+    )
 
