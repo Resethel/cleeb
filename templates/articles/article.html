@@ -49,6 +49,25 @@
                     {{ body | safe }}
                 </div>
             </article>
+
+            {% if attachments %}
+                <article class="content-attachments">
+                    <h3>Ressources complémentaires</h3>
+                    <ul>
+                    {% for attachment in attachments %}
+                        <li>
+                            <span>
+                                {{ attachment.name }}{% if attachment.short_description %} : {{ attachment.short_description }}{% endif %}
+                            </span>
+                            <a  class="download-button" href="{% url 'download-attachment' attachment.article.slug attachment.slug %}">
+                                <img src="{% static 'assets/icons/download_black_24dp.svg' %}" alt="{{ attachment.name }} download icon">
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </article>
+            {% endif %}
+
         </div>
     </main>
     <!-- Footer Section -->

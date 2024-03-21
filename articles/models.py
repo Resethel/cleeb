@@ -192,6 +192,14 @@ class Attachment(models.Model):
         help_text=_("Attachment's Name")
     )
 
+    short_description = models.CharField(
+        max_length=50,
+        verbose_name=_("Short Description"),
+        help_text=_("Attachment's (very) short description (max 50 characters)"),
+        blank=True,
+        null=True,
+    )
+
     # The type of a file is enforced during upload.
     type = models.CharField(
         max_length=10,

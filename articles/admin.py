@@ -72,10 +72,11 @@ class Attachment(admin.ModelAdmin):
     # Configuration
     # ------------------------------------------------------------------------------------------------------------------
 
-    list_display = ("id", "name", "article", "type")
+    list_display = ("id", "name", "article", "short_description", "type")
     search_fields = ("id", "name", "article")
     list_display_links = ("id", "name")
     readonly_fields = ("id", "slug")
+    list_filter = ('type', 'article')
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets
@@ -90,6 +91,7 @@ class Attachment(admin.ModelAdmin):
             "fields": (
                 "name",
                 "type",
+                "short_description",
                 "article",
                 "file"
             ),
