@@ -8,13 +8,13 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from common.choices import PublicationStatus
 from common.utils import files as file_utils
 
 
 # ======================================================================================================================
 # Choices
 # ======================================================================================================================
-
 
 class AttachmentType(models.TextChoices):
     """Choices for the `Attachment` model."""
@@ -86,6 +86,14 @@ class Article(models.Model):
         help_text=_("The title of the article."),
     )
 
+    status = models.CharField(
+        max_length=10,
+        choices=PublicationStatus.choices,
+        default=PublicationStatus.DRAFT,
+        verbose_name=_("Status"),
+        help_text=_("The status of the article."),
+    )
+
     authors = models.ManyToManyField(
         "core.Person",
         verbose_name=_("Authors"),
@@ -128,7 +136,12 @@ class Article(models.Model):
     # End def clean
 
     def get_absolute_url(self):
+        # If the article is a draft, return the draft URL, which is different from the published URL and
+        # requires special permissions to access.
+        if self.status == PublicationStatus.DRAFT:
+            return reverse('draft-article', args=[self.slug])
         return reverse('article', args=[self.slug])
+    # End def get_absolute_url
 # End class Article
 
 # ======================================================================================================================

@@ -45,6 +45,10 @@ class ArticleAdmin(admin.ModelAdmin):
             "classes": ("collapse",),
             "fields": (("created_at", "last_modified_at"),),
         }),
+        (_("Publication Status"), {
+            "classes": ("wide",),
+            "fields": ("status",),
+        }),
         (_("Article"), {
             "fields": (
                 "title",

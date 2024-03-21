@@ -2,10 +2,13 @@
 """
 Views for the `article` application.
 """
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 
 from .models import Article
+from common.choices import PublicationStatus
 
 
 # ======================================================================================================================
@@ -20,7 +23,7 @@ class ArticleIndexView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        articles = Article.objects.order_by('-created_at')
+        articles = Article.objects.filter(status=PublicationStatus.PUBLISHED).order_by('-created_at')
         # Filter by search query
         search = self.request.GET.get('search')
         if search:
@@ -29,7 +32,6 @@ class ArticleIndexView(ListView):
                 Q(authors__firstname__icontains=search) |
                 Q(authors__lastname__icontains=search)
             ).distinct()
-        print(articles)
         return articles
     # End def get_queryset
 
@@ -51,6 +53,7 @@ class ArticleView(DetailView):
     object: Article
     model = Article
     template_name = "articles/article.html"
+    queryset = Article.objects.filter(status=PublicationStatus.PUBLISHED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -65,3 +68,8 @@ class ArticleView(DetailView):
     # End def get_context_data
 # End class ArticleView
 
+@method_decorator(staff_member_required, name='dispatch')
+class DraftArticleView(ArticleView):
+    """View for the `Article` model."""
+    queryset = Article.objects.filter(status=PublicationStatus.DRAFT)
+# End class ArticleDraftView
