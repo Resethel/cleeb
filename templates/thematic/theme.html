@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Théme: {{ theme_name }} | CLEEB</title>
+    <title>Théme: {{ theme.name }} | CLEEB</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
@@ -24,15 +24,15 @@
     <!-- Main Content Section -->
     <main class="main">
         <div class="content">
-            <div class="content-title">{{ theme_name }}</div>
+            <div class="content-title">{{ theme.name }}</div>
 
 
             <!-- Main content of the page -->
             <div class="content-section">
                 <section class="content-section__intro">
-                    <h3>Description de la thématique</h3>
+                    <h3>Description du Theme</h3>
                     <div class="introduction-text">
-                        {{ theme_desc | safe }}
+                        {{ theme.description | safe }}
                     </div>
                 </section>
 

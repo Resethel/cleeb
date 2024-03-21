@@ -1,63 +1,97 @@
+# -*- coding: utf-8 -*-
+"""
+Models for the `thematic` application.
+"""
+from colorfield.fields import ColorField
 from django.db import models
+from django.urls import reverse
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 
+
+# ======================================================================================================================
+# Theme
+# ======================================================================================================================
+
+def get_theme_cover_path(instance, filename):
+    # Get the extension of the file
+    extension = filename.split('.')[-1]
+    # Return the path
+    return f"thematic/theme/{instance.slug}/cover.{extension}"
+# End def get_theme_cover_path
 
 class Theme(models.Model):
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Fields
+    # ID field
     # ------------------------------------------------------------------------------------------------------------------
 
     id = models.AutoField(primary_key=True)
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # Slug and name
+    # ------------------------------------------------------------------------------------------------------------------
+
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_("Slug"),
+        help_text=_("Slug of the theme, used in urls.")
+    )
+
     name = models.CharField(
-        verbose_name="Nom",
         max_length=100,
         unique=True,
-        help_text="Nom de la thématique"
+        verbose_name=_("Name"),
+        help_text=_("Name of the theme.")
     )
 
     short_name = models.CharField(
-        verbose_name="Nom court",
         max_length=20,
         unique=True,
         blank=True,
         null=True,
-        help_text="Nom court de la thématique, utilisé dans les urls, tags, etc."
-                  "Si laisser vide, le nom sera utilisé (tronqué à 20 caractères)."
+        verbose_name=_("Short name"),
+        help_text=_("Short name of the theme, used for tags.")
     )
 
-    short_desc = models.CharField(
-        verbose_name="Description courte",
+    # ------------------------------------------------------------------------------------------------------------------
+    # Description and image
+    # ------------------------------------------------------------------------------------------------------------------
+
+    summary = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        help_text="Description courte de la thématique, affichée dans la liste des thématiques."
+        verbose_name=_("Summary"),
+        help_text=_("Short description of the theme, displayed on the theme index page.")
     )
 
-    long_desc = models.TextField(
-        verbose_name="Description longue",
+    description = models.TextField(
         blank=True,
         null=True,
-        help_text="Description détaillée de la thématique, affichée sur la page de présentation de la thématique. "
-                  "Si laissé vide, seul la description courte sera affichée."
+        verbose_name=_("Description"),
+        help_text=_("Long description of the theme, displayed on the theme page as an article.")
     )
 
-    splash_img = models.ImageField(
-        verbose_name="Image de présentation",
-        upload_to='images/thematic/splah',
+    cover_image = models.ImageField(
+        upload_to=get_theme_cover_path,
         blank=True,
         null=True,
-        help_text="Image de présentation de la thématique, affichée en haut de la page. "
-                  "Si laissé vide, seul la couleur de fond sera affichée."
+        verbose_name=_("Cover image"),
+        help_text=_("Image displayed on the theme page.")
     )
 
-    splash_color = models.CharField(
-        verbose_name="Couleur de fond",
-        max_length=7,
-        default='#4BB166',
+    color = ColorField(
+        format='hex',
+        default=None,
         blank=True,
         null=True,
-        help_text="Couleur de fond de la page de présentation de la thématique, en format hexadécimal."
+        verbose_name=_("Color"),
+        help_text=_("Color used to represent the theme.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -65,8 +99,8 @@ class Theme(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Thèmatique"
-        verbose_name_plural = "Thèmatiques"
+        verbose_name = _("Theme")
+        verbose_name_plural = _("Themes")
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -74,3 +108,14 @@ class Theme(models.Model):
 
     def __str__(self):
         return self.name
+    # End def __str__
+
+    def clean(self):
+        super().clean()
+        self.slug = slugify(self.name)
+    # End def clean
+
+    def get_absolute_url(self):
+        return reverse('theme', kwargs={"pk" : self.id})
+    # End def get_absolute_url
+# End class Theme

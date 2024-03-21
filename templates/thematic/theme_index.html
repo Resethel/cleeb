@@ -58,14 +58,15 @@
                         {% for theme in themes %}
                             <li class="card-grid__container">
                                 <a href="{% url 'theme' theme.id %}">
-                                    {% if theme.splash_img %}
-                                        <div class="card-grid__card theme" style="--back-img: url('{{ theme.splash_img.url }}')">
+                                    {% if theme.cover_image %}
+                                        <div class="card-grid__card theme" style="--back-img: url('{{ theme.cover_image.url }}')">
                                     {% else %}
                                         <div class="card-grid__card theme" style="--back-img: url('{% static 'assets/images/placeholder/theme.webp' %}')">
                                     {% endif %}
-                                    <h5>{{ theme.name }}</h5>
-                                    <p>{{ theme.short_desc }}</p>
-
+                                        <h5>{{ theme.name }}</h5>
+                                        {% if theme.summary %}
+                                            <p>{{ theme.summary }}</p>
+                                        {% endif %}
                                     </div>
                                 </a>
                             </li>

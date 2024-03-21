@@ -19,17 +19,10 @@ class ThemeDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         self.object : Theme
-        # Get the ThematicMapText related to the ThematicMap
-        maps : set[Map]   = self.object.map_set.all()
-        name : str        = self.object.name
-        description : str = self.object.long_desc if self.object.long_desc is not None else self.object.short_desc
-
-        # Add the text and sections to the context
-        context['theme_name'] = name
-        context['theme_desc'] = description
-        context['maps'] = maps
+        context['maps'] = self.object.map_set.all()
 
         return context
+# End class ThemeDetailView
 
 
 # ======================================================================================================================
