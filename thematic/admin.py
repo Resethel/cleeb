@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from map_thematics.models import Thematic
+from thematic.models import Thematic
 
 # Register your models here.
 admin.site.register(Thematic)

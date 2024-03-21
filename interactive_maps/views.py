@@ -12,7 +12,7 @@ from django.views.generic import DetailView
 
 from core.models import Person
 from interactive_maps.models import Map
-from map_thematics.models import Thematic
+from thematic.models import Thematic
 
 
 # ======================================================================================================================

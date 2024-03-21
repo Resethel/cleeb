@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import DetailView
 
 from interactive_maps.models import Map
-from map_thematics.models import Thematic
+from thematic.models import Thematic
 
 
 # ======================================================================================================================
@@ -12,7 +12,7 @@ from map_thematics.models import Thematic
 class MapThematicDetailView(DetailView):
 
     model = Thematic
-    template_name = 'map_thematics/theme.html'
+    template_name = 'thematic/theme.html'
     context_object_name = 'thematic'
 
     def get_context_data(self, **kwargs):
@@ -33,10 +33,10 @@ class MapThematicDetailView(DetailView):
 
 
 # ======================================================================================================================
-# Vue listant les thèmatiques de la cartographie
+# Vue listant les thèmes de la cartographie
 # ======================================================================================================================
 
 def thematic_list(request):
     thematics = Thematic.objects.all()
-    return render(request, 'map_thematics/theme_catalog.html', {'thematics': thematics})
+    return render(request, 'thematic/theme_catalog.html', {'thematics': thematics})
 

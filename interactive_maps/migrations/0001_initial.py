@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('core', '0001_initial'),
         ('map_templates', '0001_initial'),
-        ('map_thematics', '0001_initial'),
+        ('thematic', '0001_initial'),
     ]
 
     operations = [
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('text', models.TextField(blank=True, default=None, help_text='Le texte de la carte interactive. Formaté en HTML.', null=True)),
                 ('slug', models.SlugField(blank=True, default=None, help_text="Le slug de la carte interactive. S'il n'est pas renseigné, il sera généré automatiquement.", max_length=100, null=True)),
                 ('authors', models.ManyToManyField(blank=True, help_text='Les auteur.ice.s de la carte interactive.', to='core.person')),
-                ('thematics', models.ManyToManyField(blank=True, help_text='Les thématiques de la carte interactive.', to='map_thematics.thematic')),
+                ('thematics', models.ManyToManyField(blank=True, help_text='Les thématiques de la carte interactive.', to='thematic.thematic')),
                 ('map_render', models.ForeignKey(blank=True, help_text='Le rendu de carte généré par le serveur.', null=True, on_delete=django.db.models.deletion.SET_NULL, to='interactive_maps.maprender', verbose_name='Rendu de carte')),
             ],
             options={

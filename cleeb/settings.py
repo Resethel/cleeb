@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     # Local apps
     'core.apps.CoreConfig',
     'interactive_maps.apps.InteractiveMapsConfig',
-    "map_thematics.apps.MapThematicsConfig",
+    "thematic.apps.ThematicConfig",
     "datasets.apps.DatasetsConfig",
     "map_templates.apps.MapTemplatesConfig",
     "articles.apps.ArticleConfig"

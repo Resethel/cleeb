@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('', include('interactive_maps.urls')),
-    path('', include('map_thematics.urls')),
+    path('', include('thematic.urls')),
     path('', include('datasets.urls')),
     path('', include('articles.urls')),
 ]
