@@ -11,10 +11,10 @@ from datasets.models import Dataset, DatasetCategory, DatasetVersion
 # Dataset Main view (search)
 # ======================================================================================================================
 
-class DatasetsSearchView(ListView):
+class DatasetsIndexView(ListView):
 
     model = Dataset
-    template_name = 'datasets/dataset_search.html'
+    template_name = 'datasets/dataset_index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

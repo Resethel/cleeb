@@ -1,0 +1,113 @@
+{% load static %}
+<!-- map_catalog.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jeux de données</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+    <script src="{% static 'js/datasets_search.js' %}"></script>
+</head>
+<body class="page">
+
+<!-- Header Section -->
+{% include 'core/topbar.html' %}
+
+<!-- Main Content Section -->
+<main class="main">
+    <header class="search-header">
+        <div class="search-header__title">
+            <h1>Jeux de données</h1>
+        </div>
+        <form class="search-header__form" action="." method="GET">
+            <div class="search-header__form__select">
+                <label for="category" class="--hidden">Catégorie</label>
+                <select name="category" id="category">
+                    <option value="">Toutes les catégories</option>
+                    {% for category in categories %}
+                        {% if category == selected_category %}
+                            <option value="{{ category.slug }}" selected>{{ category.name }}</option>
+                        {% else %}
+                            <option value="{{ category.slug }}">{{ category.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="search-header__form__input">
+                <label for="search" class="--hidden">Rechercher un jeu de données</label>
+                {% if search %}
+                    <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher un jeu de données">
+                {% else %}
+                    <input type="search" name="search" id="search" placeholder="Rechercher un jeu de données">
+                {% endif %}
+                <button type="submit">
+                    <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
+                </button>
+            </div>
+        </form>
+    </header>
+
+    <div class="search-result">
+        {% if object_list %}
+            <ul class="search-result__grid">
+                {% for dataset in object_list %}
+                    <li>
+                        <article class="search-result__dataset">
+                            <div class="dataset-categories">
+                                {% for category in dataset.categories.all %}
+                                    {% if forloop.counter < 4 %}
+                                        <a class="dataset-categories__item" href="{% url 'datasets-index' %}?category={{ category.slug }}">
+                                            <span >{{ category.name }}</span>
+                                            <img src="{{ category.icon.url }}" alt="{{ category.name }} icon" class="verdant-green-filter"/>
+                                        </a>
+                                    {% else %}
+                                        {% if forloop.counter == 4 %}
+                                            <div class="dataset-categories__more">
+                                                <button onclick="datasets_search()" class="dataset-categories__more__button" data-toggle>
+                                                    <img class="verdant-green-filter" src="{% static 'assets/icons/expand_more_black_24dp.svg' %}" alt="expand more icon"/>
+                                                </button>
+                                                <div class="dataset-categories__more__list">
+                                        {% endif %}
+                                                    <a class="dataset-categories__item" href="{% url 'datasets-index' %}?category={{ category.slug }}">
+                                                        <span >{{ category.name }}</span>
+                                                        <img src="{{ category.icon.url }}" alt="{{ category.name }} icon" class="verdant-green-filter"/>
+                                                    </a>
+                                        {% if forloop.last %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <a class="dataset-title" href="{% url 'dataset' dataset.slug %}"><h1>{{ dataset.name }}</h1></a>
+                            <a class="dataset-description" href="{% url 'dataset' dataset.slug %}">
+                                {% if dataset.thumbnail %}
+                                    <img src="{{ dataset.thumbnail.url }}" alt="{{ dataset.name }} thumbnail"/>
+                                {% else %}
+                                    <img src="{% static 'assets/images/placeholder/map.png' %}" alt="placeholder"/>
+                                {% endif %}
+                                <span>{{ dataset.short_desc }}</span>
+                            </a>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Footer Section -->
+{% include 'core/footer.html' %}
+
+</body>
+</html>
+

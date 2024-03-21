@@ -154,203 +154,296 @@ label.--hidden {
 /* ================================================================================================================== */
 
 .search-result__grid {
-    max-width: var(--content-max-width);
-    margin: 80px auto;
-}
-
-.search-result__grid__row {
     display: flex;
-    align-items: stretch;
-    height: 400px;
+    flex-wrap: wrap;
+    gap: 30px;
+    width: var(--content-max-width);
+    margin: 80px auto;
+    list-style: none;
 }
 
-.search-result__grid__column {
-    padding: calc(var(--gutter-x));
+.search-result__grid__item {
+    display: block;
+    padding: 1rem;
 }
 
-.search-result__grid.--1cols .search-result__grid__column {width: 100%;}
-.search-result__grid.--2cols .search-result__grid__column {width: 50%;}
-.search-result__grid.--3cols .search-result__grid__column {width: 33.333%;}
-.search-result__grid.--4cols .search-result__grid__column {width: 25%;}
+.search-result__grid__item li {
+    width: max-content;
+}
+
+@media only screen and (min-width: 40rem) and (max-width: 60rem) {
+    .search-result__grid {
+        width: calc(100% - 2*var(--gutter-x));
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+}
+
+@media only screen and (max-width: 40rem) {
+    .search-result__grid {
+        width: calc(100% - 2*var(--gutter-x));
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+}
 
 /* ================================================================================================================== */
-/* Search Results - Item                                                                                              */
+/* Search Results Item - Article
 /* ================================================================================================================== */
 
-.search-result__item {
+.search-result__article {
     display: flex;
     flex-direction: column;
-
+    gap: 15px;
     height: 100%;
-    padding: 4%;
-
-    border-radius: 8px;
-    background-color: var(--verdant-green);
+    width: calc(var(--content-max-width) / 3.334);
+    background: var(--eco-emerald);
+    border-radius: 15px;
+    padding-bottom: 15px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
     transition: all .1s ease-in-out;
 }
+
+.search-result__article:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.search-result__article img {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 15px 15px 0 0;
+}
+
+.article-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0 var(--gutter-x);
+}
+
+.article-metadata__author {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    width: max-content;
+    color: white;
+}
+
+.article-metadata__author:not(:first-child)::before {
+    display: inline-block;
+    content: "·";
+    margin: 0 5px;
+    color: white;
+}
+
+.article-metadata__author span {
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.article-metadata__author img {
+    object-fit: contain;
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+}
+
+.article-metadata__dates {
+    display: flex;
+    height: 25px;
+    color: white;
+}
+
+.search-result__article h1,
+.search-result__article h2,
+.search-result__article h3,
+.search-result__article h4,
+.search-result__article h5 {
+    margin: 0;
+    padding: 0 var(--gutter-x);
+    color: white;
+    font-size: var(--fs-h4);
+    line-height: var(--lh-h4);
+}
+
+/* ================================================================================================================== */
+/* Search Results Item - Dataset
+/* ================================================================================================================== */
+
+.search-result__dataset {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    width: calc(var(--content-max-width)/2 - 15px);
+    height: 100%;
+    padding: 25px;
+
+    border-radius: 8px;
+    background: var(--verdant-green);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all .1s ease-in-out;
+}
+
 /* On hover, the card will move up and the shadow will be more pronounced */
-.search-result__item:hover {
+.search-result__dataset:hover {
     transform: translateY(-5px);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-/* ================================================================================================================== */
-/* Search Results - Item - Categories                                                                                 */
-/* ================================================================================================================== */
-
-.search-result__item__categories {
+.dataset-categories {
     display: flex;
+    gap: 5px;
 }
 
-.search-result__item__categories span {
-    display: inline-block;
-}
-
-.search-result__item__categories a {
+.dataset-categories__item {
     display: flex;
     align-items: center;
-
+    gap: 2px;
     padding: 4px;
-
     border-radius: 4px;
     background-color:var(--pale-aqua);
+    text-decoration: none;
+}
 
+.dataset-categories__item:hover {
+    background-color: white;
+    text-decoration: none;
+}
+
+.dataset-categories__item > span {
     font-size: 14px;
     color: var(--verdant-green);
-    text-decoration: none;
-}
-/* The second category and beyond will have a margin to separate them */
-.search-result__item__categories a+a {
-    margin-left: 5px;
 }
 
-.search-result__item__categories a:hover {
-    background-color: #ccc;
-    text-decoration: none;
-}
-
-.search-result__item__categories a>img {
-    margin-left: 2px;
-}
-
-.search-result__item__categories__more {
-    margin-left: 5px;
+.dataset-categories__more {
     position: relative;
 }
 
 /* Display the list of categories when the button is clicked, and rotate the arrow */
-.search-result__item__categories__more.--show .search-result__item__categories__more__list {display: block;}
-.search-result__item__categories__more.--show .search-result__item__categories__more__button img {transform: rotateX(180deg);}
+.dataset-categories__more.--show .dataset-categories__more__list {display: flex;}
+.dataset-categories__more.--show .dataset-categories__more__button img {transform: rotateX(180deg);}
 
-.search-result__item__categories__more__button {
+.dataset-categories__more__button {
     -webkit-appearance: none;
-
     position: relative;
-
     width: 100%;
     padding: 4px;
-
     border: 0;
     border-radius: 4px;
     background-color:var(--pale-aqua);
-
     font-size: 14px;
     color: var(--verdant-green);
     text-decoration: none;
 }
-.search-result__item__categories__more__button:hover {
+
+.dataset-categories__more__button:hover {
     background-color: #ccc;
 }
 
-.search-result__item__categories__more__list {
+.dataset-categories__more__list {
     display: none;
+    width: max-content;
+    flex-direction: column;
     position: absolute;
     right: 0;
-
     margin-top: 5px;
-
     border-radius: 4px;
     background-color: var(--pale-aqua);
 }
 
-.search-result__item__categories__more__list a {
+.dataset-categories__more__list a {
     width: 100%;
     margin: 0;
     background-color: transparent;
 }
 
-.search-result__item__categories__more__list a+a {
+.dataset-categories__more__list a+a {
     margin: 0;
 }
 
-/* ================================================================================================================== */
-/* Search Results - Item - Title                                                                                      */
-/* ================================================================================================================== */
-
-.search-result__item__title {
+.dataset-title h1,
+.dataset-title h2,
+.dataset-title h3,
+.dataset-title h4,
+.dataset-title h5 {
     width: 100%;
-
-    margin-top: 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
-
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+    font-weight: bolder;
     text-decoration: none;
 }
 
-.search-result__item__title > h1,
-.search-result__item__title > h2,
-.search-result__item__title > h3,
-.search-result__item__title > h4,
-.search-result__item__title > h5 {
-    margin: .334rem 0;
-    line-height: 1.5rem;
-}
-
-.search-result__item__title:hover {
+.dataset-title:hover {
     color: white;
     text-decoration: none;
-    cursor: auto;
+    cursor: pointer;
 }
 
-.search-result__item__title * {
-    color: white;
-}
-
-/* ================================================================================================================== */
-/* Search Results - Item - Description                                                                                */
-/* ================================================================================================================== */
-
-.search-result__item__description {
+.dataset-description {
     display: flex;
     align-items: center;
     text-decoration: none;
 }
 
-.search-result__item__description:hover {
+.dataset-description:hover {
     text-decoration: none;
 }
 
-.search-result__item__description img {
+.dataset-description img {
     height: 10rem;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-
     border: 1px solid var(--teal-shadow);
     border-radius: 8px;
-
 }
 
-.search-result__item__description p {
+.dataset-description span {
     margin: 0 0 0 calc(var(--gutter-x) * .5);
-
     color: white;
     font-size:14px;
-
     line-height: 1rem;
     vertical-align: middle;
     word-break: break-word;
+}
+
+@media only screen and (max-width: 40rem) {
+    .search-result__dataset {
+        width: 100%;
+    }
+
+    .dataset-categories {
+        justify-content: center;
+    }
+
+    .dataset-title {
+        text-align: center;
+    }
+
+    .dataset-description {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dataset-description img {
+        width: 66.667%;
+        height: auto;
+    }
+
+    .dataset-description span {
+        margin: 0;
+        text-align: justify;
+    }
 }
 
 /* ================================================================================================================== */

@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Articles | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+{#    <script src="{% static 'js/datasets_search.js' %}"></script>#}
+</head>
+<body class="page">
+
+    {% include 'core/topbar.html' %}
+    <main class="main">
+        <header class="search-header">
+            <div class="search-header__title">
+                <h1>Articles</h1>
+            </div>
+            <form class="search-header__form" action="." method="GET">
+                <div class="search-header__form__input">
+                    <label for="search" class="--hidden">Rechercher un article</label>
+                    {% if search %}
+                        <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher un article par titre, auteur, ...">
+                    {% else %}
+                        <input type="search" name="search" id="search" placeholder="Rechercher un article par titre, auteur, ...">
+                    {% endif %}
+                    <button type="submit">
+                        <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
+                    </button>
+                </div>
+            </form>
+        </header>
+        <article class="search-result">
+            {% if articles %}
+                <ul class="search-result__grid">
+                    {% for article in articles %}
+                        <li>
+                            <a class="search-result__article" href="{% url 'article' article.slug %}">
+                                {% if article.cover_image %}
+                                    <img src="{{ article.cover_image.url }}" alt="{{ article.title }} cover"/>
+                                {% else %}
+                                    <img src="{% static 'assets/images/placeholder/map.png' %}" alt="placeholder"/>
+                                {% endif %}
+                                <div class="article-metadata">
+                                    {% for author in article.authors.all %}
+                                        <div class="article-metadata__author">
+                                            {% if author.picture %}
+                                                <img src="{{ author.picture.url }}" alt="{{ author }} picture"/>
+                                            {% endif %}
+                                            <span>{{ author }}</span>
+                                        </div>
+                                    {% endfor %}
+                                    <span class="article-metadata__date">{{ article.date|date:"d/m/Y" }}</span>
+                                </div>
+                                <h1>{{ article.title }}</h1>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+            {% endif %}
+        </article>
+    </main>
+    {% include 'core/footer.html' %}
+
+</body>
+</html>
+

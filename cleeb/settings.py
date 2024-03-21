@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'interactive_maps.apps.InteractiveMapsConfig',
     "map_thematics.apps.MapThematicsConfig",
     "datasets.apps.DatasetsConfig",
-    "map_templates.apps.MapTemplatesConfig"
+    "map_templates.apps.MapTemplatesConfig",
+    "articles.apps.ArticleConfig"
 ]
 
 MIDDLEWARE = [
