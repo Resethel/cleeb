@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import MapThematicDetailView, thematic_list
+from .views import ThemeDetailView, theme_index_view
 
 urlpatterns = [
-    path('thematiques/', thematic_list, name='thematic_list'),
-    path('thematiques/<int:pk>/', MapThematicDetailView.as_view(), name='thematic_detail'),
+    path('thematique/', theme_index_view, name='theme-index'),
+    path('theme/<int:pk>/', ThemeDetailView.as_view(), name='theme'),
 ]

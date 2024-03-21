@@ -24,7 +24,7 @@
     <main class="main">
         <div class="content">
             <div class="content-title">
-                Thématiques de la Cartographie
+                Thématique de la Cartographie
             </div>
 
 
@@ -44,7 +44,7 @@
                             qu’elles méritent d’être mises en avant.
                         </p>
                         <p>
-                            Ci-dessous, vous trouverez la liste des thématiques que nous avons choisies de mettre en avant.
+                            Ci-dessous, vous trouverez la liste des thémes que nous avons choisies de mettre en avant.
                             Pour chaque thématique, vous trouverez une description, ainsi que les luttes qui y sont associées
                             en cliquant sur la carte de la thématique.
                         </p>
@@ -52,12 +52,12 @@
                 </section>
 
                 <section class="content-section__panel">
-                    <h3>Ensemble des thématiques</h3>
+                    <h3>Ensemble des thémes</h3>
                     <ul class="card-grid">
                         <!-- Render a list of themes with cards linking to individual theme pages -->
-                        {% for theme in thematics %}
+                        {% for theme in themes %}
                             <li class="card-grid__container">
-                                <a href="{% url 'thematic_detail' theme.id %}">
+                                <a href="{% url 'theme' theme.id %}">
                                     {% if theme.splash_img %}
                                         <div class="card-grid__card theme" style="--back-img: url('{{ theme.splash_img.url }}')">
                                     {% else %}

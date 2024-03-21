@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Thematic(models.Model):
+class Theme(models.Model):
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fields

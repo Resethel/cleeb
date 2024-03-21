@@ -3,7 +3,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from core.models import Organization
-from thematic.models import Thematic
+from thematic.models import Theme
 
 
 # ======================================================================================================================
@@ -161,8 +161,8 @@ class Map(models.Model):
         help_text="Les auteur.ice.s de la carte interactive."
     )
 
-    thematics = models.ManyToManyField(
-        'thematic.Thematic',
+    themes = models.ManyToManyField(
+        'thematic.Theme',
         blank=True,
         help_text="Les thématiques de la carte interactive."
     )
