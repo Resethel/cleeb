@@ -6,7 +6,7 @@
     flex-direction: column;
     justify-content: stretch;
 
-    min-height: calc(100vh - var(--topbar-height) - var(--footer-height));
+    min-height: calc(100vh - var(--topbar-height));
     width: 100%;
 
     /**
