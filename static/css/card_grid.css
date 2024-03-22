@@ -57,46 +57,6 @@ The card are arranged in a grid, with each row containing a maximum of X cards, 
 
 }
 
-
-/* ================================================================================================================== */
-/* Style for the cards of map theme                                                                                   */
-/* ================================================================================================================== */
-
-.card-grid__card.theme {
-   padding: var(--content-gutter);
-   min-height: 300px;
-   background: /* background is defined with the variable --back-img */
-       linear-gradient(rgba(0,0,0,0.445),rgba(0,0,0,0.1)),
-       var(--back-img) no-repeat center / cover;
-
-   /* Fonts & colors */
-   text-align: left;
-   color: white;
-   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-   text-decoration: none;
-}
-
-.card-grid__card.theme h5 {
-   font-size: calc(var(--fs-dflt) * 1.2);
-   font-weight: 600;
-   text-transform: uppercase;
-   margin-bottom: 1.8rem;
-   max-width: 100%;
-}
-
-.card-grid__card.theme p {
-   font-size: var(--fs-dflt);
-   line-height: 1.618rem;
-   font-weight: 400;
-   max-width: 90%;
-}
-
-@media only screen and (max-width: 40rem) {
-   .card-grid__card.theme {
-       padding: calc(var(--content-gutter) / 1.5);
-   }
-}
-
 /* ================================================================================================================== */
 /* Style for the Organization cards
 /* ================================================================================================================== */

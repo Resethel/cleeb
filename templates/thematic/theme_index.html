@@ -7,13 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Listes des Thématiques</title>
+    <title>Thématique | CLEEB</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
-    <link rel="stylesheet" href="{% static 'css/card_grid.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
 </head>
 <body class="page">
 
@@ -22,58 +22,46 @@
 
     <!-- Main Content Section -->
     <main class="main">
-        <div class="content">
-            <div class="content-title">
-                Thématique de la Cartographie
+        <header class="search-header">
+            <div class="search-header__title">
+                <h1>Thématique</h1>
             </div>
+            <form class="search-header__form" action="." method="GET">
+                <div class="search-header__form__input">
+                    <label for="search" class="--hidden">Rechercher un théme</label>
+                    {% if search %}
+                        <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher un théme">
+                    {% else %}
+                        <input type="search" name="search" id="search" placeholder="Rechercher un théme">
+                    {% endif %}
+                    <button type="submit">
+                        <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
+                    </button>
+                </div>
+            </form>
+        </header>
 
-
-            <div class="content-section">
-                <section class="content-section__intro">
-                    <h3>Introduction</h3>
-                    <div class="introduction-text">
-                        <p>
-                            La cartographie militante est un projet qui vise à mettre en lumière les luttes et les mobilisations
-                            qui ont lieu sur le territoire de la Métropole de Metz.
-                        </p>
-                        <p>
-                            Ces luttes sont nombreuses et variées, et nous avons choisie les organiser en thématiques afin de
-                            faciliter la navigation sur la carte. Chaque thématique regroupe des luttes qui ont des points
-                            communs, mais qui sont aussi très différentes les unes des autres. Nous avons choisi de ne pas
-                            hiérarchiser les thématiques, car nous considérons que toutes les luttes sont importantes et
-                            qu’elles méritent d’être mises en avant.
-                        </p>
-                        <p>
-                            Ci-dessous, vous trouverez la liste des thémes que nous avons choisies de mettre en avant.
-                            Pour chaque thématique, vous trouverez une description, ainsi que les luttes qui y sont associées
-                            en cliquant sur la carte de la thématique.
-                        </p>
-                    </div>
-                </section>
-
-                <section class="content-section__panel">
-                    <h3>Ensemble des thémes</h3>
-                    <ul class="card-grid">
-                        <!-- Render a list of themes with cards linking to individual theme pages -->
-                        {% for theme in themes %}
-                            <li class="card-grid__container">
-                                <a href="{% url 'theme' theme.id %}">
-                                    {% if theme.cover_image %}
-                                        <div class="card-grid__card theme" style="--back-img: url('{{ theme.cover_image.url }}')">
-                                    {% else %}
-                                        <div class="card-grid__card theme" style="--back-img: url('{% static 'assets/images/placeholder/theme.webp' %}')">
-                                    {% endif %}
-                                        <h5>{{ theme.name }}</h5>
-                                        {% if theme.summary %}
-                                            <p>{{ theme.summary }}</p>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                            </li>
-                        {% endfor %}
-                   </ul>
-                </section>
-            </div>
+        <div class="search-result">
+            {% if themes %}
+                <ul class="search-result__grid">
+                    {% for theme in themes %}
+                        <li>
+                            {% if theme.cover_image %}
+                                <article class="search-result__theme" style="--theme-bkgd: url('{{ theme.cover_image.url }}')">
+                            {% else %}
+                                <article class="search-result__theme" style="--theme-bkgd: url('{% static 'assets/images/placeholder/theme.webp' %}')">
+                            {% endif %}
+                                <h3><a class="card-link" href="{% url 'theme' theme.slug %}">{{ theme.name }}</a></h3>
+                                {% if theme.summary %}
+                                    <p>{{ theme.summary }}</p>
+                                {% endif %}
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+            {% endif %}
         </div>
     </main>
 

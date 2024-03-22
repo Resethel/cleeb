@@ -116,6 +116,6 @@ class Theme(models.Model):
     # End def clean
 
     def get_absolute_url(self):
-        return reverse('theme', kwargs={"pk" : self.id})
+        return reverse('theme', kwargs={"theme_slug" : self.slug})
     # End def get_absolute_url
 # End class Theme

@@ -1,15 +1,18 @@
-from django.shortcuts import render
-from django.views.generic import DetailView
+# -*- coding: utf-8 -*-
+"""
+Views for the `thematic` application.
+"""
+from django.db.models import Q
+from django.views.generic import DetailView, ListView
 
-from interactive_maps.models import Map
 from thematic.models import Theme
 
 
 # ======================================================================================================================
-# Vue des thèmatiques de la cartographie
+# Theme view
 # ======================================================================================================================
 
-class ThemeDetailView(DetailView):
+class ThemeView(DetailView):
 
     model = Theme
     template_name = 'thematic/theme.html'
@@ -22,17 +25,39 @@ class ThemeDetailView(DetailView):
         context['maps'] = self.object.map_set.all()
 
         return context
-# End class ThemeDetailView
+# End class ThemeView
 
 
 # ======================================================================================================================
-# Vue listant les thèmes de la cartographie
+# Theme Index View (Thematic view)
 # ======================================================================================================================
 
-def theme_index_view(request):
-    return render(
-        request,
-        'thematic/theme_index.html',
-        {'themes': Theme.objects.all()}
-    )
-# End def theme_index_view
+class ThemeIndexView(ListView):
+    """View for the index of the `article` application."""
+    model = Theme
+    template_name = "thematic/theme_index.html"
+    context_object_name = "themes"
+    paginate_by = 10
+
+    def get_queryset(self):
+        themes = Theme.objects.order_by('name')
+        # Filter by search query
+        search = self.request.GET.get('search')
+        if search:
+            themes = themes.filter(
+                Q(name__icontains=search) |
+                Q(short_name__icontains=search) |
+                Q(summary__icontains=search)
+            ).distinct()
+        return themes
+    # End def get_queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add to the context the search query
+        search = self.request.GET.get('search')
+        context['search'] = search if search else None
+        return context
+    # End def get_context_data
+# End class ThemeIndexView
+
