@@ -561,7 +561,7 @@
 }
 
 /* Styles for the download button */
-.content-attachments ul li .download-button {
+.content-attachments ul li .button {
     flex-shrink: 0; /* prevents the shrinking of the button */
     height: 30px;
     width: 30px;
@@ -571,30 +571,30 @@
     padding: 2px;
 }
 
-.content-attachments ul li .download-button img {
+.content-attachments ul li .button img {
     height: 100%;
     width: 100%;
     filter: var(--white-filter)
 }
 
 /* On hover... */
-.content-attachments ul li .download-button:hover {
+.content-attachments ul li .button:hover {
     background-color: white;
     cursor: pointer;
 }
 
-.content-attachments ul li .download-button:hover img {
+.content-attachments ul li .button:hover img {
     filter: var(--verdant-green-filter);
 }
 
 /* On click... */
-.content-attachments ul li .download-button:active {
+.content-attachments ul li .button:active {
     border-color: var(--verdant-green);
     background-color: var(--verdant-green);
     cursor: pointer;
 }
 
-.content-attachments ul li .download-button:active img {
+.content-attachments ul li .button:active img {
     filter: var(--white-filter);
 }
 

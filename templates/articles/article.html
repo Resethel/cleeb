@@ -68,7 +68,7 @@
                             <span>
                                 {{ attachment.name }}{% if attachment.short_description %} : {{ attachment.short_description }}{% endif %}
                             </span>
-                            <a  class="download-button" href="{% url 'download-attachment' attachment.article.slug attachment.slug %}">
+                            <a class="button" href="{% url 'download-attachment' attachment.article.slug attachment.slug %}">
                                 <img src="{% static 'assets/icons/download_black_24dp.svg' %}" alt="{{ attachment.name }} download icon">
                             </a>
                         </li>

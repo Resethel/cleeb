@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Models for the `interactive_maps` application.
+"""
 from django import urls
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 
 from core.models import Organization
 from thematic.models import Theme
@@ -151,22 +156,6 @@ class Map(models.Model):
     # Metadata fields
     # ------------------------------------------------------------------------------------------------------------------
 
-    # Title of the thematic map
-    title = models.CharField(max_length=100)
-
-    # Author of the thematic map
-    authors = models.ManyToManyField(
-        'core.Person',
-        blank=True,
-        help_text="Les auteur.ice.s de la carte interactive."
-    )
-
-    themes = models.ManyToManyField(
-        'thematic.Theme',
-        blank=True,
-        help_text="Les thématiques de la carte interactive."
-    )
-
     created_at = models.DateField(
         auto_now_add=True,
         help_text="La date de création de la carte interactive.",
@@ -180,7 +169,29 @@ class Map(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Rendered map
+    # Map fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Title of the thematic map
+    title = models.CharField(max_length=100)
+
+    # Author of the thematic map
+    authors = models.ManyToManyField(
+        'core.Person',
+        blank=True,
+        help_text="Les auteur.ice.s de la carte interactive."
+    )
+
+    themes = models.ManyToManyField(
+        'thematic.Theme',
+        related_name='maps',
+        blank=True,
+        verbose_name=_("Themes"),
+        help_text=_("The themes of the map.")
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Render field
     # ------------------------------------------------------------------------------------------------------------------
 
     render = models.OneToOneField(
@@ -194,7 +205,7 @@ class Map(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
-    # Content
+    # Content fields
     # ------------------------------------------------------------------------------------------------------------------
 
     introduction = models.TextField(

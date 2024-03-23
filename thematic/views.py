@@ -22,7 +22,8 @@ class ThemeView(DetailView):
         context = super().get_context_data(**kwargs)
 
         self.object : Theme
-        context['maps'] = self.object.map_set.all()
+        context['has_maps'] = self.object.maps.exists() # TODO: Filter by published maps once the status is implemented
+        context['has_articles'] =  self.object.articles.filter(status='published').exists()
 
         return context
 # End class ThemeView
