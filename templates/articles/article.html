@@ -31,7 +31,7 @@
                 <div class="content-metadata__authors">
                     {% for author in authors %}
                         <a class="" href="{{ author.url }}">
-                            <span>{{ author.firstname }} {{ author.lastname }}</span>
+                            <span>{{ author.display_name }}</span>
                             {% if author.picture %}
                                 <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
                             {% else %}

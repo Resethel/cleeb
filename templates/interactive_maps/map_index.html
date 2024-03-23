@@ -74,7 +74,7 @@
                                     {% for author in map.authors.all %}
                                         <div class="article-metadata__author">
                                             {% if author.picture %}
-                                                <img src="{{ author.picture.url }}" alt="{{ author }} picture"/>
+                                                <img src="{{ author.picture.url }}" alt="{{ author.display }} picture"/>
                                             {% endif %}
                                             <span>{{ author.display_name }}</span>
                                         </div>

@@ -70,12 +70,12 @@
                                     {% for author in article.authors.all %}
                                         <div class="article-metadata__author">
                                             {% if author.picture %}
-                                                <img src="{{ author.picture.url }}" alt="{{ author }} picture"/>
+                                                <img src="{{ author.picture.url }}" alt="{{ author.display_name }} picture"/>
                                             {% endif %}
-                                            <span>{{ author }}</span>
+                                            <span>{{ author.display_name }}</span>
                                         </div>
                                     {% endfor %}
-                                    <span class="article-metadata__date">{{ article.date|date:"d/m/Y" }}</span>
+                                    <span class="article-metadata__date">{{ article.created_at.date }}</span>
                                 </div>
                                 <h1><a class="card-link" href="{% url 'article' article.slug %}">{{ article.title }}</a></h1>
                             </article>

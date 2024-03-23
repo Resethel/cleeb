@@ -87,11 +87,15 @@
 }
 
 .content-metadata__authors a {
-    color: var(--verdant-green);
-    background-color: white;
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 25px;
     padding-left: 5px;
     border-radius: 4px 14px 14px 4px;
+    background-color: white;
+    color: var(--verdant-green);
+    text-decoration: none;
     transition: all .3s;
 }
 
@@ -101,12 +105,10 @@
 }
 
 .content-metadata__authors a>img {
-    height: 24px;
-    width: 24px;
+    height: 25px;
+    width: 25px;
     border-radius: 50%;
-    margin-bottom: 1px;
-    margin-left: 5px;
-    vertical-align: middle;
+    background-color: rgba(0, 0, 0, 0.3)
 }
 
 /* Adjust styles for the article content */
