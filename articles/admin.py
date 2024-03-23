@@ -53,6 +53,7 @@ class ArticleAdmin(admin.ModelAdmin):
             "fields": (
                 "title",
                 "authors",
+                "themes",
                 "cover_image",
                 "body",
             ),

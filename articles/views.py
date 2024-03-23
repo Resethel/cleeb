@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 
 from common.choices import PublicationStatus
+from thematic.models import Theme
 from .models import Article, AttachmentType, Attachment
 
 
@@ -25,7 +26,14 @@ class ArticleIndexView(ListView):
 
     def get_queryset(self):
         articles = Article.objects.filter(status=PublicationStatus.PUBLISHED).order_by('-created_at')
-        # Filter by search query
+
+        # 1. Filter by theme
+        theme_slug = self.request.GET.get('theme')
+        if theme_slug:
+            theme = Theme.objects.filter(slug=theme_slug)
+            articles = articles.filter(themes__in=theme)
+
+        # 2. Filter by search query
         search = self.request.GET.get('search')
         if search:
             articles = articles.filter(
@@ -38,6 +46,10 @@ class ArticleIndexView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Add to the context which theme
+        context['themes'] = Theme.objects.all()
+        theme_slug = self.request.GET.get('theme')
+        context['selected_theme'] = Theme.objects.get(slug=theme_slug) if theme_slug else None
         # Add to the context the search query
         search = self.request.GET.get('search')
         context['search'] = search if search else None

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
-{#    <script src="{% static 'js/datasets_search.js' %}"></script>#}
+
 </head>
 <body class="page">
 
@@ -22,6 +22,19 @@
                 <h1>Articles</h1>
             </div>
             <form class="search-header__form" action="." method="GET">
+                <div class="search-header__form__select">
+                    <label for="theme" class="--hidden">Theme</label>
+                    <select name="theme" id="theme">
+                        <option value="">Tous les thèmes</option>
+                        {% for theme in themes %}
+                            {% if theme == selected_theme %}
+                                <option value="{{ theme.slug }}" selected>{{ theme.short_name }}</option>
+                            {% else %}
+                                <option value="{{ theme.slug }}">{{ theme.short_name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="search-header__form__input">
                     <label for="search" class="--hidden">Rechercher un article</label>
                     {% if search %}
@@ -35,16 +48,23 @@
                 </div>
             </form>
         </header>
-        <article class="search-result">
+        <div class="search-result">
             {% if articles %}
                 <ul class="search-result__grid">
                     {% for article in articles %}
                         <li>
-                            <a class="search-result__article" href="{% url 'article' article.slug %}">
+                            <article class="search-result__article">
                                 {% if article.cover_image %}
-                                    <img src="{{ article.cover_image.url }}" alt="{{ article.title }} cover"/>
+                                    <img class="article-cover" src="{{ article.cover_image.url }}" alt="{{ article.title }} cover"/>
                                 {% else %}
-                                    <img src="{% static 'assets/images/placeholder/map.png' %}" alt="placeholder"/>
+                                    <img class="article-cover" src="{% static 'assets/images/placeholder/map.png' %}" alt="placeholder"/>
+                                {% endif %}
+                                {% if article.themes %}
+                                    <ul class="article-themes">
+                                        {% for theme in article.themes.all %}
+                                            <li><a href="{% url 'theme' theme.slug %}">{{ theme.short_name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
                                 {% endif %}
                                 <div class="article-metadata">
                                     {% for author in article.authors.all %}
@@ -57,15 +77,15 @@
                                     {% endfor %}
                                     <span class="article-metadata__date">{{ article.date|date:"d/m/Y" }}</span>
                                 </div>
-                                <h1>{{ article.title }}</h1>
-                            </a>
+                                <h1><a class="card-link" href="{% url 'article' article.slug %}">{{ article.title }}</a></h1>
+                            </article>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 <div class="search-result__empty"><h2>Aucun résultat</h2></div>
             {% endif %}
-        </article>
+        </div>
     </main>
     {% include 'core/footer.html' %}
 
