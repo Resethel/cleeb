@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Views for the interactive maps application.
 """
@@ -5,15 +6,59 @@ from __future__ import annotations
 
 from bs4 import BeautifulSoup
 from django import urls
+from django.db.models import Q
 from django.http import FileResponse, Http404
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404
+from django.views.generic import DetailView, ListView
 
 from core.models import Person
 from interactive_maps.models import Map
 from thematic.models import Theme
 
+
+# ======================================================================================================================
+# Interactive maps' index view
+# ======================================================================================================================
+
+class MapIndexView(ListView):
+    """Index view for the interactive maps."""
+    model = Map
+    template_name = 'interactive_maps/map_index.html'
+    context_object_name = 'maps'
+
+    def get_queryset(self):
+        # 1. Get the maps
+        maps = Map.objects.order_by('-created_at')
+
+        # 2. Filter by theme
+        theme_slug = self.request.GET.get('theme')
+        if theme_slug:
+            theme = Theme.objects.filter(slug=theme_slug)
+            maps = maps.filter(themes__in=theme)
+
+        # 2. Filter by search query
+        search = self.request.GET.get('search')
+        if search:
+            maps = maps.filter(
+                Q(title__icontains=search) |
+                Q(authors__firstname__icontains=search) |
+                Q(authors__lastname__icontains=search)
+            ).distinct()
+        return maps
+    # End def get_queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 1. Add to the context which theme is selected
+        context['themes'] = Theme.objects.all()
+        theme_slug = self.request.GET.get('theme')
+        context['selected_theme'] = Theme.objects.get(slug=theme_slug) if theme_slug else None
+        # Add to the context the search query
+        search = self.request.GET.get('search')
+        context['search'] = search if search else None
+        return context
+    # End def get_context_data
+# End class MapIndexView
 
 # ======================================================================================================================
 # Maps detail view
@@ -37,7 +82,7 @@ class MapDetailView(DetailView):
         title        : str         = self.object.title
         try:
             map_embed_html : str | None = self.object.render.embed_html.read().decode('utf-8')
-            map_fs_link    : str | None = urls.reverse('map_fullscreen', kwargs={'slug': self.object.slug})
+            map_fs_link    : str | None = urls.reverse('map-detail-fullscreen', kwargs={'slug': self.object.slug})
         except AttributeError:
             # If the map_render is None, then the map has not been generated yet
             map_embed_html = None
@@ -113,27 +158,6 @@ def map_fullscreen_view(request, slug):
     if map_render is None or map_render.full_html is None:
         raise Http404(f"La vue plein écran de la carte '{map_instance.title}' n'est pas disponible.")
 
-    # Return the html of the map's full screen view
+    # Return the html of the map's fullscreen view
     return FileResponse(map_render.full_html, as_attachment=False)
 # End def interactive_map_fullscreen_view
-
-# ======================================================================================================================
-# Interactive maps' catalog view
-# ======================================================================================================================
-
-def maps_catalog_view(request):
-    # List all the available maps
-    map_objects  = Map.objects.all()
-
-
-    context = []
-    for m in map_objects:
-        sub_context = {}
-        sub_context['title']         = m.title
-        sub_context['themes']        = m.themes.all()
-        sub_context['created_at']    = m.created_at
-        sub_context['last_modified'] = m.last_modified
-        sub_context['authors']       = m.authors
-        context.append(context)
-
-    return render(request, 'interactive_maps/map_catalog.html', context={'maps' : map_objects})

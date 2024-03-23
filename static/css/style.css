@@ -15,6 +15,7 @@
     --fs-h5  : 1rem;
     --fs-dflt: 1rem;
     --fs-small: 0.8888889rem;
+    --fs-tiny: 0.75rem;
 
     --lh-h1  : 5.5555556rem;
     --lh-h2  : 2.7777778rem;
@@ -23,6 +24,7 @@
     --lh-h5  : 1.3888889rem;
     --lh-dflt: 1.3888889rem;
     --lh-small: 1.1111111rem;
+    --ls-tiny: 0.75rem;
 
     /* Colors */
     --deep-sea-blue: #0F292F;

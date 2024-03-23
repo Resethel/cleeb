@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
-    <link rel="stylesheet" href="{% static 'css/card_grid.css' %}">
 
 </head>
 <body class="page">
@@ -44,7 +43,7 @@
                     {% if has_maps %}
                         <li>
                             <span>Voir les <b>cartes</b> sur ce théme</span>
-                            <a class="button" href="{% url 'interactive_maps_catalog' %}">
+                            <a class="button" href="{% url 'map-index' %}?theme={{ theme.slug }}">
                                 <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt="go to interactive maps index">
                             </a>
                         </li>

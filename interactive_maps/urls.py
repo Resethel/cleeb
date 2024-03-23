@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+URLs for the `interactive_maps` application.
+"""
 from django.urls import path
 
-from .views import MapDetailView, map_fullscreen_view
-from .views import maps_catalog_view
+from .views import MapDetailView, map_fullscreen_view, MapIndexView
 
 urlpatterns = [
-    path('cartes/', maps_catalog_view, name='interactive_maps_catalog'),
-    path('cartes/<slug:slug>/', MapDetailView.as_view(), name='interactive_map_detail'),
-    path('cartes/<slug:slug>/plein-ecran', map_fullscreen_view, name='map_fullscreen'),
+    path('cartes/', MapIndexView.as_view(), name='map-index'),
+    path('carte/<slug:slug>/', MapDetailView.as_view(), name='map-detail'),
+    path('carte/<slug:slug>/plein-ecran', map_fullscreen_view, name='map-detail-fullscreen'),
 ]

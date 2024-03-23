@@ -121,7 +121,7 @@ class MapRender(models.Model):
     def get_absolute_url(self):
         # If the template is linked to a map, then the map is supposed to be displayed.
         if self.is_linked_to_map():
-            return urls.reverse('map_fullscreen', kwargs={'slug': self.map.slug})
+            return urls.reverse('map-detail-fullscreen', kwargs={'slug': self.map.slug})
         # If the template is not linked, then the map is not supposed to be displayed.
         # Therefore, return None
         return None
@@ -251,6 +251,6 @@ class Map(models.Model):
     # End def clean_fields
 
     def get_absolute_url(self):
-        return urls.reverse('interactive_map_detail', kwargs={'slug': self.slug})
+        return urls.reverse('map-detail', kwargs={'slug': self.slug})
     # End def get_absolute_url
 # End class Map

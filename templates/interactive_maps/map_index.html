@@ -1,0 +1,98 @@
+{% load static %}
+<!-- map_catalog.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cartes | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+</head>
+<body class="page">
+
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <header class="search-header">
+            <div class="search-header__title">
+                <h1>Cartes</h1>
+            </div>
+            <form class="search-header__form" action="." method="GET">
+                <div class="search-header__form__select">
+                    <label for="theme" class="--hidden">Theme</label>
+                    <select name="theme" id="theme">
+                        <option value="">Tous les thèmes</option>
+                        {% for theme in themes %}
+                            {% if theme == selected_theme %}
+                                <option value="{{ theme.slug }}" selected>{{ theme.short_name }}</option>
+                            {% else %}
+                                <option value="{{ theme.slug }}">{{ theme.short_name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="search-header__form__input">
+                    <label for="search" class="--hidden">Rechercher un article</label>
+                    {% if search %}
+                        <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher une carte par titre, auteur, ...">
+                    {% else %}
+                        <input type="search" name="search" id="search" placeholder="Rechercher une carte par titre, auteur, ...">
+                    {% endif %}
+                    <button type="submit">
+                        <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
+                    </button>
+                </div>
+            </form>
+        </header>
+        <div class="search-result">
+            {% if maps %}
+                <ul class="search-result__grid">
+                    {% for map in maps %}
+                        <li>
+                            <article class="search-result__article">
+                                {% if map.thumbnail %}
+                                    <img class="article-cover" src="{{ map.thumbnail.url }}" alt="{{ map.title }} cover"/>
+                                {% else %}
+                                    <img class="article-cover" src="{% static 'assets/images/placeholder/map.png' %}" alt="placeholder"/>
+                                {% endif %}
+                                {% if map.themes %}
+                                    <ul class="article-themes">
+                                        {% for theme in map.themes.all %}
+                                            <li><a href="{% url 'theme' theme.slug %}">{{ theme.short_name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <div class="article-metadata">
+                                    {% for author in map.authors.all %}
+                                        <div class="article-metadata__author">
+                                            {% if author.picture %}
+                                                <img src="{{ author.picture.url }}" alt="{{ author }} picture"/>
+                                            {% endif %}
+                                            <span>{{ author.display_name }}</span>
+                                        </div>
+                                    {% endfor %}
+                                    <span class="article-metadata__date">{{ map.created_at }}</span>
+                                </div>
+                                <h1><a class="card-link" href="{% url 'map-detail' map.slug %}">{{ map.title }}</a></h1>
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>
