@@ -101,6 +101,14 @@ class Article(models.Model):
         blank=True
     )
 
+    themes = models.ManyToManyField(
+        "thematic.Theme",
+        verbose_name=_("Themes"),
+        related_name="articles",
+        help_text=_("Themes of the article."),
+        blank=True
+    )
+
     cover_image = models.ImageField(
         upload_to=get_cover_image_upload_path,
         verbose_name=_("Splash image"),
@@ -200,7 +208,7 @@ class Attachment(models.Model):
         null=True,
     )
 
-    # The type of a file is enforced during upload.
+    # The type of file is enforced during upload.
     type = models.CharField(
         max_length=10,
         choices=AttachmentType.choices,

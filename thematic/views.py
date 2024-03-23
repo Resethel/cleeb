@@ -1,42 +1,64 @@
-from django.shortcuts import render
-from django.views.generic import DetailView
+# -*- coding: utf-8 -*-
+"""
+Views for the `thematic` application.
+"""
+from django.db.models import Q
+from django.views.generic import DetailView, ListView
 
-from interactive_maps.models import Map
-from thematic.models import Thematic
+from thematic.models import Theme
 
 
 # ======================================================================================================================
-# Vue des thèmatiques de la cartographie
+# Theme view
 # ======================================================================================================================
 
-class MapThematicDetailView(DetailView):
+class ThemeView(DetailView):
 
-    model = Thematic
+    model = Theme
     template_name = 'thematic/theme.html'
-    context_object_name = 'thematic'
+    context_object_name = 'theme'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        self.object : Thematic
-        # Get the ThematicMapText related to the ThematicMap
-        maps : set[Map]   = self.object.map_set.all()
-        name : str        = self.object.name
-        description : str = self.object.long_desc if self.object.long_desc is not None else self.object.short_desc
-
-        # Add the text and sections to the context
-        context['thematic_name'] = name
-        context['thematic_desc'] = description
-        context['maps'] = maps
+        self.object : Theme
+        context['has_maps'] = self.object.maps.exists() # TODO: Filter by published maps once the status is implemented
+        context['has_articles'] =  self.object.articles.filter(status='published').exists()
 
         return context
+# End class ThemeView
 
 
 # ======================================================================================================================
-# Vue listant les thèmes de la cartographie
+# Theme Index View (Thematic view)
 # ======================================================================================================================
 
-def thematic_list(request):
-    thematics = Thematic.objects.all()
-    return render(request, 'thematic/theme_catalog.html', {'thematics': thematics})
+class ThemeIndexView(ListView):
+    """View for the index of the `article` application."""
+    model = Theme
+    template_name = "thematic/theme_index.html"
+    context_object_name = "themes"
+    paginate_by = 10
+
+    def get_queryset(self):
+        themes = Theme.objects.order_by('name')
+        # Filter by search query
+        search = self.request.GET.get('search')
+        if search:
+            themes = themes.filter(
+                Q(name__icontains=search) |
+                Q(short_name__icontains=search) |
+                Q(summary__icontains=search)
+            ).distinct()
+        return themes
+    # End def get_queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add to the context the search query
+        search = self.request.GET.get('search')
+        context['search'] = search if search else None
+        return context
+    # End def get_context_data
+# End class ThemeIndexView
 

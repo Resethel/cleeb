@@ -43,9 +43,9 @@
                 </div>
             </div>
             <div class="content-tags">
-                {% for thematic in thematics %}
-                    <a href="{% url 'thematic_detail' thematic.id %}">
-                        <span>{{ thematic.short_name }}</span>
+                {% for theme in themes %}
+                    <a href="{% url 'theme' theme.id %}">
+                        <span>{{ theme.short_name }}</span>
                     </a>
                 {% endfor %}
             </div>

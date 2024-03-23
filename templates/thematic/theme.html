@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Thématique: {{ thematic_name }}</title>
+    <title>Théme: {{ theme.name }} | CLEEB</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
@@ -23,64 +23,43 @@
 
     <!-- Main Content Section -->
     <main class="main">
-        <div class="content">
-            <div class="content-title">{{ thematic_name }}</div>
+        <div class="content --article">
+            <div class="content-title">{{ theme.name }}</div>
 
+            <!-- Article that describes the theme -->
+            <article class="content-article">
+                {% if theme.cover_image %}
+                    <img src="{{ theme.cover_image.url }}" alt="{{ title }} cover" class="content-article__cover">
+                {% endif %}
+                <div class="content-article__body">
+                    {{ theme.description | safe }}
+                </div>
+            </article>
 
-            <!-- Main content of the page -->
-            <div class="content-section">
-                <section class="content-section__intro">
-                    <h3>Description de la thématique</h3>
-                    <div class="introduction-text">
-                        {{ thematic_desc | safe }}
-                    </div>
-                </section>
-
-                <section class="content-section__panel" id="map_list">
-                    <h3>Cartes interactives sur cette thématique:</h3>
-                    <ul class="card-grid">
-                        {% for map in maps %}
-                            <li class="card-grid__container">
-                                <a href="{% url 'interactive_map_detail' map.slug %}">
-                                    <div class="card-grid__card map">
-                                        {% if map.thumbnail %}
-                                            <img src="{{ map.thumbnail.url }}" alt="{{ map.name }}">
-                                        {% else %}
-                                            <img src="{% static 'assets/images/placeholder/map.png' %}" alt="{{ map.name }}">
-                                        {% endif %}
-                                        <div class="card-content">
-                                            <div class="card-metadata">
-                                                {% for author in map.authors.all %}
-                                                    <div class="card-metadata__authors">
-                                                        {% if author.picture %}
-                                                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
-                                                        {% else %}
-                                                            <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
-                                                        {% endif %}
-                                                        <a href="#{{ author.lastname }}-{{ author.firstname }}">
-                                                            <span>{{ author.firstname }} {{ author.lastname }}</span>
-                                                        </a>
-                                                    </div>
-                                                    {% if not forloop.last %}
-                                                        <span class="card-metadata__divider">·</span>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                {%  if map.published_at %}
-                                                    <span class="card-metadata__divider">·</span>
-                                                    <div class="card-metadata__dates">
-                                                        <span>{{ map.published_at }}</span>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <h5 class="card-title">{{ map.title }}</h5>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        {% endfor %}
+            <!-- Links to maps and articles related to the theme -->
+            {% if has_maps or has_articles %}
+                <article class="content-attachments">
+                    <h3>Pour en savoir plus</h3>
+                    <ul>
+                    {% if has_maps %}
+                        <li>
+                            <span>Voir les <b>cartes</b> sur ce théme</span>
+                            <a class="button" href="{% url 'interactive_maps_catalog' %}">
+                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt="go to interactive maps index">
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if has_articles %}
+                        <li>
+                            <span>Voir les <b>articles</b> sur ce théme</span>
+                            <a class="button" href="{% url 'article-index' %}?theme={{ theme.slug }}">
+                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt="go to articles index">
+                            </a>
+                        </li>
+                    {% endif %}
                     </ul>
-                </section>
-            </div>
+                </article>
+            {% endif %}
         </div>
     </main>
 

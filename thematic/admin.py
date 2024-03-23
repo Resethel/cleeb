@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from thematic.models import Thematic
+from thematic.models import Theme
 
 # Register your models here.
-admin.site.register(Thematic)
+admin.site.register(Theme)

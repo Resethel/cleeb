@@ -12,7 +12,7 @@ from django.views.generic import DetailView
 
 from core.models import Person
 from interactive_maps.models import Map
-from thematic.models import Thematic
+from thematic.models import Theme
 
 
 # ======================================================================================================================
@@ -30,14 +30,14 @@ class MapDetailView(DetailView):
 
         self.object : Map
         # Get the ThematicMapText related to the ThematicMap
-        introduction   : str           = self.object.introduction
-        text           : str           = self.object.text
-        thematics      : set[Thematic] = self.object.thematics.all()
-        authors        : set[Person]   = self.object.authors.all()
-        title          : str           = self.object.title
+        introduction : str         = self.object.introduction
+        text         : str         = self.object.text
+        themes       : set[Theme]  = self.object.themes.all()
+        authors      : set[Person] = self.object.authors.all()
+        title        : str         = self.object.title
         try:
             map_embed_html : str | None = self.object.render.embed_html.read().decode('utf-8')
-            map_fs_link     : str | None = urls.reverse('map_fullscreen', kwargs={'slug': self.object.slug})
+            map_fs_link    : str | None = urls.reverse('map_fullscreen', kwargs={'slug': self.object.slug})
         except AttributeError:
             # If the map_render is None, then the map has not been generated yet
             map_embed_html = None
@@ -45,7 +45,7 @@ class MapDetailView(DetailView):
 
         # Add the text and sections to the context
         context['title']         = title
-        context['thematics']     = thematics
+        context['themes']        = themes
         context['created_at']    = self.object.created_at
         context['last_modified'] = self.object.last_modified
         context['authors']       = authors
@@ -130,7 +130,7 @@ def maps_catalog_view(request):
     for m in map_objects:
         sub_context = {}
         sub_context['title']         = m.title
-        sub_context['thematics']     = m.thematics.all()
+        sub_context['themes']        = m.themes.all()
         sub_context['created_at']    = m.created_at
         sub_context['last_modified'] = m.last_modified
         sub_context['authors']       = m.authors

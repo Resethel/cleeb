@@ -1,0 +1,71 @@
+{% load static %}
+<!-- themes_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Thématique | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+</head>
+<body class="page">
+
+    <!-- Header Section -->
+    {% include 'core/topbar.html' %}
+
+    <!-- Main Content Section -->
+    <main class="main">
+        <header class="search-header">
+            <div class="search-header__title">
+                <h1>Thématique</h1>
+            </div>
+            <form class="search-header__form" action="." method="GET">
+                <div class="search-header__form__input">
+                    <label for="search" class="--hidden">Rechercher un théme</label>
+                    {% if search %}
+                        <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher un théme">
+                    {% else %}
+                        <input type="search" name="search" id="search" placeholder="Rechercher un théme">
+                    {% endif %}
+                    <button type="submit">
+                        <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
+                    </button>
+                </div>
+            </form>
+        </header>
+
+        <div class="search-result">
+            {% if themes %}
+                <ul class="search-result__grid">
+                    {% for theme in themes %}
+                        <li>
+                            {% if theme.cover_image %}
+                                <article class="search-result__theme" style="--theme-bkgd: url('{{ theme.cover_image.url }}')">
+                            {% else %}
+                                <article class="search-result__theme" style="--theme-bkgd: url('{% static 'assets/images/placeholder/theme.webp' %}')">
+                            {% endif %}
+                                <h3><a class="card-link" href="{% url 'theme' theme.slug %}">{{ theme.name }}</a></h3>
+                                {% if theme.summary %}
+                                    <p>{{ theme.summary }}</p>
+                                {% endif %}
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include 'core/footer.html' %}
+</body>
+</html>

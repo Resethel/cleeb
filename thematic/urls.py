@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+URLs for the `thematic` application.
+"""
 from django.urls import path
-from .views import MapThematicDetailView, thematic_list
+from .views import ThemeView, ThemeIndexView
 
 urlpatterns = [
-    path('thematiques/', thematic_list, name='thematic_list'),
-    path('thematiques/<int:pk>/', MapThematicDetailView.as_view(), name='thematic_detail'),
+    path('thematique/', ThemeIndexView.as_view(), name='theme-index'),
+    path('theme/<slug:slug>/', ThemeView.as_view(), name='theme'),
 ]
