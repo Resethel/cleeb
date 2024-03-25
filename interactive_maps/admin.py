@@ -85,7 +85,10 @@ class MapAdmin(admin.ModelAdmin):
             ),
         }),
         ('Metadonnées', {
-            'fields': ('title', 'authors', 'themes'),
+            'fields': (
+                ('publication_status',),
+                ('title', 'authors', 'themes'),
+            )
         }),
         ('Rendu', {
             'fields': ('render',),

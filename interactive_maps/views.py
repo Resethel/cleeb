@@ -6,11 +6,14 @@ from __future__ import annotations
 
 from bs4 import BeautifulSoup
 from django import urls
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 
+from common.choices import PublicationStatus
 from core.models import Person
 from interactive_maps.models import Map
 from thematic.models import Theme
@@ -28,7 +31,7 @@ class MapIndexView(ListView):
 
     def get_queryset(self):
         # 1. Get the maps
-        maps = Map.objects.order_by('-created_at')
+        maps = Map.objects.filter(publication_status=PublicationStatus.PUBLISHED).order_by('-created_at')
 
         # 2. Filter by theme
         theme_slug = self.request.GET.get('theme')
@@ -69,6 +72,7 @@ class MapDetailView(DetailView):
     model = Map
     template_name = 'interactive_maps/map.html'
     context_object_name = 'interactive_maps'
+    queryset = Map.objects.filter(publication_status=PublicationStatus.PUBLISHED)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -144,13 +148,26 @@ class MapDetailView(DetailView):
     # End def __split_text_sections
 # End class MapDetailView
 
+
+@method_decorator(staff_member_required, name='dispatch')
+class MapDraftDetailView(MapDetailView):
+    queryset = Map.objects.filter(publication_status=PublicationStatus.DRAFT)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context['map_fs_link'] is not None:
+            context['map_fs_link'] = urls.reverse('map-draft-detail-fullscreen', kwargs={'slug': self.object.slug})
+        return context
+# End class MapDraftDetailView
+
+
 # ======================================================================================================================
 # Interactive maps' full screen view
 # ======================================================================================================================
 
 def map_fullscreen_view(request, slug):
     # Get the map
-    map_instance = get_object_or_404(Map, slug=slug)
+    map_instance = get_object_or_404(Map, slug=slug, publication_status=PublicationStatus.PUBLISHED)
 
     # Get the map's render
     map_render = map_instance.render
@@ -161,3 +178,18 @@ def map_fullscreen_view(request, slug):
     # Return the html of the map's fullscreen view
     return FileResponse(map_render.full_html, as_attachment=False)
 # End def interactive_map_fullscreen_view
+
+@staff_member_required
+def map_draft_fullscreen_view(request, slug):
+    # Get the map
+    map_instance = get_object_or_404(Map, slug=slug, publication_status=PublicationStatus.DRAFT)
+
+    # Get the map's render
+    map_render = map_instance.render
+
+    if map_render is None or map_render.full_html is None:
+        raise Http404(f"La vue plein écran de la carte '{map_instance.title}' n'est pas disponible.")
+
+    # Return the html of the map's fullscreen view
+    return FileResponse(map_render.full_html, as_attachment=False)
+# End def interactive_map_draft_fullscreen_view

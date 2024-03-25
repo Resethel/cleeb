@@ -7,6 +7,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 
+from common.choices import PublicationStatus
 from core.models import Organization
 from thematic.models import Theme
 
@@ -119,12 +120,16 @@ class MapRender(models.Model):
     # End def clean_fields
 
     def get_absolute_url(self):
-        # If the template is linked to a map, then the map is supposed to be displayed.
-        if self.is_linked_to_map():
-            return urls.reverse('map-detail-fullscreen', kwargs={'slug': self.map.slug})
         # If the template is not linked, then the map is not supposed to be displayed.
         # Therefore, return None
-        return None
+        if self.is_linked_to_map() is False:
+            return None
+
+        # If the template is linked to a map, then the map is supposed to be displayed.
+        if self.map.publication_status == PublicationStatus.DRAFT:
+            return urls.reverse('map-draft-detail-fullscreen', kwargs={'slug': self.map.slug})
+
+        return urls.reverse('map-detail-fullscreen', kwargs={'slug': self.map.slug})
     # End def get_absolute_url
 
     def is_linked_to_map(self):
@@ -190,6 +195,14 @@ class Map(models.Model):
         help_text=_("The themes of the map.")
     )
 
+    publication_status = models.CharField(
+        choices=PublicationStatus.choices,
+        default=PublicationStatus.DRAFT,
+        max_length=20,
+        verbose_name=_("Publication status"),
+        help_text=_("The publication status of the map.")
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Render field
     # ------------------------------------------------------------------------------------------------------------------
@@ -251,6 +264,8 @@ class Map(models.Model):
     # End def clean_fields
 
     def get_absolute_url(self):
+        if self.publication_status == PublicationStatus.DRAFT:
+            return urls.reverse('map-draft-detail', kwargs={'slug': self.slug})
         return urls.reverse('map-detail', kwargs={'slug': self.slug})
     # End def get_absolute_url
 # End class Map
