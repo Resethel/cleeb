@@ -65,15 +65,11 @@
                         <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
                     {%  endif %}
                 </section>
-                {% if sections %}
+                {% if text %}
                     <section class="content-section__text">
                         <h3>Informations complémentaires</h3>
                         <article class="section-article">
-                            {% for section in sections %}
-                                <section>
-                                    {{ section | safe }}
-                                </section>
-                            {% endfor %}
+                            {{ text | safe }}
                         </article>
                     </section>
                 {% endif %}

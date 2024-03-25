@@ -222,26 +222,38 @@
 .content-article__body h3,
 .content-article__body h4,
 .content-article__body h5,
-.content-article__body h6 {
+.content-article__body h6,
+.content-section__text article h1,
+.content-section__text article h2,
+.content-section__text article h3,
+.content-section__text article h4,
+.content-section__text article h5,
+.content-section__text article h6 {
     color: var(--verdant-green);
     letter-spacing: 0;
 }
 
 .content-article__body ul,
-.content-article__body ol {
+.content-article__body ol,
+.content-section__text article ul,
+.content-section__text article ol {
     border-radius: 20px;
     background: rgba(75,177,102,.2);
     padding: var(--lh-dflt) 40px ;
 }
 
 .content-article__body ul li,
-.content-article__body ol li {
+.content-article__body ol li,
+.content-section__text article ul li,
+.content-section__text article ol li {
     list-style: none;
     padding: 0 0 0 10px;
 }
 
 .content-article__body ul li:before,
-.content-article__body ol li:before {
+.content-article__body ol li:before,
+.content-section__text article ul li:before,
+.content-section__text article ol li:before {
     display: inline-block;
 
     width: 30px;
@@ -253,7 +265,8 @@
 }
 
 /* For ordered lists, modify the content to display the number */
-.content-article__body ol li:before {
+.content-article__body ol li:before,
+.content-section__text article ol li:before {
     content: counter(list-item) ".";
 }
 
@@ -431,33 +444,6 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     word-wrap: anywhere;
-}
-
-.content-section__text article h1,
-.content-section__text article h2,
-.content-section__text article h3,
-.content-section__text article h4,
-.content-section__text article h5,
-.content-section__text article h6 {
-    width: 100%;
-    margin-top: 0.5rem;
-    margin-bottom: 10px;
-    padding-bottom: 0.5rem;
-    color: var(--eco-emerald);
-}
-
-.content-section__text article ul {
-    background-color: var(--eco-emerald);
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.content-section__text article ul li {
-    margin-bottom: 5px;
-    list-style-type: circle;
-    list-style-position: inside;
-    color: #ffffff;
 }
 
 /* ================================================================================================================== */

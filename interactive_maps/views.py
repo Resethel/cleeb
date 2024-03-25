@@ -100,7 +100,7 @@ class MapDetailView(DetailView):
         context['authors']       = authors
 
         context['introduction']  = None if introduction is None else self.__format_introduction(introduction)
-        context['sections']      = None if text is None else self.__split_text_sections(text)
+        context['text']          = text
 
         context['map_embed']     = map_embed_html
         context['map_fs_link']   = map_fs_link
