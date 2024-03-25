@@ -4,14 +4,14 @@
         <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
         <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
         <li><a href="#">Contactez-nous</a></li>
-        <li><a href="#">Données personnelles</a></li>
-        <li><a href="#">Conditions d'utilisation</a></li>
+        <li><a href="{% url 'donnees-personnelles' %}">Données personnelles</a></li>
+        <li><a href="{% url 'conditions-d-utilisation' %}">Conditions d'utilisation</a></li>
     </ul>
     <a href="https://lesecologistes.fr" class="footer-logo">
         <img src="{% static 'assets/images/logo/footer.svg' %}" alt="logo Les Écologistes">
     </a>
     <div class="footer-credits">
-        <a class="footer-credits__link">Mentions Légales</a>
+        <a class="footer-credits__link" href="{% url 'mentions-legales' %}" >Mentions Légales</a>
         <span class="footer-credits__text">&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
         <div class="footer-credits__socials">
             <span>Suivez-nous !</span>
@@ -29,8 +29,8 @@
         <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
         <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
         <li><a href="#">Contactez-nous</a></li>
-        <li><a href="#">Données personnelles</a></li>
-        <li><a href="#">Conditions d'utilisation</a></li>
+        <li><a href="{% url 'donnees-personnelles' %}">Données personnelles</a></li>
+        <li><a href="{% url 'conditions-d-utilisation' %}">Conditions d'utilisation</a></li>
     </ul>
     <div class="mobile-footer__socials">
         <span>Suivez-nous !</span>
@@ -43,6 +43,7 @@
     </div>
     <div class="mobile-footer__credits">
         <span>&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
+        <a href="{% url 'mentions-legales' %}">Mentions Légales</a>
     </div>
     <script>
         function backToTop() {

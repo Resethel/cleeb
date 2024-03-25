@@ -31,6 +31,10 @@
     padding: 2% max(calc((100% - var(--text-max-width) - var(--content-gutter)) / 2), var(--gutter-x));
 }
 
+.content.--article.--green {
+    background: var(--green-eco-grd);
+}
+
 /* ================================================================================================================== */
 /* Content Title
 /* ================================================================================================================== */
@@ -45,6 +49,10 @@
 
 .content.--article .content-title {
     color: var(--verdant-green);
+}
+
+.content.--article.--green .content-title {
+    color: white;
 }
 
 /* ================================================================================================================== */
@@ -201,6 +209,12 @@
 
 .content-article__body {
     padding: var(--content-gutter);
+}
+
+/* Disable any padding or margin for the first child */
+.content-article__body:first-child {
+    padding-top: 0;
+    margin-top: 0;
 }
 
 .content-article__body h1,

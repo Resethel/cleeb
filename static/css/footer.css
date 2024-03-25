@@ -224,9 +224,10 @@
 
 .mobile-footer__credits {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 1rem;
 
     padding: calc(var(--content-gutter) / 2);
 
@@ -238,7 +239,13 @@
     text-align: center;
 }
 
+.mobile-footer__credits a {
+    color: white;
+}
 
+.mobile-footer__credits a:hover {
+    cursor: pointer;
+}
 
 
 @media only screen and (max-width: 40rem) {

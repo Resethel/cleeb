@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ flatpage.title }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/content.css' %}"/>
+</head>
+<body class="page">
+<main class="main">
+    {% include 'core/topbar.html' %}
+    <div class="content --article --green">
+        <div class="content-title">
+            <strong>{{ flatpage.title }}</strong>
+        </div>
+        <article class="content-article">
+            <div class="content-article__body">
+                {{ flatpage.content | safe}}
+            </div>
+        </article>
+    </div>
+    {% include 'core/footer.html' %}
+</main>
+</body>
+</html>
