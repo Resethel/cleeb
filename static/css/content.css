@@ -211,24 +211,15 @@
     padding: var(--content-gutter);
 }
 
-/* Disable any padding or margin for the first child */
-.content-article__body:first-child {
+/* Disable any padding or margin for the first heading or paragraph of the article */
+.content-article__body :is(h1, h2, h3, h4, h5, h6, p):first-child,
+.content-section__text article :is(h1, h2, h3, h4, h5, h6):first-child {
     padding-top: 0;
     margin-top: 0;
 }
 
-.content-article__body h1,
-.content-article__body h2,
-.content-article__body h3,
-.content-article__body h4,
-.content-article__body h5,
-.content-article__body h6,
-.content-section__text article h1,
-.content-section__text article h2,
-.content-section__text article h3,
-.content-section__text article h4,
-.content-section__text article h5,
-.content-section__text article h6 {
+.content-article__body :is(h1, h2, h3, h4, h5, h6),
+.content-section__text article :is(h1, h2, h3, h4, h5, h6) {
     color: var(--verdant-green);
     letter-spacing: 0;
 }
