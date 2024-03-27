@@ -29,7 +29,7 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ("id", "title")
     list_display_links = ("id", "title")
     readonly_fields = ("id", "slug", "created_at", "last_modified_at")
-
+    radio_fields = {'status': admin.HORIZONTAL}
     inlines = (AttachmentInline,)
 
     # ------------------------------------------------------------------------------------------------------------------

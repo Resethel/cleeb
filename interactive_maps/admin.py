@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Admin for the `interactive_maps` application.
+"""
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from .models import Map, MapRender
 
@@ -69,6 +74,7 @@ class MapAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'authors_', 'has_render', 'created_at', 'last_modified')
     search_fields = ('id', 'title', 'slug')
     list_display_links = ('id', 'title')
+    radio_fields = {'publication_status': admin.HORIZONTAL}
 
     readonly_fields = ('id', 'slug', 'created_at', 'last_modified')
 
@@ -77,23 +83,25 @@ class MapAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('Informations', {
+        (_('Information'), {
             'classes': ('collapse',),
             'fields': (
                 ('id', 'slug'),
                 ('created_at', 'last_modified'),
             ),
         }),
-        ('Metadonnées', {
-            'fields': (
-                ('publication_status',),
-                ('title', 'authors', 'themes'),
-            )
+        (_("Publication Status"), {
+            "classes": ('wide',),
+            'fields': ('publication_status',),
         }),
-        ('Rendu', {
+        (_('Metadata'), {
+            'classes': ('wide',),
+            'fields': ('title', 'authors', 'themes'),
+        }),
+        (_('Render'), {
             'fields': ('render',),
         }),
-        ('Contenu', {
+        (_('Content'), {
             'fields': ('introduction', 'text'),
         })
     )
