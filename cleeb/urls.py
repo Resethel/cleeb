@@ -29,6 +29,9 @@ urlpatterns = [
     path('donnees-personnelles/', flatpages_views.flatpage, {'url': '/donnees-personnelles/'}, name='donnees-personnelles'),
     path('conditions-d-utilisation/', flatpages_views.flatpage, {'url': '/conditions-d-utilisation/'}, name='conditions-d-utilisation'),
 
+    # TinyMCE
+    path('tinymce/', include('tinymce.urls')),
+
     # Apps
     path('', include('core.urls')),
     path('', include('interactive_maps.urls')),

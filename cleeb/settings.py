@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'colorfield',
     'nested_admin',
+    'tinymce',
 
     # Local apps
     'core.apps.CoreConfig',
@@ -158,3 +159,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Celery
 CELERY_BROKER_URL = 'amqp://cleeb:cleeb@localhost:5672/cleeb_vhost'
+
+# TinyMCE
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 500,
+    "menubar": True,
+    "plugins": "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,code,help,wordcount,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
+    "code,help,wordcount",
+    "toolbar": "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help | imageupload",
+}
