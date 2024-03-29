@@ -80,7 +80,7 @@ class MapDetailView(DetailView):
         self.object : Map
         # Get the ThematicMapText related to the ThematicMap
         introduction : str         = self.object.introduction
-        text         : str         = self.object.text
+        body         : str         = self.object.body
         themes       : set[Theme]  = self.object.themes.all()
         authors      : set[Person] = self.object.authors.all()
         title        : str         = self.object.title
@@ -92,7 +92,7 @@ class MapDetailView(DetailView):
             map_embed_html = None
             map_fs_link     = None
 
-        # Add the text and sections to the context
+        # Add the body and sections to the context
         context['title']         = title
         context['themes']        = themes
         context['created_at']    = self.object.created_at
@@ -100,7 +100,7 @@ class MapDetailView(DetailView):
         context['authors']       = authors
 
         context['introduction']  = None if introduction is None else self.__format_introduction(introduction)
-        context['text']          = text
+        context['body']          = body
 
         context['map_embed']     = map_embed_html
         context['map_fs_link']   = map_fs_link

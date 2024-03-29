@@ -102,7 +102,7 @@ class MapAdmin(admin.ModelAdmin):
             'fields': ('render',),
         }),
         (_('Content'), {
-            'fields': ('introduction', 'text'),
+            'fields': ('introduction', 'body'),
         })
     )
 
