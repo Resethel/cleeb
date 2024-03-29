@@ -6,6 +6,7 @@ from django import urls
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
+from tinymce import models as tinymce_models
 
 from common.choices import PublicationStatus
 from core.models import Organization
@@ -230,11 +231,11 @@ class Map(models.Model):
                   "Toutes balises de structure (section, article, h1, p, etc.) seront supprimées."
     )
 
-    text = models.TextField(
+    body = tinymce_models.HTMLField(
         blank=True,
         null=True,
         default=None,
-        help_text="Le texte de la carte interactive. Formaté en HTML."
+        help_text=_("The body of the interactive map.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------

@@ -7,6 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from tinymce import models as tinymce_models
 
 from common.choices import PublicationStatus
 from common.utils import files as file_utils
@@ -117,7 +118,7 @@ class Article(models.Model):
         blank=True,
     )
 
-    body = models.TextField(
+    body = tinymce_models.HTMLField(
         verbose_name=_("Article body"),
         help_text=_("The body of the article."),
     )
