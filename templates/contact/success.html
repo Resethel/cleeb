@@ -1,0 +1,28 @@
+{% load static %}
+<!-- Contact Form -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formulaire de contact | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+
+</head>
+<body class="page">
+{% include 'core/topbar.html' %}
+<main class="main">
+     <div class="content">
+        <h1>Merci pour votre message</h1>
+        <p>
+            Nous vous répondrons dans les plus brefs délais.
+        </p>
+        <a href="{% url 'home' %}" class="btn-white-large">Revenir à la page d'accueil</a>
+    </div>
+</main>
+{% include 'core/footer.html' %}
+</body>
+</html>
