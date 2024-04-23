@@ -75,6 +75,11 @@ class Contact(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     def __str__(self):
-        return self.name
+        return _("{name} - {subject} ({created_at})").format(
+            name=self.name,
+            subject=self.subject,
+            created_at=self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        )
+    # End def __str__
 
 # End class Contact
