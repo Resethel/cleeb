@@ -1,0 +1,39 @@
+{% load static %}
+{% load i18n %}
+<!-- Contact Form -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% trans "Contact" %} | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+
+</head>
+<body class="page">
+{% include 'core/topbar.html' %}
+<main class="content --article --green"
+      style="flex-direction: column;
+                justify-content: center;
+                align-items: center;"
+>
+     <div class="content-title" style="text-align: center;">
+        <strong>{% trans "Thank you for your message !" %}</strong>
+    </div>
+    <p style="text-align: center; color: white;">
+        {% blocktranslate %}
+        We sent you a confirmation email, have you received it?<br>
+        Think about checking your spam folder ! If you don't find it, don't hesitate to contact us again.<br>
+        We will get back to you as soon as possible.
+        {% endblocktranslate %}
+    </p>
+    <a href="{% url 'home' %}" class="btn-white-large">{% trans "Back to home" %}</a>
+</main>
+{% include 'core/footer.html' %}
+</body>
+</html>

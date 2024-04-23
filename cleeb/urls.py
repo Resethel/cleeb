@@ -33,11 +33,12 @@ urlpatterns = [
     path('tinymce/', include('tinymce.urls')),
 
     # Apps
+    path('', include('articles.urls')),
+    path('', include('contact.urls')),
     path('', include('core.urls')),
+    path('', include('datasets.urls')),
     path('', include('interactive_maps.urls')),
     path('', include('thematic.urls')),
-    path('', include('datasets.urls')),
-    path('', include('articles.urls')),
 ]
 
 if settings.DEBUG:

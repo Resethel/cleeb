@@ -1,0 +1,74 @@
+{% load i18n %}
+{% load static %}
+<!-- contact/form.html -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formulaire de contact | CLEEB</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+</head>
+<body class="page">
+<main class="main">
+    {% include 'core/topbar.html' %}
+    <div class="content --article --green">
+        <div class="content-title"><strong>{% trans "Contact us !" %}</strong></div>
+        <form method="post" class="content-form" novalidate>
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="content-form__form-errors">
+                    <h1>
+                        <strong>{% trans "There was an error with your submission. Please correct the errors below." %}</strong>
+                    </h1>
+                </div>
+            {% endif %}
+            {% for field in form %}
+                {% if field.name == 'agreement' %}
+                    <div class="content-form__input {% if field.field.required %}required{% endif %}">
+                    {% if field.errors %}
+                        <div class="content-form__field-errors">{{ field.errors }}</div>
+                    {% endif %}
+                    <div class="content-form__checkbox">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.help_text | safe }}
+                        </label>
+                    </div>
+                {% else %}
+                    <div class="content-form__input {% if field.field.required %}required{% endif %}">
+                    {% if field.errors %}
+                        <div class="content-form__field-errors">{{ field.errors }}</div>
+                    {% endif %}
+                    <label for="{{ field.id_for_label }}" {% if field.field.required %}class="required"{% endif %}>
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="content-form__submit">Envoyer</button>
+            <footer class="content-form__footer">
+                {% url "donnees-personnelles" as privacy_policy_url %}
+                {% blocktranslate %}
+                    Fields marked with <span style='color: red;'>*</span> are mandatory.<br>
+                    You have the right to access, rectify, delete and port your data,
+                    as well as to object to and limit the processing of your data.
+                    You can exercise these rights by contacting us at the
+                    address given in the <a href="{{ privacy_policy_url }}">privacy policy</a>
+                    or via this contact form.
+                {% endblocktranslate %}
+            </footer>
+        </form>
+    </div>
+    {% include 'core/footer.html' %}
+</main>
+
+</body>
+</html>

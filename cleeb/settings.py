@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     "thematic.apps.ThematicConfig",
     "datasets.apps.DatasetsConfig",
     "map_templates.apps.MapTemplatesConfig",
-    "articles.apps.ArticleConfig"
+    "articles.apps.ArticleConfig",
+    "contact.apps.ContactConfig"
 ]
 SITE_ID = 1
 
