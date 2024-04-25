@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Views for the `datasets` application.
+"""
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 
 from datasets.models import Dataset, DatasetCategory, DatasetVersion
@@ -86,15 +90,18 @@ def dataset_version_download_view(request: HttpRequest, slug: str, pk: int) -> H
     # Find the dataset mentioned by the slug
     dataset = Dataset.objects.get(slug=slug)
     if not dataset:
-        return HttpResponse('Aucun jeu de données trouvé', status=404)
+        return HttpResponse(_("No dataset available"), status=404)
 
     # Find the version of the dataset
     if not pk:
-        return HttpResponse('Aucune version de jeu de données spécifiée', status=400)
+        return HttpResponse(_("No dataset version provided"), status=400)
 
     data = DatasetVersion.objects.get(pk=pk)
     if not data:
-        return HttpResponse('Aucune version de jeu de données trouvée', status=404)
+        return HttpResponse(
+            _("Dataset \"{name}\" (version {version}) does not exist".format(name=dataset.name, version=pk)),
+            status=404
+        )
 
     # Builds the file name for the dataset to get
     parent_name = data.dataset.name
