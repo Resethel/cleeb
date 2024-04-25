@@ -19,14 +19,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.flatpages import views as flatpages_views
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     # Django admin
     path('admin/', admin.site.urls),
 
+    # Locales
+    path('i18n/', include('django.conf.urls.i18n')),
+
     # Flatpages
-    path('mentions-legales/', flatpages_views.flatpage, {'url': '/mentions-legales/'}, name='mentions-legales'),
-    path('donnees-personnelles/', flatpages_views.flatpage, {'url': '/donnees-personnelles/'}, name='donnees-personnelles'),
+    path('mentions-legales/'        , flatpages_views.flatpage, {'url': '/mentions-legales/'}        , name='mentions-legales'),
+    path('donnees-personnelles/'    , flatpages_views.flatpage, {'url': '/donnees-personnelles/'}    , name='donnees-personnelles'),
     path('conditions-d-utilisation/', flatpages_views.flatpage, {'url': '/conditions-d-utilisation/'}, name='conditions-d-utilisation'),
 
     # TinyMCE
