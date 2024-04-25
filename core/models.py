@@ -10,6 +10,8 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
+
 
 # ======================================================================================================================
 # Person (Author, Contributor, etc.)
@@ -45,7 +47,7 @@ class Person(models.Model):
     # Name of the author
     lastname = models.CharField(
         max_length=100,
-        verbose_name="Nom de famille",
+        verbose_name=_("Last name"),
         blank=True,
         null=True,
         default=None
@@ -54,7 +56,7 @@ class Person(models.Model):
     # First-name of the author
     firstname = models.CharField(
         max_length=100,
-        verbose_name="Prénom",
+        verbose_name=_("First name"),
         blank=True,
         null=True,
         default=None
@@ -63,7 +65,7 @@ class Person(models.Model):
     pseudonym = models.CharField(
         unique=True,
         max_length=100,
-        verbose_name="Pseudonyme",
+        verbose_name=_("Pseudonym"),
         blank=True,
         null=True,
         default=None
@@ -74,7 +76,7 @@ class Person(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name="Biographie"
+        verbose_name=_("Biography")
     )
 
     # ----- Social Media -----
@@ -83,31 +85,31 @@ class Person(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name="Courriel",
+        verbose_name=_("Email")
     )
     facebook = models.URLField(
         blank=True,
         null=True,
         default=None,
-        verbose_name="Facebook",
+        verbose_name=_("Facebook")
     )
     instagram = models.URLField(
         blank=True,
         null=True,
         default=None,
-        verbose_name="Instagram",
+        verbose_name=_("Instagram")
     )
     twitter_x = models.URLField(
         blank=True,
         null=True,
         default=None,
-        verbose_name="Twitter/X",
+        verbose_name=_("Twitter/X")
     )
     website = models.URLField(
         blank=True,
         null=True,
         default=None,
-        verbose_name="Site web",
+        verbose_name=_("Website")
     )
 
     # ----- Picture -----
@@ -118,7 +120,7 @@ class Person(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name="Photo"
+        verbose_name=_("Picture")
     )
 
     # ---- Organizations ----
@@ -162,13 +164,13 @@ class Person(models.Model):
     def clean(self):
         # The person must have a name and/or a pseudonym
         if not self.lastname and not self.firstname and not self.pseudonym:
-            raise ValidationError("L'auteur doit avoir un nom et un prénom, et/ou un pseudonyme.")
+            raise ValidationError(_("The person must have a first name and/or a last name, and/or a pseudonym."))
 
         # If the author as a first name or a last name, they must have the other as well
         if self.lastname and not self.firstname:
-            raise ValidationError({"firstname": "Si le nom de famille est renseigné, le prénom doit l'être également."})
+            raise ValidationError({"firstname": _("If the last name is filled in, the first name must be as well.")})
         if self.firstname and not self.lastname:
-            raise ValidationError({"lastname": "Si le prénom est renseigné, le nom de famille doit l'être également."})
+            raise ValidationError({"lastname": _("If the first name is filled in, the last name must be as well.")})
     # End def clean
 
     def clean_fields(self, exclude=None):
@@ -235,11 +237,12 @@ class Organization(models.Model):
     name = models.CharField(
         unique=True,
         max_length=100,
-        verbose_name="Nom de l'organisation"
+        verbose_name=_("Name of the organization")
     )
     type = models.CharField(
         max_length=100,
-        verbose_name="Type d'organisation"
+        verbose_name=_("Type of organization"),
+        help_text=_("Type of organization (e.g. NGO, Company, Political Party, etc.)"),
     )
     description = models.TextField(
         blank=True,
