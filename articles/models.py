@@ -50,8 +50,8 @@ class Article(models.Model):
 
     id = models.AutoField(
         primary_key=True,
-        verbose_name="ID",
-        help_text="L'ID de l'article.",
+        verbose_name=_("ID"),
+        help_text=_("Article ID"),
     )
 
     slug = models.SlugField(
