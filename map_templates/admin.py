@@ -16,25 +16,7 @@ from common.utils.admin import get_clock_icon_html
 from common.utils.tasks import TaskStatus
 from map_templates.models import CirclePattern, FeatureGroup, Filter, Layer, MapTemplate, PropertyStyle, StripePattern, \
     Style, TileLayer, Tooltip, TooltipField
-
-# ======================================================================================================================
-# Constants
-# ======================================================================================================================
-
-CLOCK_ICON_HTML = """
-<span style="background-image: url('/static/admin/img/icon-clock.svg');
-             background-repeat: no-repeat;
-             background-position: 0 -16;
-             position: relative;
-             width: 16px;
-             height: 16px;
-             display: inline-block;
-             vertical-align: middle;
-             overflow: hidden;
-
-             filter: brightness(0) saturate(100%) invert(51%) sepia(49%) saturate(4518%) hue-rotate(359deg) brightness(100%) contrast(107%);"
-></span>
-"""
+from django.utils.translation import gettext_lazy as _
 
 # ======================================================================================================================
 # TileLayer
@@ -52,13 +34,13 @@ class TileLayerAdmin(NestedModelAdmin):
     # Add a custom display for the URL
     def display_url(self, obj):
         if obj.url is None:
-            return 'N/A'
+            return _("N/A")
 
         # If the URL is too long, display only the first 50 characters
         if len(obj.url) > 50:
             return obj.url[:50] + "..."
         return obj.url
-    display_url.short_description = 'URL'
+    display_url.short_description = _("URL")
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, **kwargs)
@@ -80,11 +62,11 @@ class CirclePatternAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
     fieldsets = (
-        ('ID', {
+        (_('ID'), {
             'classes': ('collapse',),
             'fields': ('id',),
         }),
-        ('Circle Pattern Details', {
+        (_('Circle Pattern Details'), {
             'fields': (
                 ('color', 'fill_color'),
                 ('width', 'height'),
@@ -104,11 +86,11 @@ class StripePatternAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
     fieldsets = (
-        ('ID', {
+        (_('ID'), {
             'classes': ('collapse',),
             'fields': ('id',),
         }),
-        ('Stripe Pattern Details', {
+        (_('Stripe Pattern Details'), {
             'fields': (
                 ('color', 'space_color'),
                 ('weight', 'space_weight'),
@@ -134,9 +116,9 @@ class PropertyStyleAdmin(NestedModelAdmin):
     ordering = ('style', 'key')
 
     fieldsets = (
-        ("Appartenance", {
+        (_('Parent Style'), {
             'classes': ('collapse',),  # Hide the fieldset by default
-            'description': "L'appartenance du style de propriété à un style global.",
+            'description': _("The parent style of the property style."),
             'fields': ('style',)
         }),
         ("Clé et valeur", {
@@ -144,8 +126,8 @@ class PropertyStyleAdmin(NestedModelAdmin):
                 ('key', 'value'),
             )
         }),
-        ("Bordures", {
-            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+        (_("Borders"), {
+            'description': _("Lines that delimit a geometric shape."),
             'classes': ('wide',),
             'fields': (
                 'stroke',
@@ -154,8 +136,8 @@ class PropertyStyleAdmin(NestedModelAdmin):
                 ('line_cap', 'line_join')
             )
         }),
-        ("Remplissage", {
-            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+        (_("Fill"), {
+            'description': _("Color that fills a geometric shape."),
             'fields': (
                 'fill',
                 ('fill_color', 'fill_rule'),
@@ -168,18 +150,18 @@ class PropertyStyleAdmin(NestedModelAdmin):
 class PropertyStyleInline(NestedStackedInline):
     model = PropertyStyle
     extra = 0
-    verbose_name = "Style des propriétés"
-    verbose_name_plural = "Styles des propriétés"
+    verbose_name = _("Property Style")
+    verbose_name_plural = _("Property Styles")
 
     fieldsets = (
-        ("Clé et valeur", {
+        (_('Key and Value'), {
             'classes': ('wide',),
             'fields': (
                 ('key', 'value'),
             )
         }),
-        ("Bordures", {
-            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+        (_("Borders"), {
+            'description': _("Lines that delimit a geometric shape."),
             'classes': ('wide',),
             'fields': (
                 'stroke',
@@ -188,8 +170,8 @@ class PropertyStyleInline(NestedStackedInline):
                 ('line_cap', 'line_join')
             )
         }),
-        ("Remplissage", {
-            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+        (_("Fill"), {
+            'description': _("Color that fills a geometric shape."),
             'fields': (
                 'fill',
                 ('fill_color', 'fill_rule'),
@@ -231,13 +213,13 @@ class StyleAdmin(NestedModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ("Appartenance", {
+        (_('Parent Layer'), {
             'classes': ('collapse',),  # Hide the fieldset by default
-            'description': "L'appartenance d'un style à une couche.",
+            'description': _("The parent layer of the style."),
             'fields': (('style_type', 'owning_layer', 'id'),)
         }),
-        ("Bordures", {
-            'description': "Les bordures sont les lignes qui délimitent les formes géométriques.",
+        (_('Borders'), {
+            'description': _("Borders are the lines that delimit a geometric shapes."),
             'classes': ('wide',),
             'fields': (
                 'stroke',
@@ -246,8 +228,8 @@ class StyleAdmin(NestedModelAdmin):
                 ('line_cap', 'line_join')
             )
         }),
-        ("Remplissage", {
-            'description': "Le remplissage est la couleur qui remplit les formes géométriques.",
+        (_('Fill'), {
+            'description': _("Fill is the color that fills a geometric shape."),
             'fields': (
                 'fill',
                 ('fill_color', 'fill_rule'),
@@ -262,8 +244,8 @@ class StyleAdmin(NestedModelAdmin):
 class StyleInline(NestedStackedInline):
     model = Style
     extra = 0
-    verbose_name = "Style"
-    verbose_name_plural = "Styles"
+    verbose_name = _("Style")
+    verbose_name_plural = _("Styles")
 
     inlines = [
         PropertyStyleInline
@@ -288,8 +270,8 @@ class FilterInline(NestedTabularInline):
     extra = 0
     # show_change_link = True
 
-    verbose_name = "Filter"
-    verbose_name_plural = "Filters"
+    verbose_name = _("Filter")
+    verbose_name_plural = _("Filters")
 # End class FilterInline
 
 # ======================================================================================================================
@@ -356,8 +338,8 @@ class LayerAdmin(NestedModelAdmin, GISModelAdmin):
 class LayerInline(NestedStackedInline):
     model = Layer
     extra = 0
-    verbose_name = "Couche"
-    verbose_name_plural = "Couches"
+    verbose_name = _("Layer")
+    verbose_name_plural = _("Layers")
     formfield_overrides = {
         GeometryField: {'widget': OSMWidget}
     }
@@ -395,8 +377,8 @@ class FeatureGroupAdmin(NestedModelAdmin):
 class FeatureGroupInline(NestedStackedInline):
     model = FeatureGroup
     extra = 0
-    verbose_name = "Feature Group"
-    verbose_name_plural = "Feature Groups"
+    verbose_name = _("Feature Group")
+    verbose_name_plural = _("Feature Groups")
 
     inlines = [
         LayerInline,
@@ -426,21 +408,21 @@ class MapTemplateAdmin(NestedModelAdmin, GISModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('ID', {
+        (_('ID'), {
             'classes': ('collapse',),
             'fields': ('id',),
         }),
-        ('Generation Control', {
+        (_('Task Information'), {
             'classes': ('collapse',),
             'fields': (
                 ('task_id', 'task_status'),
                 'regenerate'
             )
         }),
-        ('Description', {
+        (_('Description'), {
             'fields': ('name',)
         }),
-        ('Tiles and Controls', {
+        (_('Map Configuration'), {
             'fields': (
                 'tiles',
                 'zoom_start',
@@ -468,7 +450,7 @@ class MapTemplateAdmin(NestedModelAdmin, GISModelAdmin):
                 return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
             case _:
                 return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
-    generation_status.short_description = "Statut de Génération"
+    generation_status.short_description = _("Generation Status")
 
     def child_map_render(self, obj : MapTemplate):
         if obj.render is None:
@@ -477,5 +459,5 @@ class MapTemplateAdmin(NestedModelAdmin, GISModelAdmin):
             name = obj.render.name
             id_ = obj.render.id
             return format_html(f'<a href="/admin/interactive_maps/maprender/{id_}/change/">{name}@{id_}</a>')
-    child_map_render.short_description = "Rendu Lié"
+    child_map_render.short_description = _("Child Map Render")
 # End class MapTemplateAdmin
