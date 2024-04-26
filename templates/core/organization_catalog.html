@@ -1,14 +1,14 @@
 <!-- organizations_list.html -->
 {% load static %}
-
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Index des Organisations participant à la cartographie</title>
+    <title>{% trans 'Organisations list' %} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -24,7 +24,7 @@
     <main class="main">
         <div class="content">
             <div class="content-title">
-                Organisations participants à la cartographie
+                {% trans 'List of the organizations who participated in the project' %}
             </div>
 
             <!-- Section block with the introduction to the organization's list -->
@@ -33,21 +33,23 @@
                     <h3>Introduction</h3>
                     <div class="introduction-text">
                         <p>
-                            Les cartes interactives présentées sur ce site sont le fruit d'une collaboration entre
-                            divers associations, collectifs et partis politiques centrés sur la protection de
-                            l'environnement.
-                            Ensemble, nous avons travaillé à rassembler et cartographier les actions et initiatives
-                            qui visent à sensibiliser, éduquer et agir en faveur d'un avenir plus durable pour nos
-                            territoires et communautés.
-                            Ci-dessous, vous trouverez une liste des organisations qui ont participé à cette initiative
-                            et qui sont engagées dans la protection de notre environnement.
+                            {% blocktranslate %}
+                                The interactive maps and articles presented on this site are the result of a collaboration
+                                between various associations, collectives and political parties focused on environmental
+                                protection.<br>
+                                Together, we worked to gather and map various actions, projects, initiatives, events, and
+                                compile various resources that aim to raise awareness, educate and act for a more sustainable
+                                future for our territories and communities.<br>
+                                Below, you will find a list of the organizations that participated in this initiative and are
+                                committed to protecting our environment.
+                            {% endblocktranslate %}
                         </p>
                     </div>
                 </div>
 
                 <!-- Section block with a list of organizations -->
                 <section class="content-section__panel" id="organizations-card-list">
-                    <h3>Groupes et Organisations</h3>
+                    <h3>{% trans 'Organizations' %}</h3>
                     <ul class="card-grid">
                         <!-- Render a list of organizations with cards -->
                         {% for organization in organizations %}

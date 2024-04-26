@@ -1,13 +1,14 @@
 {% load static %}
+{% load i18n %}
 <!-- dataset_detail.html -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Jeux de données: {{ dataset.name }}</title>
+    <title>{% trans 'Dataset' %}: {{ dataset.name }} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">

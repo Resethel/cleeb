@@ -1,13 +1,13 @@
-<!-- theme_detail.html -->
-{% load static %} 
+{% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Théme: {{ theme.name }} | CLEEB</title>
+    <title>{% trans "Theme" %}: {{ theme.name }} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
@@ -42,17 +42,17 @@
                     <ul>
                     {% if has_maps %}
                         <li>
-                            <span>Voir les <b>cartes</b> sur ce théme</span>
+                            <span>{% trans "See the <b>maps</b> on this theme" %}</span>
                             <a class="button" href="{% url 'map-index' %}?theme={{ theme.slug }}">
-                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt="go to interactive maps index">
+                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt={% trans "go to interactive maps list" %}>
                             </a>
                         </li>
                     {% endif %}
                     {% if has_articles %}
                         <li>
-                            <span>Voir les <b>articles</b> sur ce théme</span>
+                            <span>{% trans "See the <b>articles</b> on this theme" %}</span>
                             <a class="button" href="{% url 'article-index' %}?theme={{ theme.slug }}">
-                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt="go to articles index">
+                                <img src="{% static 'assets/icons/navigate_next_FILL0_wght400_GRAD200_opsz24.svg' %}" alt={% trans "go to the articles list" %}>
                             </a>
                         </li>
                     {% endif %}

@@ -1,12 +1,13 @@
 <!-- organization_detail.html -->
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Organisation: {{ title }}</title>
+    <title>{% trans "Organisation" %}: {{ title }} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -19,7 +20,7 @@
 
     <!-- Main Content Section -->
     <main class="resume">
-        <div class="resume-title">Organisation</div>
+        <div class="resume-title">{{ title }}</div>
         <article class="resume-card">
             <div class="resume-card__header">
                 <div class="resume-card__header__image">
