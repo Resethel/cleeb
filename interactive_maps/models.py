@@ -40,8 +40,8 @@ class MapRender(models.Model):
 
     id = models.AutoField(
         primary_key=True,
-        verbose_name="ID",
-        help_text="L'ID de la carte.",
+        verbose_name=_("ID"),
+        help_text=_("The unique identifier of the map render.")
     )
 
     slug = models.SlugField(
@@ -61,8 +61,8 @@ class MapRender(models.Model):
         on_delete=models.CASCADE,
         null=True,
         default=None,
-        verbose_name='Modèle',
-        help_text="Le modèle utilisé pour générer le rendu de la carte."
+        verbose_name=_("Template"),
+        help_text=_("The template used to render the map.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ class MapRender(models.Model):
     name = models.CharField(
         unique=True,
         max_length=255,
-        verbose_name="Nom",
-        help_text="Le nom du rendu."
+        verbose_name=_("Name"),
+        help_text=_("The name of the map render.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -82,18 +82,18 @@ class MapRender(models.Model):
 
     embed_html = models.FileField(
         name="embed_html",
-        verbose_name="HTML intégrable",
+        verbose_name=_("Embedded HTML"),
+        help_text=_("The embedded HTML code of the map. This file is used for the embedded display of the map."),
         upload_to=map_render_embed_path,
-        help_text="Le code HTML de la carte pouvant être intégré dans une page web.",
         null=True,
         default=None,
     )
 
     full_html = models.FileField(
         name="full_html",
-        verbose_name="HTML complet",
+        verbose_name=_("Full HTML"),
+        help_text=_("The full HTML code of the map. This file is used for the fullscreen display of the map."),
         upload_to=map_render_full_path,
-        help_text="Le code HTML d'une page web contenant la carte.",
         null=True,
         default=None,
     )
@@ -103,8 +103,8 @@ class MapRender(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Rendu de carte"
-        verbose_name_plural = "Rendus de carte"
+        verbose_name = _("Map Render")
+        verbose_name_plural = _("Map Renders")
     # End class Meta
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ class Map(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Le slug de la carte interactive. S'il n'est pas renseigné, il sera généré automatiquement."
+        help_text=_("The slug of the map. This field is automatically generated from the title.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -164,13 +164,15 @@ class Map(models.Model):
 
     created_at = models.DateField(
         auto_now_add=True,
-        help_text="La date de création de la carte interactive.",
+        verbose_name=_("Created at"),
+        help_text=_("The creation date of the interactive map."),
         editable=False
     )
 
     last_modified = models.DateField(
         auto_now=True,
-        help_text="La date de dernière modification de la carte interactive.",
+        verbose_name=_("Last modified"),
+        help_text=_("The last modification date of the interactive map."),
         editable=False
     )
 
@@ -185,7 +187,8 @@ class Map(models.Model):
     authors = models.ManyToManyField(
         'core.Person',
         blank=True,
-        help_text="Les auteur.ice.s de la carte interactive."
+        verbose_name=_("Authors"),
+        help_text=_("The authors of the map.")
     )
 
     themes = models.ManyToManyField(
@@ -211,11 +214,11 @@ class Map(models.Model):
     render = models.OneToOneField(
         'MapRender',
         related_name='map',
-        verbose_name="Rendu de carte",
+        verbose_name=_("Render"),
+        help_text=_("The render of the map."),
         on_delete=models.SET_NULL,
         blank=True,
-        null=True,
-        help_text="Le rendu de la carte."
+        null=True
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -226,16 +229,20 @@ class Map(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="L'introduction de la carte interactive. Formaté en HTML."
-                  "Seuls les balises de style (strong, em, etc.) seront conservées."
-                  "Toutes balises de structure (section, article, h1, p, etc.) seront supprimées."
+        verbose_name=_("Introduction text"),
+        help_text=_(
+            "The introduction of the interactive map. Formatted in HTML."
+            "Only style tags (strong, em, etc.) will be kept."
+            "All structure tags (section, article, h1, p, etc.) will be removed."
+        )
     )
 
     body = tinymce_models.HTMLField(
         blank=True,
         null=True,
         default=None,
-        help_text=_("The body of the interactive map.")
+        verbose_name=_("Body text"),
+        help_text=_("The body of the interactive map. Formatted in HTML.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -243,8 +250,8 @@ class Map(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
     class Meta:
         ordering = ['id',]  # Order Thematic maps by 'title' field
-        verbose_name = "Carte interactive"
-        verbose_name_plural = "Cartes interactives"
+        verbose_name = _("Interactive Map")
+        verbose_name_plural = _("Interactive Maps")
     # End class Meta
 
     # ------------------------------------------------------------------------------------------------------------------
