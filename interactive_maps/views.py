@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 
 from common.choices import PublicationStatus
@@ -173,7 +174,7 @@ def map_fullscreen_view(request, slug):
     map_render = map_instance.render
 
     if map_render is None or map_render.full_html is None:
-        raise Http404(f"La vue plein écran de la carte '{map_instance.title}' n'est pas disponible.")
+        raise Http404(_("The fullscreen view of the map '{title}' is not available.").format(title=map_instance.title))
 
     # Return the html of the map's fullscreen view
     return FileResponse(map_render.full_html, as_attachment=False)
@@ -188,7 +189,7 @@ def map_draft_fullscreen_view(request, slug):
     map_render = map_instance.render
 
     if map_render is None or map_render.full_html is None:
-        raise Http404(f"La vue plein écran de la carte '{map_instance.title}' n'est pas disponible.")
+        raise Http404(_("The fullscreen view of the map '{title}' is not available.").format(title=map_instance.title))
 
     # Return the html of the map's fullscreen view
     return FileResponse(map_render.full_html, as_attachment=False)

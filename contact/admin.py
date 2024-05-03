@@ -16,10 +16,10 @@ class ContactAdmin(admin.ModelAdmin):
     """
     Admin for the `Contact` model.
     """
-    list_display = ('name', 'email', 'subject', 'message')
+    list_display       = ('name', 'email', 'subject', 'message')
     list_display_links = ('name', 'email', 'subject')
-    search_fields = ('name', 'email', 'subject', 'message')
-    readonly_fields = ('name', 'email', 'subject', 'message', 'created_at')
+    search_fields      = ('name', 'email', 'subject', 'message')
+    readonly_fields    = ('name', 'email', 'subject', 'message', 'created_at')
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets
@@ -34,7 +34,7 @@ class ContactAdmin(admin.ModelAdmin):
                 'message',
             ),
         }),
-        (_('Admin'), {
+        (_('Admin actions'), {
             'fields': (
                 'created_at',
                 'handled',

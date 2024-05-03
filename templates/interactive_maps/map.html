@@ -1,12 +1,13 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Carte interactive: {{ title }}</title>
+    <title>{% trans "Interactive Map" %}: {{ title }} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -26,8 +27,8 @@
             </div>
             <div class="content-metadata">
                 <div class="content-metadata__dates">
-                    <span>Créer le: {{ created_at }}</span>
-                    <span>Dernière modification: {{ last_modified }}</span>
+                    <span>{% trans "Created on" %} {{ created_at }}</span>
+                    <span>{% trans "Last modified on" %} {{ last_modified }}</span>
                 </div>
                 <div class="content-metadata__authors">
                     {% for author in authors %}
@@ -52,22 +53,22 @@
             <article class="content-section">
                 {% if introduction %}
                     <section class="content-section__intro">
-                        <h3>Introduction</h3>
+                        <h3>{% trans "Introduction" %}</h3>
                         <div class="introduction-text">{{ introduction | safe }}</div>
                     </section>
                 {% endif %}
                 <section class="content-section__map">
-                    <h3>Carte interactive</h3>
+                    <h3>{% trans "Interactive Map" %}</h3>
                     {% if map_embed %}
                         <div class="map-render">{{ map_embed | safe }}</div>
-                        <a class="fullscreen-link" href="{{ map_fs_link }}">Ouvrir la carte en plein écran &gt</a>
+                        <a class="fullscreen-link" href="{{ map_fs_link }}">{% trans "Open the map in full screen" %}&gt;</a>
                     {% else %}
                         <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
                     {%  endif %}
                 </section>
                 {% if text %}
                     <section class="content-section__text">
-                        <h3>Informations complémentaires</h3>
+                        <h3>{% trans "Additional information" %}</h3>
                         <article class="section-article">
                             {{ text | safe }}
                         </article>

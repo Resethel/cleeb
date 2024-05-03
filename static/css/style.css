@@ -272,3 +272,17 @@ body.page {
     /* Ensure that the main content is at least the height of the viewport minus the topbar */
     min-height: calc(100vh - var(--topbar-height));
 }
+
+/* ================================================================================================================== */
+/* Label hidding
+/* ================================================================================================================== */
+
+/* Hide labels used for accessibility */
+label.--hidden {
+    position: absolute;
+    clip: rect(1px 1px 1px 1px);
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}

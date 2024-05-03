@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Admin for the `core` application.
+"""
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from core.filters import PersonFullNameFilter, PersonOrganizationsFilter
 from core.models import Person, Organization
@@ -11,11 +16,11 @@ from core.models import Person, Organization
 class PersonAdmin(admin.ModelAdmin):
     """Admin class for the Person model."""
 
-    list_display = ('id', 'full_name', 'email', 'member_of', 'has_picture')
+    list_display       = ('id', 'full_name', 'email', 'member_of', 'has_picture')
     list_display_links = ('id', 'full_name')
-    list_filter = (PersonFullNameFilter, PersonOrganizationsFilter)
-    search_fields = ('id', 'full_name')
-    list_per_page = 25
+    list_filter        = (PersonFullNameFilter, PersonOrganizationsFilter)
+    search_fields      = ('id', 'full_name')
+    list_per_page      = 25
 
     readonly_fields = ('id', 'slug')
 
@@ -24,21 +29,21 @@ class PersonAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('ID', {
+        (_('ID'), {
             'classes': ('collapse',),
             'fields': (('id', 'slug'),)
         }),
-        ('Dénomination', {
-            'description': "Le nom de la personne. Le nom et prénom ou le pseudonyme sont requis. Les 3 peuvent être renseignés simultanément.",
+        (_('Nom'), {
+            'description': _("Name of the person. The last name and first name or the pseudonym are required. All 3 can be filled in simultaneously."),
             'fields': (('lastname', 'firstname'), 'pseudonym')
         }),
-        ('Médias sociaux', {
+        (_('Contact and Social medias'), {
             'fields': ('email', 'facebook', 'instagram', 'twitter_x', 'website')
         }),
-        ('Image', {
+        (_('Picture'), {
             'fields': ('picture',)
         }),
-        ('Lien avec des organisations', {
+        (_("Organization affiliations"), {
             'fields': ('organizations',)
         }),
     )
@@ -50,13 +55,13 @@ class PersonAdmin(admin.ModelAdmin):
     def has_picture(self, obj):
         return bool(obj.picture)
     has_picture.boolean = True
-    has_picture.short_description = "Possède une photo"
+    has_picture.short_description = _("Has picture")
 
     def member_of(self, obj):
         if obj.organizations.count() == 0:
             return "-"
         return ", ".join([organization.name for organization in obj.organizations.all()])
-    member_of.short_description = "Lien avec des organisations"
+    member_of.short_description = _("Organization affiliations")
 admin.site.register(Person, PersonAdmin)
 
 
@@ -78,20 +83,20 @@ class OrganizationAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('ID', {
+        (_('ID'), {
             'classes': ('collapse',),
             'fields': (('id', 'slug'),)
         }),
-        ('Dénomination', {
+        (_('Nom'), {
             'fields': ('name',)
         }),
-        ('Identité visuelle', {
+        (_('Logo and other images'), {
             'fields': ('logo',)
         }),
-        ('Contact et réseaux sociaux', {
+        (_('Contact and Social medias'), {
             'fields': ('email', 'facebook', 'instagram', 'twitter_x', 'website')
         }),
-        ('Description', {
+        (_('Description'), {
             'fields': ('type', 'description')
         }),
     )

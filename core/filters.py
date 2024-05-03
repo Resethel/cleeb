@@ -6,6 +6,7 @@ from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 
 from core.models import Organization, Person
+from django.utils.translation import gettext_lazy as _
 
 
 # ======================================================================================================================
@@ -14,7 +15,7 @@ from core.models import Organization, Person
 
 class PersonFullNameFilter(SimpleListFilter):
     """Filter for the `Person` model's organizations."""
-    title = "Nom complet"
+    title = _("Full name")
     parameter_name = "full_name"
 
     def lookups(self, request, model_admin):
@@ -52,7 +53,7 @@ class PersonFullNameFilter(SimpleListFilter):
 
 class PersonOrganizationsFilter(SimpleListFilter):
     """Filter for the `Person` model's organizations."""
-    title = "Organisations"
+    title = _("Organizations")
     parameter_name = "organizations"
 
     def lookups(self, request, model_admin):

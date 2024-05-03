@@ -1,20 +1,37 @@
 {% load static %}
+{% load i18n %}
 <footer class="footer">
     <ul class="footer-menu">
         <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
         <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
-        <li><a href={% url 'contact:form' %}>Contactez-nous</a></li>
-        <li><a href="{% url 'donnees-personnelles' %}">Données personnelles</a></li>
-        <li><a href="{% url 'conditions-d-utilisation' %}">Conditions d'utilisation</a></li>
+        <li><a href={% url 'contact:form' %}>{% trans "Contact us !" %}</a></li>
+        <li><a href="{% url 'donnees-personnelles' %}">{% trans "Privacy policy" %}</a></li>
+        <li><a href="{% url 'conditions-d-utilisation' %}">{%  trans "Terms of use" %}</a></li>
     </ul>
     <a href="https://lesecologistes.fr" class="footer-logo">
         <img src="{% static 'assets/images/logo/footer.svg' %}" alt="logo Les Écologistes">
     </a>
     <div class="footer-credits">
-        <a class="footer-credits__link" href="{% url 'mentions-legales' %}" >Mentions Légales</a>
+        <a class="footer-credits__link" href="{% url 'mentions-legales' %}" >{% trans "Legal notice" %}</a>
         <span class="footer-credits__text">&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
+        <form class="footer-credits__language-switcher" action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <img src="{% static 'assets/icons/language_FILL0_wght400_GRAD0_opsz24.svg' %}" alt="language">
+            <input name="next" type="hidden" value="{{ redirect_to }}">
+            <label for="language-switcher" class="--hidden">{% trans "Language" %}</label>
+            <select name="language" onchange="this.form.submit()" id="language-switcher">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                        {{ language.name_local|title }} ({{ language.code }})
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
         <div class="footer-credits__socials">
-            <span>Suivez-nous !</span>
+            <span>{% trans "Follow us !" %}</span>
             <a href="https://www.facebook.com/eelvmetz/"><img src="{% static 'assets/icons/facebook.svg' %}" alt="logo facebook"></a>
             <a href="https://twitter.com/EelvMetz"><img src="{% static 'assets/icons/twitterx.svg' %}" alt="logo twitter/x"></a>
             <a href="https://www.instagram.com/eelvmetz"><img src="{% static 'assets/icons/instagram.svg' %}" alt="logo instagram"></a>
@@ -28,12 +45,12 @@
     <ul class="mobile-footer__menu">
         <li><a href="https://lorraine.lesecologistes.fr">Les Écologistes - Lorraine</a></li>
         <li><a href="https://sauvonslaforetdemercy.org">Sauvons la Forêt de Mercy</a></li>
-        <li><a href="#">Contactez-nous</a></li>
-        <li><a href="{% url 'donnees-personnelles' %}">Données personnelles</a></li>
-        <li><a href="{% url 'conditions-d-utilisation' %}">Conditions d'utilisation</a></li>
+        <li><a href="{% url 'contact:form' %}">{% trans "Contact us !" %}</a></li>
+        <li><a href="{% url 'donnees-personnelles' %}">{% trans "Privacy policy" %}</a></li>
+        <li><a href="{% url 'conditions-d-utilisation' %}">{% trans "Terms of use" %}</a></li>
     </ul>
     <div class="mobile-footer__socials">
-        <span>Suivez-nous !</span>
+        <span>{% trans "Follow us !" %}</span>
         <a href="https://www.facebook.com/eelvmetz/"><img src="{% static 'assets/icons/facebook.svg' %}" alt="logo facebook"></a>
         <a href="https://twitter.com/EelvMetz"><img src="{% static 'assets/icons/twitterx.svg' %}" alt="logo twitter/x"></a>
         <a href="https://www.instagram.com/eelvmetz"><img src="{% static 'assets/icons/instagram.svg' %}" alt="logo instagram"></a>
@@ -42,8 +59,24 @@
         <img src="{% static 'assets/images/logo/footer.svg' %}" alt="logo Les Écologistes">
     </div>
     <div class="mobile-footer__credits">
+        <form class="mobile-footer__credits__language-switcher" action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <img src="{% static 'assets/icons/language_FILL0_wght400_GRAD0_opsz24.svg' %}" alt="language">
+        <input name="next" type="hidden" value="{{ redirect_to }}">
+        <label for="language-switcher" class="--hidden">{% trans "Language" %}</label>
+        <select name="language" onchange="this.form.submit()" id="language-switcher">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                    {{ language.name_local|title }} ({{ language.code }})
+                </option>
+            {% endfor %}
+        </select>
+    </form>
         <span>&copy 2024 - Les Écologistes Lorraine - Groupe Local du Pays Messin</span>
-        <a href="{% url 'mentions-legales' %}">Mentions Légales</a>
+        <a href="{% url 'mentions-legales' %}">{% trans "Legal notice" %}</a>
     </div>
     <script>
         function backToTop() {

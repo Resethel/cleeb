@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Models for the `datasets` application.
+"""
 from __future__ import annotations
 
 import re
@@ -18,6 +21,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.utils.tasks import TaskStatus
 from datasets import tasks
@@ -109,8 +113,8 @@ class Feature(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Entité géographique"
-        verbose_name_plural = "Entités géographiques"
+        verbose_name = _("Geographic Feature")
+        verbose_name_plural = _("Geographic Features")
     # End class Meta
 # End class Feature
 
@@ -174,7 +178,8 @@ class DatasetLayerField(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Longueur maximale du champ de texte.",
+        verbose_name=_("Max length"),
+        help_text=_("Maximum length of the text field."),
         validators=[MinValueValidator(0)]
     )
 
@@ -182,7 +187,8 @@ class DatasetLayerField(models.Model):
         null=True,
         blank=True,
         default=None,
-        help_text="Précision du champ numérique.",
+        verbose_name=_("Precision"),
+        help_text=_("Number of decimal places."),
         validators=[MinValueValidator(0)]
     )
 
@@ -204,8 +210,8 @@ class DatasetLayerField(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Champ de couche de jeu de données"
-        verbose_name_plural = "Champs de couche de jeu de données"
+        verbose_name = _("Dataset Layer Field")
+        verbose_name_plural = _("Dataset Layer Fields")
         unique_together = ['name', 'layer']
     # End class Meta
 
@@ -244,28 +250,32 @@ class DatasetLayer(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Nom de la couche de jeu de données."
+        verbose_name=_("Layer name"),
+        help_text=_("Name of the layer of the dataset.")
     )
 
     srid = models.IntegerField(
         blank=True,
         null=True,
         default=None,
-        help_text="SRID de la couche de jeu de données.",
+        verbose_name="SRID", # No need for translation
+        help_text=_("SRID (SRS) of the layer of the dataset.")
     )
 
     bounding_box = gis_models.PolygonField(
         blank=True,
         null=True,
         default=None,
-        help_text="Boîte englobante de la couche du jeu de données."
+        verbose_name=_("Bounding box"),
+        help_text=_("Bounding box of the layer of the dataset.")
     )
 
     feature_count = models.IntegerField(
         blank=True,
         null=True,
         default=None,
-        help_text="Nombre de géométries dans la couche du jeu de données.",
+        verbose_name=_("Feature count"),
+        help_text=_("Number of features in the layer."),
         validators=[MinValueValidator(0)]
     )
 
@@ -274,7 +284,8 @@ class DatasetLayer(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Type de géométrie de la couche du jeu de données."
+        verbose_name=_("Geometry type"),
+        help_text=_("Type of the geometries in the layer.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -290,8 +301,8 @@ class DatasetLayer(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Couche de jeu de données"
-        verbose_name_plural = "Couches de jeux de données"
+        verbose_name = _("Dataset Layer")
+        verbose_name_plural = _("Dataset Layers")
         unique_together = ['name', 'dataset']
     # End class Meta
 # End class DatasetLayer
@@ -328,15 +339,15 @@ class DatasetVersion(models.Model):
 
     date = models.DateTimeField(
         default=timezone.now,
-        help_text="Date de la version du jeu de données."
+        help_text=_("Date of the version of the dataset.")
     )
 
     # ----- File -----
 
     file = models.FileField(
         upload_to=dataset_version_filepath,
-        verbose_name="Fichier",
-        help_text="Fichier de la version du jeu de données.",
+        verbose_name=_("File"),
+        help_text=_("File containing the dataset."),
         default=None,
         null=True,
         blank=True,
@@ -349,7 +360,8 @@ class DatasetVersion(models.Model):
         max_length=10,
         choices=ENCODING_CHOICES,
         default=UTF8,
-        help_text="Encodage des propriétés du jeu de données."
+        verbose_name=_("Encoding"),
+        help_text=_("Encoding of the dataset file.")
     )
 
     # ----- Task-related fields -----
@@ -358,8 +370,8 @@ class DatasetVersion(models.Model):
         blank=True,
         null=True,
         default=None,
-        verbose_name="ID de la tâche",
-        help_text="ID de la tâche de génération des entités géographiques."
+        verbose_name=_("Task ID"),
+        help_text=_("ID of the task that generates the geographic features.")
     )
 
     task_status = models.CharField(
@@ -368,12 +380,14 @@ class DatasetVersion(models.Model):
         null=True,
         default=None,
         choices=TaskStatus,
-        help_text="Statut de la tâche de génération des entités géographiques."
+        verbose_name=_("Task status"),
+        help_text=_("Status of the task that generates the geographic features.")
     )
 
     regenerate = models.BooleanField(
         default=False,
-        help_text="Indique si les entités géographiques doivent être régénérées."
+        verbose_name=_("Regenerate"),
+        help_text=_("Regenerate the geographic features of the dataset.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -397,8 +411,8 @@ class DatasetVersion(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Version de jeu de données"
-        verbose_name_plural = "Versions de jeux de données"
+        verbose_name = _("Dataset Version")
+        verbose_name_plural = _("Dataset Versions")
         ordering = ['-date']
     # End class Meta
 # End class DatasetVersion
@@ -501,9 +515,24 @@ class DatasetCategory(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, unique=True, help_text="Nom de la catégorie du jeu de données.")
-    icon = models.FileField(upload_to='datasets/category_icons', help_text="Icône de la catégorie du jeu de données. Doit être un fichier SVG monochrome (noir, fond transparent).")
-    slug = models.SlugField(max_length=200, null=True, default=None)
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_("Category name"),
+        help_text=_("Name of the category of the dataset.")
+    )
+
+    icon = models.FileField(
+        upload_to='datasets/category_icons',
+        verbose_name=_("Icon"),
+        help_text=_("Icon of the dataset category. Must be a monochromatic SVG file (black, transparent background).")
+    )
+    slug = models.SlugField(
+        max_length=200,
+        null=True,
+        default=None
+    )
 
     # ------------------------------------------------------------------------------------------------------------------
     # Methods
@@ -515,7 +544,7 @@ class DatasetCategory(models.Model):
 
     def clean(self):
         if not SVG_REGEX.match(self.icon.file.read().decode('latin-1')):
-            raise ValidationError('Le fichier doit être un fichier SVG valide.')
+            raise ValidationError(_("The icon must be a monochromatic SVG file."))
 
         # Set the slug
         self.slug = slugify(self.name)
@@ -526,8 +555,8 @@ class DatasetCategory(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = "Catégorie d'un jeu de données"
-        verbose_name_plural = "Catégories de jeux de données"
+        verbose_name = _("Dataset Category")
+        verbose_name_plural = _("Dataset Categories")
         ordering = ['name']
     # End class Meta
 # End class DatasetCategory
@@ -545,13 +574,24 @@ class DatasetTechnicalInformation(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     id = models.AutoField(primary_key=True)
-    key = models.CharField(max_length=100, help_text="Clé de l'information technique.")
-    value = models.CharField(max_length=250, help_text="Valeur de l'information technique.")
+
+    key = models.CharField(
+        max_length=100,
+        verbose_name=_("Key"),
+        help_text=_("Sorting key of the technical information.")
+    )
+
+    value = models.CharField(
+        max_length=250,
+        verbose_name=_("Value"),
+        help_text="Valeur de l'information technique."
+    )
     dataset = models.ForeignKey(
         'Dataset',
         on_delete=models.CASCADE,
         related_name='technical_information',
-        help_text="Jeu de données associé à l'information technique."
+        verbose_name=_("Dataset"),
+        help_text=_("Dataset to which the technical information is related.")
     )
 # End class DatasetTechnicalInformation
 
@@ -581,18 +621,21 @@ class Dataset(models.Model):
     name = models.CharField(
         max_length=100,
         unique=True,
-        help_text="Nom du jeu de données"
+        verbose_name=_("Dataset Name"),
+        help_text=_("Name of the dataset.")
     )
 
     public = models.BooleanField(
         default=True,
-        help_text="Indique si le jeu de données peut être partagé publiquement."
+        verbose_name=_("Public"),
+        help_text=_("Whether the dataset is public or not.")
     )
 
     categories = models.ManyToManyField(
         'DatasetCategory',
         blank=True,
-        help_text="Catégories du jeu de données."
+        verbose_name=_("Categories"),
+        help_text=_("Categories of the dataset.")
     )
 
     short_desc = models.TextField(
@@ -600,14 +643,16 @@ class Dataset(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Description courte du jeu de données affichée dans les listes (max: 400 caractères, optionnel)."
+        verbose_name=_("Short description"),
+        help_text=_("Short description of the dataset, displayable as summary (max: 400 characters, optional).")
     )
 
     description = models.TextField(
         blank=True,
         null=True,
         default=None,
-        help_text="Description du jeu de données. Optionnel."
+        verbose_name=_("Description"),
+        help_text=_("Description of the dataset (optional).")
     )
 
     source = models.CharField(
@@ -615,19 +660,23 @@ class Dataset(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Source du jeu de données. Optionnel."
+        verbose_name=_("Source"),
+        help_text=_("Source from which the dataset was obtained (optional).")
     )
 
     last_update = models.DateField(
         auto_now=True,
-        help_text="Date de dernière mise à jour du jeu de données.")
+        verbose_name=_("Last update"),
+        help_text=_("Date of the last update of the dataset.")
+    )
 
     language = models.CharField(
         max_length=30,
         blank=True,
         null=True,
         default=None,
-        help_text="Langue du jeu de données. Optionnel."
+        verbose_name=_("Language"),
+        help_text=_("Primary language of the dataset (optional).")
     )
 
     license = models.CharField(
@@ -635,14 +684,16 @@ class Dataset(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Licence du jeu de données. Optionnel."
+        verbose_name=_("License"),
+        help_text=_("License of the dataset (optional).")
     )
 
     usage_restrictions = models.TextField(
         blank=True,
         null=True,
         default=None,
-        help_text="Restrictions d'utilisation du jeu de données. Optionnel."
+        verbose_name=_("Usage restrictions"),
+        help_text=_("Restrictions on the usage of the dataset (optional).")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -699,12 +750,3 @@ def generate_dataset_slug(sender, instance, **kwargs):
     """Generate the slug for the resource"""
     instance.slug = slugify(instance.name)
 # End def generate_dataset_slug
-
-
-# ======================================================================================================================
-# Helper methods
-# ======================================================================================================================
-
-
-
-

@@ -1,11 +1,12 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Articles | CLEEB</title>
+    <title>{% trans 'Articles Search' %} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -23,9 +24,9 @@
             </div>
             <form class="search-header__form" action="." method="GET">
                 <div class="search-header__form__select">
-                    <label for="theme" class="--hidden">Theme</label>
+                    <label for="theme" class="--hidden">{% trans "Theme" %}</label>
                     <select name="theme" id="theme">
-                        <option value="">Tous les thèmes</option>
+                        <option value="">{% trans "All themes" %}</option>
                         {% for theme in themes %}
                             {% if theme == selected_theme %}
                                 <option value="{{ theme.slug }}" selected>{{ theme.short_name }}</option>
@@ -36,11 +37,11 @@
                     </select>
                 </div>
                 <div class="search-header__form__input">
-                    <label for="search" class="--hidden">Rechercher un article</label>
+                    <label for="search" class="--hidden">{% trans 'Search for an article' %}</label>
                     {% if search %}
-                        <input type="search" name="search" id="search" value="{{ search }}" placeholder="Rechercher un article par titre, auteur, ...">
+                        <input type="search" name="search" id="search" value="{{ search }}" placeholder={% trans 'Search for an article by title, author, ...' %}>
                     {% else %}
-                        <input type="search" name="search" id="search" placeholder="Rechercher un article par titre, auteur, ...">
+                        <input type="search" name="search" id="search" placeholder={% trans 'Search for an article by title, author, ...' %}>
                     {% endif %}
                     <button type="submit">
                         <img src="{% static 'assets/icons/search_black_24dp.svg' %}" alt="search icon"/>
@@ -83,7 +84,8 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <div class="search-result__empty"><h2>Aucun résultat</h2></div>
+                <div class="search-result__empty"><h2>{% trans 'No articles found' %}</h2></div>
+            }
             {% endif %}
         </div>
     </main>

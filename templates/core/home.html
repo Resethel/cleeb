@@ -1,12 +1,13 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cartographie Militante - Home</title>
+    <title>{{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -23,14 +24,22 @@
         <section id="hero">
             <div class="hero-container">
                 <div class="info">
-                    <h1>Cartographie Militante</h1>
-                    <h2>Une cartographie des luttes environnementales et sociales sur l'eurométropole de Metz</h2>
+                    <h1>{{ site.name }}: {% trans 'An activist mapping project' %}</h1>
+                    <h2>
+                        {% blocktranslate %}
+                            An activist mapping project to highlight environmental and social struggles in the
+                            Grand Est region of France.
+                        {% endblocktranslate %}
+                    </h2>
                     <p>
-                        Cette cartographie militante est un projet de cartographie des luttes environnementales et
-                        sociales sur l'eurométropole de Metz. Elle a pour but de mettre en avant les luttes et les
-                        alternatives qui se développent sur le territoire.
+                        {% blocktranslate %}
+                            As environmental and social struggles are often invisible and hard to locate, this project
+                            aims to make them more visible and accessible to the public.<br>
+                            It gathers summarizes in the form of maps and articles data gathered by activists and
+                            researchers on the ground regarding various struggles and alternatives in the region.
+                        {% endblocktranslate %}
                     </p>
-                    <a class="btn-white-large" href="{% url 'map-index' %}">Voir les cartes</a>
+                    <a class="btn-white-large" href="{% url 'map-index' %}">{% trans 'Explore the maps' %}</a>
                 </div>
             </div>
             <div class="hero-attributions">

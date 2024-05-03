@@ -1,12 +1,12 @@
 {% load static %}
-
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Article: {{ title }}</title>
+    <title>{% trans 'Article' %}: {{ title }} | {{ site.name }}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -26,7 +26,7 @@
             </div>
             <div class="content-metadata">
                 <div class="content-metadata__dates">
-                    <span>Publié le {{ created_at }}</span>
+                    <span>{% trans "Published on" %} {{ created_at }}</span>
                 </div>
                 <div class="content-metadata__authors">
                     {% for author in authors %}
@@ -61,7 +61,7 @@
 
             {% if attachments %}
                 <article class="content-attachments">
-                    <h3>Ressources complémentaires</h3>
+                    <h3>{% trans "Attachments" %}</h3>
                     <ul>
                     {% for attachment in attachments %}
                         <li>

@@ -4,15 +4,17 @@ Validators for the `datasets` application.
 """
 import zipfile
 
-from django.core.files import File
 from django.core.exceptions import ValidationError
+from django.core.files import File
+from django.utils.translation import gettext_lazy as _
 
 
 def validate_dataset_version_file(field: File):
     """Validator for the `file` attribute of a `DatasetVersion` object."""
     if not zipfile.is_zipfile(field.file):
         raise ValidationError(
-            message=f"'{field.name}' n'est pas un fichier ZIP valide.",
+            # message=f"'{field.name}' n'est pas un fichier ZIP valide.",
+            message=_("{file} is not a valid ZIP file.").format(file=field.name),
             params={'file': field.name}
         )
     else:
@@ -21,7 +23,7 @@ def validate_dataset_version_file(field: File):
             with zipfile.ZipFile(field.file) as zip_file:
                 if not zip_file.testzip() is None:
                     raise ValidationError(
-                        message=f"Le fichier ZIP '{field.name}' est corrompu.",
+                        message=_("{file} is corrupted.").format(file=field.name),
                         params={'file': field.name}
                     )
                 else:
@@ -33,12 +35,12 @@ def validate_dataset_version_file(field: File):
                             break
                     if not shapefile_found:
                         raise ValidationError(
-                            message=f"Le fichier ZIP '{field.name}' ne contient pas de fichier shapefile (.shp).",
+                            message=_("{file} does not contain a shapefile (.shp).").format(file=field.name),
                             params={'file': field.name}
                         )
         except zipfile.BadZipFile:
             raise ValidationError(
-                message='Le fichier ZIP est corrompu.',
+                message=_("{file} ZIP file seems to be corrupted.").format(file=field.name),
                 params={'file': field.name}
             )
 # End def validate_dataset_file

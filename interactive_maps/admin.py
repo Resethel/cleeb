@@ -25,17 +25,17 @@ class MapRenderAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('ID', {
+        (_('Information'), {
             'classes': ('collapse',),
             'fields': (
                 ('id','slug',),
                 ('template', 'map')
             ),
         }),
-        ('Description', {
+        (_('Description'), {
             'fields': ('name',),
         }),
-        ('Render', {
+        (_('Map Render'), {
             'fields': ('embed_html', 'full_html'),
         })
     )
@@ -51,17 +51,17 @@ class MapRenderAdmin(admin.ModelAdmin):
             name = obj.template.name
             id_ = obj.template.id
             return format_html(f"<a href=/admin/map_templates/maptemplate/{id_}>{name}@{id_}</a>")
-    linked_template.short_description = "Modèle Lié"
+    linked_template.short_description = _("Affiliated Template")
 
     def has_full_html(self, obj: MapRender):
         return obj.full_html is not None
     has_full_html.boolean = True
-    has_full_html.short_description = "has full html?"
+    has_full_html.short_description = _("has full html?")
 
     def has_embed_html(self, obj: MapRender):
         return obj.embed_html is not None
     has_embed_html.boolean = True
-    has_embed_html.short_description = "has embed html?"
+    has_embed_html.short_description = _("has embed html?")
 # End class MapRenderAdmin
 
 # ======================================================================================================================
@@ -114,10 +114,10 @@ class MapAdmin(admin.ModelAdmin):
         if obj.authors.count() == 0:
             return "-"
         return ", ".join([author.display_name for author in obj.authors.all()])
-    authors_.short_description = "Auteur.ice.s"
+    authors_.short_description = _("Authors")
 
     def has_render(self, obj: Map):
         return obj.render is not None
     has_render.boolean = True
-    has_render.short_description = "Possède un rendu?"
+    has_render.short_description = _("has render?")
 # End class MapAdmin

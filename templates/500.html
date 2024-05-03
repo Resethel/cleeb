@@ -1,12 +1,13 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language_code }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>500 - Internal Server Error</title>
+    <title>500 - {% trans "Internal Server Error" %}</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/topbar.css' %}">
@@ -22,11 +23,13 @@
          <div class="error-content">
             <h1>500</h1>
             <p>
-                Oups, il semblerait que quelque chose a mal tourné...
-                Nos administrateurs ont été notifiés et travaillent à résoudre le problème.
-                Vous pouvez retourner à la page d'accueil en cliquant sur le bouton ci-dessous.
+                {% blocktranslate %}
+                    Oops, something went wrong...
+                    Our administrators have been notified and are working to fix the problem.
+                    You can return to the home page by clicking the button below.
+                {% endblocktranslate %}
             </p>
-            <a href="{% url 'home' %}" class="btn-white-large">Revenir à la page d'accueil</a>
+            <a href="{% url 'home' %}" class="btn-white-large">{% trans "Return to Homepage" %}</a>
         </div>
         <span class="background-attributions">
             <a href="https://www.freepik.com/free-photo/natural-surface-with-peony-bush-foliage-copy-space_15844463.htm#query=leaves%20background&position=3&from_view=keyword&track=ais&uuid=97850ecf-093d-44a8-8c23-6040d1b88733">Image by pvproductions</a> on Freepik

@@ -6,6 +6,7 @@ import django.contrib.gis.admin as gis_admin
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from common.utils.admin import get_clock_icon_html
 from common.utils.tasks import TaskStatus
@@ -54,13 +55,13 @@ class DatasetLayerFieldAdmin(admin.ModelAdmin):
             parent_name = f"{field.layer.dataset.dataset} v{field.layer.dataset.get_version_number()}"
             return format_html(f'<a href="/admin/datasets/dataset/{field.layer.dataset.id}/change/">{parent_name}</a>')
         return "-"
-    parent_dataset.short_description = 'Parent Dataset'
+    parent_dataset.short_description = _('Parent Dataset')
 
     def parent_layer(self, field : DatasetLayerField):
         if field.layer is not None:
             return format_html(f'<a href="/admin/datasets/datasetlayer/{field.layer.id}/change/">{field.layer.name}</a>')
         return "-"
-    parent_layer.short_description = 'Parent Layer'
+    parent_layer.short_description = _('Parent Layer')
 # End class DatasetLayerFieldAdmin
 
 class DatasetLayerFieldInline(admin.TabularInline):
@@ -98,17 +99,17 @@ class DatasetVersionAdmin(admin.ModelAdmin):
     # ------------------------------------------------------------------------------------------------------------------
 
     fieldsets = (
-        ('Task Information', {
+        (_("Task Information"), {  # Fieldset title (legend
             'classes': ('collapse',),  # Hide the fieldset by default
             'fields': (
                 ('task_id', 'task_status'),
                 'regenerate'
             )
         }),
-        ('Information', {
+        (_("Information"), {
             'fields': ('id', 'dataset')
         }),
-        ('Configuration', {
+        (_("Configuration"), {
             'fields': ('date', 'file', 'encoding')
         }),
     )
@@ -126,13 +127,13 @@ class DatasetVersionAdmin(admin.ModelAdmin):
             parent_name = f"{version.dataset.name}"
             return format_html(f'<a href="/admin/datasets/dataset/{version.dataset.id}/change/">{parent_name}</a>')
         return "-"
-    parent_dataset.short_description = 'Parent Dataset'
+    parent_dataset.short_description = _('Parent Dataset')
 
     def file_size(self, version : DatasetVersion):
         if version.file:
             return f"{version.file.size / 1024 / 1024:.2f} MB"
         return "-"
-    file_size.short_description = 'File Size (MB)'
+    file_size.short_description = _('File Size (MB)')
 
 
     def generation_status(self, version : DatasetVersion):
@@ -149,7 +150,7 @@ class DatasetVersionAdmin(admin.ModelAdmin):
                 return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
             case _:
                 return format_html('<img src="/static/admin/img/icon-alert.svg" alt="Invalid">')
-    generation_status.short_description = 'Generation Status'
+    generation_status.short_description = _('Generation Status')
 # End class DatasetVersionAdmin
 
 admin.site.register(DatasetVersion, DatasetVersionAdmin)
@@ -171,7 +172,7 @@ class DatasetTechnicalInformationInline(admin.TabularInline):
     extra = 0
 
 class CategoryFilter(admin.SimpleListFilter):
-    title = 'categories'  # Human-readable title which will be displayed in the right admin sidebar just above the filter options.
+    title = _('categories')  # Human-readable title which will be displayed in the right admin sidebar just above the filter options.
     parameter_name = 'categories'  # Parameter for the filter that will be used in the URL query.
 
     def lookups(self, request, model_admin):
@@ -203,7 +204,7 @@ class DatasetAdmin(admin.ModelAdmin):
 
     def category(self, dataset : Dataset):
         if dataset.categories is None or dataset.categories.count() == 0:
-            return "Non Défini"
+            return _("Undefined")
         return ", ".join([category.name for category in dataset.categories.all()])
     # End def category
 
@@ -215,7 +216,7 @@ class DatasetAdmin(admin.ModelAdmin):
             return f"{dataset_version.file.size / 1024 / 1024:.2f} MB"
         return "-"
 
-    file_size.short_description = 'File Size (MB)'
+    file_size.short_description = _('File Size (MB)')
 
     # ------------------------------------------------------------------------------------------------------------------
     # Inlines
