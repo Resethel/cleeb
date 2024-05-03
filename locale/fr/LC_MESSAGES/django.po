@@ -1,0 +1,1577 @@
+# CLEEB Website French Translation
+# Copyright (C) 2024 - Les Écologistes
+# This file is distributed under the same license as the CLEEB website sources.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-03 14:22+0000\n"
+"PO-Revision-Date: 2024-05-03 17:17+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Metadata"
+msgstr "Métadonnées"
+
+msgid "Publication Status"
+msgstr "Statut de publication"
+
+msgid "Article"
+msgstr "Article"
+
+msgid "Attachment"
+msgstr "Piéce jointe"
+
+msgid "Articles"
+msgstr "Articles"
+
+msgid "File"
+msgstr "Fichier"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Video"
+msgstr "Vidéo"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Article ID"
+msgstr "ID de l'article"
+
+msgid "Created at"
+msgstr "Créé le"
+
+msgid "The date of creation of the article."
+msgstr "La date de création de l'article."
+
+msgid "Last modified at"
+msgstr "Dernière modification le"
+
+msgid "The date of the last modification of the article."
+msgstr "La date de la dernière modification de l'article."
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "The title of the article."
+msgstr "Le titre de l'article."
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "The status of the article."
+msgstr "Le statut de l'article."
+
+msgid "Authors"
+msgstr "Auteur.ices"
+
+msgid "Authors of the article."
+msgstr "Auteur.ices de l'article."
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Themes of the article."
+msgstr "Thèmes de l'article."
+
+msgid "Splash image"
+msgstr "Image de couverture"
+
+msgid "The splash image of the article."
+msgstr "L'image de couverture de l'article."
+
+msgid "Article body"
+msgstr "Corps de l'article"
+
+msgid "The body of the article."
+msgstr "Le corps de l'article."
+
+msgid "Attachment ID"
+msgstr "ID de la pièce jointe"
+
+msgid "Article to which the attachment belongs to"
+msgstr "Article auquel la pièce jointe appartient"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Attachment's Name"
+msgstr "Nom de la pièce jointe"
+
+msgid "Short Description"
+msgstr "Description courte"
+
+msgid "Attachment's (very) short description (max 50 characters)"
+msgstr "Description (très) courte de la pièce jointe (max 50 caractères)"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Attachment's Type"
+msgstr "Type de la pièce jointe"
+
+msgid "Attachment's File"
+msgstr "Fichier de la pièce jointe"
+
+msgid "Attachments"
+msgstr "Pièces jointes"
+
+msgid "The file is not a valid PDF file."
+msgstr "Le fichier n'est pas un PDF valide."
+
+msgid "The file is not a valid image file."
+msgstr "Le fichier n'est pas une image valide."
+
+msgid "English"
+msgstr "Anglais"
+
+msgid "French"
+msgstr "Français"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Admin actions"
+msgstr "Actions d'amdinistration"
+
+msgid "Contact form submissions"
+msgstr "Formulaires de contact soumis"
+
+msgid "How you want to be referred as"
+msgstr "Par quel nom souhaitez-vous être appelé.e"
+
+msgid "Email"
+msgstr "Courriel"
+
+msgid "Your email address"
+msgstr "Votre adresse courriel"
+
+msgid "Subject"
+msgstr "Sujet"
+
+msgid "Subject of your message"
+msgstr "Sujet de votre message"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Agreement"
+msgstr "Accord"
+
+msgid "You must agree to the terms and conditions to submit the form."
+msgstr "Vous devez accepter les conditions pour soumettre le formulaire."
+
+msgid "I agree to the terms and conditions specified in the "
+msgstr "J'accepte les conditions spécifiées dans le "
+
+msgid "Name of the sender."
+msgstr "Nom de l'expéditeur."
+
+msgid "Email address of the sender."
+msgstr "Adresse courriel de l'expéditeur."
+
+msgid "Subject of the message."
+msgstr "Sujet du message."
+
+msgid "Content of the message."
+msgstr "Contenu du message."
+
+msgid "Date and time when the message was created."
+msgstr "Date et heure à laquelle le message a été créé."
+
+msgid "Handled"
+msgstr "A été traité"
+
+msgid "Flag to indicate if the message was handled by the team."
+msgstr "Indicateur de traitement du message par les administrateur.ices."
+
+msgid "Contact Message"
+msgstr "Message de contact"
+
+msgid "Contact Messages"
+msgstr "Messages de contact"
+
+#, python-brace-format
+msgid "{name} - {subject} ({created_at})"
+msgstr "{name} - {subject} ({created_at})"
+
+msgid "Nom"
+msgstr "Nom"
+
+msgid ""
+"Name of the person. The last name and first name or the pseudonym are "
+"required. All 3 can be filled in simultaneously."
+msgstr ""
+"Nom de la personne. Le nom de famille et le prénom ou le pseudonyme sont "
+"obligatoires. Les 3 peuvent être remplis simultanément."
+
+msgid "Contact and Social medias"
+msgstr "Contact et réseaux sociaux"
+
+msgid "Picture"
+msgstr "Image"
+
+msgid "Organization affiliations"
+msgstr "Affiliation à des organisations"
+
+msgid "Has picture"
+msgstr "Possède une image"
+
+msgid "Logo and other images"
+msgstr "Logo et autres images"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Core"
+msgstr "Application Principale"
+
+msgid "Full name"
+msgstr "Nom"
+
+msgid "Organizations"
+msgstr "Organisations"
+
+msgid "Last name"
+msgstr "Nom de famille"
+
+msgid "First name"
+msgstr "Prénom"
+
+msgid "Pseudonym"
+msgstr "Pseudonyme"
+
+msgid "Biography"
+msgstr "Biographie"
+
+msgid "Facebook"
+msgstr "Facebook"
+
+msgid "Instagram"
+msgstr "Instagram"
+
+msgid "Twitter/X"
+msgstr "Twitter/X"
+
+msgid "Website"
+msgstr "Site web"
+
+msgid ""
+"The person must have a first name and/or a last name, and/or a pseudonym."
+msgstr ""
+"La personne doit avoir un prénom et/ou un nom de famille, et/ou un "
+"pseudonyme."
+
+msgid "If the last name is filled in, the first name must be as well."
+msgstr "Si le nom de famille est rempli, le prénom doit l'être aussi."
+
+msgid "If the first name is filled in, the last name must be as well."
+msgstr "Si le prénom est rempli, le nom de famille doit l'être aussi."
+
+msgid "Name of the organization"
+msgstr "Nom de l'organisation"
+
+msgid "Type of organization"
+msgstr "Type d'organisation"
+
+msgid "Type of organization (e.g. NGO, Company, Political Party, etc.)"
+msgstr "Type d'organisation (ex. ONG, Entreprise, Parti politique, etc.)"
+
+msgid "Parent Dataset"
+msgstr "Jeu de données parent"
+
+msgid "Parent Layer"
+msgstr "Couche parente"
+
+msgid "Task Information"
+msgstr "Information sur la tâche"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Configuration"
+msgstr "Configuration"
+
+msgid "File Size (MB)"
+msgstr "Taille du fichier (Mo)"
+
+msgid "Generation Status"
+msgstr "Statut de génération"
+
+msgid "categories"
+msgstr "catégories"
+
+msgid "Undefined"
+msgstr "Non défini"
+
+msgid "Datasets"
+msgstr "Jeu de données"
+
+msgid "Geographic Feature"
+msgstr "Entité géographique"
+
+msgid "Geographic Features"
+msgstr "Entités géographiques"
+
+msgid "Max length"
+msgstr "Longueur maximale"
+
+msgid "Maximum length of the text field."
+msgstr "Longueur maximale du champ de texte."
+
+msgid "Precision"
+msgstr "Précision"
+
+msgid "Number of decimal places."
+msgstr "Nombre de décimales après la virgule."
+
+msgid "Dataset Layer Field"
+msgstr "Champ de couche de jeu de données"
+
+msgid "Dataset Layer Fields"
+msgstr "Champs de couche de jeu de données"
+
+msgid "Layer name"
+msgstr "Nom de la couche"
+
+msgid "Name of the layer of the dataset."
+msgstr "Nom de la couche du jeu de données."
+
+msgid "SRID (SRS) of the layer of the dataset."
+msgstr "SRID (SRS) de la couche du jeu de données."
+
+msgid "Bounding box"
+msgstr "Ampleur géographique"
+
+msgid "Bounding box of the layer of the dataset."
+msgstr "Ampleur géographique de la couche du jeu de données."
+
+msgid "Feature count"
+msgstr "Nombre de Features"
+
+msgid "Number of features in the layer."
+msgstr "Nombre de features sur la couche."
+
+msgid "Geometry type"
+msgstr "Type de Géométrie"
+
+msgid "Type of the geometries in the layer."
+msgstr "Type de géométries appartenant à la couche."
+
+msgid "Dataset Layer"
+msgstr "Couche du jeu de donnée"
+
+msgid "Dataset Layers"
+msgstr "Couches des jeux de données"
+
+msgid "Date of the version of the dataset."
+msgstr "Date d’ajout de cette version du jeu de donnée."
+
+msgid "File containing the dataset."
+msgstr "Fichier contenant le jeu de données."
+
+msgid "Encoding"
+msgstr "Codage"
+
+msgid "Encoding of the dataset file."
+msgstr "Codage du fichier du jeu de données."
+
+msgid "Task ID"
+msgstr "ID de la tâche"
+
+msgid "ID of the task that generates the geographic features."
+msgstr "ID de la tâche générant les entités géographiques."
+
+msgid "Task status"
+msgstr "Statut de la tâche"
+
+msgid "Status of the task that generates the geographic features."
+msgstr "Statut de la tâche générant les entités géographiques."
+
+msgid "Regenerate"
+msgstr "Re-générer"
+
+msgid "Regenerate the geographic features of the dataset."
+msgstr "Re-générer les entitées géographiques de ce jeu de données."
+
+msgid "Dataset Version"
+msgstr "Version du jeu de données"
+
+msgid "Dataset Versions"
+msgstr "Versions des Jeux de données"
+
+msgid "Category name"
+msgstr "Nom de la catégorie"
+
+msgid "Name of the category of the dataset."
+msgstr "Nom de la catégorie du jeu de données."
+
+msgid "Icon"
+msgstr "Icône"
+
+msgid ""
+"Icon of the dataset category. Must be a monochromatic SVG file (black, "
+"transparent background)."
+msgstr ""
+"Icône du la catégorie.\n"
+"Le fichier doit être au format “SVG” et être monochromatique (noir sur fond "
+"transparent)."
+
+msgid "The icon must be a monochromatic SVG file."
+msgstr "L’icône doit être un fichier SVG monochromatique."
+
+msgid "Dataset Category"
+msgstr "Catégorie du Jeu de données"
+
+msgid "Dataset Categories"
+msgstr "Catégories des Jeux de données"
+
+msgid "Key"
+msgstr "Clé"
+
+msgid "Sorting key of the technical information."
+msgstr "Clé de tri de l’information technique."
+
+msgid "Value"
+msgstr "Valeur"
+
+msgid "Dataset"
+msgstr "Jeu de données"
+
+msgid "Dataset to which the technical information is related."
+msgstr "Jeu de données dont l’information technique est issue."
+
+msgid "Dataset Name"
+msgstr "Nom du jeu de données"
+
+msgid "Name of the dataset."
+msgstr "Nom du jeu de données."
+
+msgid "Public"
+msgstr "Public"
+
+msgid "Whether the dataset is public or not."
+msgstr "Indique si le jeu de données est accessible au visiteurs."
+
+msgid "Categories"
+msgstr "Catégories"
+
+msgid "Categories of the dataset."
+msgstr "Catégories du jeu de données."
+
+msgid "Short description"
+msgstr "Description courte"
+
+msgid ""
+"Short description of the dataset, displayable as summary (max: 400 "
+"characters, optional)."
+msgstr ""
+"Courte description du jeu de données, qui sera utilisée en tant que résumé "
+"(max: 400 caractères, optionnel)."
+
+msgid "Description of the dataset (optional)."
+msgstr "Description du jeu de données (optionnel)."
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Source from which the dataset was obtained (optional)."
+msgstr "La source auprès de laquelle le jeu de donnée a été obtenu."
+
+msgid "Last update"
+msgstr "Dernière modification"
+
+msgid "Date of the last update of the dataset."
+msgstr "Date de la dernière modification du jeu de données."
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Primary language of the dataset (optional)."
+msgstr "Langue principale du jeu de données (optionnel)."
+
+msgid "License"
+msgstr "Licence"
+
+msgid "License of the dataset (optional)."
+msgstr "Licence du jeu de données (optionnel)."
+
+msgid "Usage restrictions"
+msgstr "Restrictions d’usage"
+
+msgid "Restrictions on the usage of the dataset (optional)."
+msgstr "Restriction vis-à-vis de l’usage du jeu de donnée (optionnel)."
+
+#, python-brace-format
+msgid "{file} is not a valid ZIP file."
+msgstr "`{file}` n’est pas un fichier ZIP valide."
+
+#, python-brace-format
+msgid "{file} is corrupted."
+msgstr "Le fichier `{file}` est corrompu."
+
+#, python-brace-format
+msgid "{file} does not contain a shapefile (.shp)."
+msgstr "Le fichier `{file}` ne contient pas de shapefile (.shp)."
+
+#, python-brace-format
+msgid "{file} ZIP file seems to be corrupted."
+msgstr "le fichier zip “{file}” semble corrompu."
+
+msgid "No dataset available"
+msgstr "Aucun jeu de données disponible"
+
+msgid "No dataset version provided"
+msgstr "Aucune version de jeu de donnée fournie"
+
+#, python-brace-format
+msgid "Dataset \"{name}\" (version {version}) does not exist"
+msgstr "Le jeu de donnée “{name}” (version {version}) n’existe pas"
+
+msgid "Map Render"
+msgstr "Rendu de carte"
+
+msgid "Affiliated Template"
+msgstr "Modèle lié"
+
+msgid "has full html?"
+msgstr "possède un HTML complet ?"
+
+msgid "has embed html?"
+msgstr "possède un HTML embarquable ?"
+
+msgid "Render"
+msgstr "Rendu"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "has render?"
+msgstr "possède un rendu ?"
+
+msgid "Interactive Maps"
+msgstr "Cartes interactives"
+
+msgid "The unique identifier of the map render."
+msgstr "L’identifiant unique du rendu de carte."
+
+msgid "Template"
+msgstr "Modèle"
+
+msgid "The template used to render the map."
+msgstr "Le modèle utilisé pour générer le rendu de la carte."
+
+msgid "The name of the map render."
+msgstr "Le nom du rendu de carte."
+
+msgid "Embedded HTML"
+msgstr "HTML embarqué"
+
+msgid ""
+"The embedded HTML code of the map. This file is used for the embedded "
+"display of the map."
+msgstr ""
+"La code HTML embarqué de la carte. Ce fichier est utilisé pour afficher une "
+"carte sur une autre page."
+
+msgid "Full HTML"
+msgstr "HTML complet"
+
+msgid ""
+"The full HTML code of the map. This file is used for the fullscreen display "
+"of the map."
+msgstr ""
+"Le code HTML complet de la carte. Ce fichier est utilisé pour afficher la "
+"carte en plein écran."
+
+msgid "Map Renders"
+msgstr "Rendus de cartes"
+
+msgid ""
+"The slug of the map. This field is automatically generated from the title."
+msgstr ""
+"Le slug de la carte. Le champ est généré automatiquement à partir du titre."
+
+msgid "The creation date of the interactive map."
+msgstr "Date de création de la carte intéractive."
+
+msgid "Last modified"
+msgstr "Dernière modification"
+
+msgid "The last modification date of the interactive map."
+msgstr "La dernière modification de la carte interactive."
+
+msgid "The authors of the map."
+msgstr "Les auteur.ices de la carte."
+
+msgid "The themes of the map."
+msgstr "Les thèmes de la carte."
+
+msgid "Publication status"
+msgstr "Statut de publication"
+
+msgid "The publication status of the map."
+msgstr "Le statut de publication de la carte."
+
+msgid "The render of the map."
+msgstr "Le rendu de la carte."
+
+msgid "Introduction text"
+msgstr "Texte d’introduction"
+
+msgid ""
+"The introduction of the interactive map. Formatted in HTML.Only style tags "
+"(strong, em, etc.) will be kept.All structure tags (section, article, h1, p, "
+"etc.) will be removed."
+msgstr ""
+"Texte d’introduction de la carte interactive.\n"
+"Formatté en HTML.\n"
+"Seuls les balises de styles (strong, em, etc) seront conservées.\n"
+"Toute balise de structure (section, article, h1, p, etc.) seront retirées."
+
+msgid "Body text"
+msgstr "Corps du texte"
+
+msgid "The body of the interactive map. Formatted in HTML."
+msgstr "Le corps du texte décrivant la carte interactive. Formaté en HTML."
+
+msgid "Interactive Map"
+msgstr "Carte interactive"
+
+#, python-brace-format
+msgid "The fullscreen view of the map '{title}' is not available."
+msgstr "La vue en plein écran de la carte ‘{title}’ n’est pas disponible."
+
+msgid "N/A"
+msgstr "N/A"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Circle Pattern Details"
+msgstr "Détails du motif à cercles"
+
+msgid "Stripe Pattern Details"
+msgstr "Détails du motif à rayures"
+
+msgid "Parent Style"
+msgstr "Style parent"
+
+msgid "The parent style of the property style."
+msgstr "Le style parent du style de propriété."
+
+msgid "Borders"
+msgstr "Bordures"
+
+msgid "Lines that delimit a geometric shape."
+msgstr "Lignes délimitant la forme géométrique."
+
+msgid "Fill"
+msgstr "Remplissage"
+
+msgid "Color that fills a geometric shape."
+msgstr "Couleur remplissant la forme géométrique."
+
+msgid "Property Style"
+msgstr "Style de la propriété"
+
+msgid "Property Styles"
+msgstr "Styles des propriétés"
+
+msgid "Key and Value"
+msgstr "Clé et Valeur"
+
+msgid "The parent layer of the style."
+msgstr "La couche parente du style."
+
+msgid "Borders are the lines that delimit a geometric shapes."
+msgstr "Les bordures sont les lignes délimitant une forme géométrique."
+
+msgid "Fill is the color that fills a geometric shape."
+msgstr "Couleur remplissant une forme géométrique."
+
+msgid "Style"
+msgstr "Style"
+
+msgid "Styles"
+msgstr "Styles"
+
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "Filters"
+msgstr "Filtres"
+
+msgid "Layer"
+msgstr "Couche"
+
+msgid "Layers"
+msgstr "Couches"
+
+msgid "Feature Group"
+msgstr "Groupe d’entités géographiques"
+
+msgid "Feature Groups"
+msgstr "Groupes d’entités géographiques"
+
+msgid "Map Configuration"
+msgstr "Configuration de la carte"
+
+msgid "Child Map Render"
+msgstr "Rendu de carte fils"
+
+msgid "Map Templates"
+msgstr "Modèles de cartes"
+
+msgid "The name of the tile layer."
+msgstr "Nom de la couche de tuiles."
+
+msgid "Verbose Name"
+msgstr "Nom “verbeux”"
+
+msgid "The verbose name of the tile layer."
+msgstr "Nom “verbeux” de la couche de tuiles."
+
+msgid "Transparent"
+msgstr "Transparent"
+
+msgid "Whether the tile layer is transparent, i.e., has an alpha channel."
+msgstr ""
+"Indique si la couche de tuiles est transparente (i.e., possède un canal "
+"alpha)."
+
+msgid "Overlay"
+msgstr "Superposition"
+
+msgid ""
+"Whether the tile layer is an overlay, i.e., can be superimposed on other "
+"layers."
+msgstr "Indique si la couche de tuile est une superposition."
+
+msgid "Show in Layer Control"
+msgstr "Afficher dans le contrôle des couches"
+
+msgid "Whether the tile layer should be shown in the layer control."
+msgstr "Indique si la visibilité de la couche de tuiles peut être controlée."
+
+msgid "Built-in"
+msgstr "Intégré"
+
+msgid ""
+"The type of the tile layer. If 'folium', the tile is managed by Folium and "
+"the other fields are ignored."
+msgstr ""
+"Le type de couche de tuiles. Si ‘folium;, la couche de tuile provient de "
+"Folium et les autres champs seront ignorés."
+
+msgid "The XYZ URL of the tile layer."
+msgstr "L’URL XYZ de la couche de tuiles."
+
+msgid "Attribution"
+msgstr "Attribution"
+
+msgid "The attribution (credits) of the tile layer."
+msgstr "L’attribution des sources de la couche de tuiles."
+
+msgid "Access Token"
+msgstr "Jeton d’accès"
+
+msgid ""
+"Some tile providers require an access token to access their tiles. This "
+"field should be empty if no access token is required."
+msgstr ""
+"Certains fournisseurs de tuiles requièrent un jeton d’accès. The champ doit "
+"rester vide si le fournisseur ne requière pas de jeton d’accès."
+
+msgid "An URL is required for XYZ tiles."
+msgstr "Un URL est nécessaire pour les tuiles XYZ."
+
+msgid "An attribution is required for XYZ tiles."
+msgstr "Une attribution de source est requise pour les tuiles XYZ."
+
+#, python-brace-format
+msgid "An access token is required for the tile '{name}@{url}'."
+msgstr "Un jeton d’accès est requis pour les tuiles ‘{name}@{url}’"
+
+#, python-brace-format
+msgid "The access token provided is invalid for the tile '{name}@{url}'."
+msgstr ""
+"Le jeton d’accès renseigné n’est pas valide pour la tuile `{name}@{url}`."
+
+msgid "Tile Layer"
+msgstr "Couche de tuiles"
+
+msgid "Tile Layers"
+msgstr "Couches de tuiles"
+
+msgid "Color"
+msgstr "Couleur"
+
+msgid "The color of the fill pattern."
+msgstr "La couleur du motif de remplissage."
+
+msgid "Opacity"
+msgstr "Opacité"
+
+msgid "Space Color"
+msgstr "Couleur des espacements"
+
+msgid "The color of the spaces between the stripes."
+msgstr "La couleur des espacement entre les rayures."
+
+msgid "Stripe Width"
+msgstr "Largeur des rayures"
+
+msgid "The width of the stripes (in pixels)."
+msgstr "La largeur des rayures (en pixels)."
+
+msgid "Space Width"
+msgstr "Largeur d’espacement"
+
+msgid "The width of the spaces between the stripes (in pixels)."
+msgstr "La nombre de pixel entre chaque rayure."
+
+msgid "Angle"
+msgstr "Angle"
+
+msgid ""
+"The angle of the stripes, in degrees, from an horizontal eastward line)."
+msgstr ""
+"L’angle des rayures, en degrés, par rapport à une ligne horizontal vers "
+"l’est."
+
+msgid "Space Opacity"
+msgstr "Opacité des espaces"
+
+msgid "Stripe Pattern"
+msgstr "Motif à rayures"
+
+msgid "Stripe Patterns"
+msgstr "Motifs à rayures"
+
+msgid "Horizontal Space"
+msgstr "Espacement horizontal"
+
+msgid "The horizontal distance between the circles (in pixels)."
+msgstr "La distance horizontal entre chaque cercle (en pixels)."
+
+msgid "Vertical Space"
+msgstr "Espacement Vertical"
+
+msgid "The vertical distance between the circles (in pixels)."
+msgstr "La distance vertical entre chaque cercle (en pixels)."
+
+msgid "Radius"
+msgstr "Rayon"
+
+msgid "The radius of the circles (in pixels)."
+msgstr "Le rayon des cercles (en pixels)."
+
+msgid "Fill Color"
+msgstr "Couleur de remplissage"
+
+msgid "The fill color of the circles."
+msgstr "Couleur de remplissage des cercles."
+
+msgid "Fill Opacity"
+msgstr "Opacité du remplissage"
+
+msgid "Circle Pattern"
+msgstr "Motif à cercles"
+
+msgid "Circle Patterns"
+msgstr "Motifs à cercles"
+
+msgid "Enable shape's borders"
+msgstr "Activer les bordures de la formes"
+
+msgid "Whether the shapes border should be drawn."
+msgstr "Indique si la forme doit être dessinée avec des bordures."
+
+msgid "The color of the shape."
+msgstr "Couleur de la forme."
+
+msgid "Border Width"
+msgstr "Épaisseur des bordures"
+
+msgid "The width of the shape's border (in pixels)."
+msgstr "Épaisseur des bordures de la forme (en pixels)."
+
+msgid "Butt"
+msgstr "Bout"
+
+msgid "Round"
+msgstr "Rond"
+
+msgid "Square"
+msgstr "Carré"
+
+msgid "Line Cap"
+msgstr "Forme des bouts de lignes"
+
+msgid ""
+"The cap of the shape's border. Butt: flat ends (i.e., no cap); Round: "
+"rounded ends; Square: square ends."
+msgstr ""
+"Indique le style des bouts de lignes de bordures.\n"
+"Bout: bout plate;\n"
+"Rond: bout arrondi;\n"
+"Carré: bout carré (i.e. un carré de coté long comme l’épaisseur de la ligne "
+"est ajouté)"
+
+msgid "Arcs"
+msgstr "Arcs"
+
+msgid "Bevel"
+msgstr "Biseau"
+
+msgid "Miter"
+msgstr "Onglet"
+
+msgid "Miter-Clip"
+msgstr "Onglet Rabotté"
+
+msgid "Line Join"
+msgstr "Jointure des lignes"
+
+msgid ""
+"The join of the shape's border. Arcs: arcs between the lines; Bevel: beveled "
+"corners; Miter: mitered corners; Miter-Clip: mitered corners with clipping; "
+"Round: rounded corners."
+msgstr ""
+"La forme de jointures des lignes.\n"
+"Arcs: un arc est tracé entre les lignes;\n"
+"Biseau: un coin en biseau;\n"
+"Onglet: un coin en onglet;\n"
+"Onglet Rabotté: un coin en onglet rabotté;\n"
+"Rond: un coin arrondi."
+
+msgid "Border dashes"
+msgstr "Bordures en pointillés"
+
+msgid ""
+"The dash pattern of the shape's border. A list of space-separated values "
+"that specify distances to alternately draw a line and a gap. "
+msgstr ""
+"Motif des pointillés des bordures de la forme, représenté par une listes de "
+"valeurs, séparées par des espaces, spécifiant les longueurs des pointillés "
+"et des espaces alternativement."
+
+msgid "Border dashes' offset"
+msgstr "Décalages des bordures en pointillés"
+
+msgid "The offset between the dashes of the shape's border."
+msgstr "Décalage entre les pointillés de la bordure."
+
+msgid "Enable shape's fill"
+msgstr "Remplir la forme"
+
+msgid "Whether the shape should be filled."
+msgstr "Indique si la forme doit être remplie."
+
+msgid ""
+"The color of the shape's fill. If not set, the shape will use the color of "
+"the border."
+msgstr ""
+"Couleur du remplissage. Si non spécifié, le remplissage utilisera la même "
+"couleur que la bordure."
+
+msgid "Nonzero"
+msgstr "Nonzero"
+
+msgid "Even-Odd"
+msgstr "Pair-Impair"
+
+msgid "Fill Rule"
+msgstr "Règle de remplissage"
+
+msgid ""
+"The fill rule of the shape. Nonzero: the shape is filled if the winding "
+"number is not zero; Even-Odd: the shape is filled if the winding number is "
+"odd."
+msgstr ""
+"La règle de remplissage de la forme.\n"
+"Nonzero: La forme est rempli de telle manière qu’aucun espace est non rempli "
+"(e.g., pas de donut).;\n"
+"Pair-Impair: Le remplissage s’effecture dans selon une regle d’enroulement "
+"où les les sous formes impaires ne sont pas remplie (i.e., rempli-pas_rempli-"
+"rempli)."
+
+msgid "Fill Pattern"
+msgstr "Motif de remplissage"
+
+msgid "The style cannot have both the stroke and the fill disabled."
+msgstr ""
+"Au moins l’une des options “bordure” ou “remplissage” doit être rempli."
+
+msgid ""
+"The style cannot be filled by both a circle pattern and a stripe pattern."
+msgstr ""
+"Un style ne peut pas être rempli par des cercles et de bandes simultanément."
+
+msgid "Highlight"
+msgstr "Surbrillance"
+
+msgid "Unknown"
+msgstr "Inconnu"
+
+msgid "Owner"
+msgstr "Propriétaire"
+
+msgid "Orphaned"
+msgstr "Orphelin"
+
+msgid "String"
+msgstr "Chaîne de caractères"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Boolean"
+msgstr "Booléen"
+
+msgid "Property's Style"
+msgstr "Style de la propriété"
+
+msgid "Properties' Styles"
+msgstr "Styles des Propriétés"
+
+msgid "Alias"
+msgstr "Pseudo"
+
+msgid "The alias of the field in the tooltip."
+msgstr "Le pseudo du champ de l’infobulle."
+
+msgid "Index"
+msgstr "Index"
+
+msgid "The index of the field in the tooltip."
+msgstr "L’index du champ de l’infobulle."
+
+msgid "Tooltip Field"
+msgstr "Champ de l’Infobulle"
+
+msgid "Tooltip Fields"
+msgstr "Champs des Infobulles"
+
+msgid "The tooltip field must belong to the same dataset layer as the tooltip."
+msgstr ""
+"Le champ de l’infobulle doit appartenir à la même couche de jeu de données "
+"que l’infobulle elle-même."
+
+msgid "Sticky"
+msgstr "Auto-maintient"
+
+msgid "Whether the tooltip should stick to the mouse cursor."
+msgstr "Indique si l’infobulle doit suivre le curseur de la souris."
+
+msgid "The CSS style of the tooltip."
+msgstr "Le style, en CSS, de l’infobulle."
+
+msgid "Tooltip"
+msgstr "Infobulle"
+
+msgid "Tooltips"
+msgstr "Infobulles"
+
+msgid "The name of the layer."
+msgstr "Le nom de la couche."
+
+msgid "Show on Startup"
+msgstr "Afficher au démarrage"
+
+msgid "Whether the display of the layer should be enabled at startup."
+msgstr "Indique si la couche doit être affiché lors du chargement de la carte."
+
+msgid "Z-index"
+msgstr "Z-index"
+
+msgid ""
+"The index defining the display order of the layers. The higher the index, "
+"the more the layer is displayed in the foreground."
+msgstr ""
+"Indice définissant l’ordre dans lequel les couches sont dessinées. Plus "
+"grand sera l’indice, plus au premier plan sera la couche."
+
+msgid "Boundaries"
+msgstr "Limites"
+
+msgid ""
+"The boundaries of the layer. Any feature outside these boundaries will not "
+"be processed."
+msgstr ""
+"Limites de la couche. Toute entité géographique en dehors de ces limites ne "
+"sera pas traitée."
+
+msgid "Intersect"
+msgstr "Intersection"
+
+msgid "Strict"
+msgstr "Stricte"
+
+msgid "Crop"
+msgstr "Recadrage"
+
+msgid "Boundary Type"
+msgstr "Type de limites"
+
+msgid ""
+"Defines how the boundaries should be used. Intersect: any features "
+"intersecting or within the boundaries are kept in their entirety; Strict: "
+"only features completely within the boundaries are kept; Crop: any features "
+"intersecting the boundaries are cropped to fit within the boundaries, "
+"features outside are removed."
+msgstr ""
+"Indique le comportement des limites. Intersection: toute entité géographique "
+"entrecoupant ou se situant à l’intérieur de la limite sera conservé dans son "
+"intégralité; Stricte: Seul les entités géographiques entièrement situé dans "
+"le périmètre des limites seront conservées; Recadrage: toute entité "
+"entrecoupant les limites seront recadrées pour s’ajuster aux limites."
+
+msgid "The layer must belong to a feature group or a map template."
+msgstr ""
+"La couche doit appartenir à un groupe de couche ou un modèle de cartes."
+
+msgid "The layer cannot belong to both a feature group and a map template."
+msgstr ""
+"La couche ne peut appartenir à groupe de couches et un modèle de carte "
+"simultanément."
+
+msgid "The name of the feature group."
+msgstr "Le nom du groupe de couches."
+
+msgid "Parent Map Template"
+msgstr "Modèle de carte parent"
+
+msgid "The map template to which the feature group belongs."
+msgstr "Modèle de carte dont le groupe de couches dépend."
+
+msgid "Is an Overlay"
+msgstr "Est un Overlay"
+
+msgid ""
+"Whether the feature group is an overlay, i.e., can be superimposed on other "
+"layers."
+msgstr ""
+"Indique si un groupe de couche est un overlay, i.e., s’il peut se superposer "
+"aux autres couches."
+
+msgid "Whether the feature group should be shown in the layer control."
+msgstr ""
+"Indique si le groupe de fonctionnalités doit être affiché dans le contrôle "
+"des couches."
+
+msgid "Whether the display of the feature group should be enabled at startup."
+msgstr ""
+"Indique si l'affichage du groupe de fonctionnalités doit être activé au "
+"démarrage."
+
+msgid ""
+"The index defining the display order of the feature groups. The higher the "
+"index, the more the feature group is displayed in the foreground."
+msgstr ""
+"Index définissant l’ordre des groupes d’entités géographiques.\n"
+"Plus l’index et haut, et plus le groupe se positionnera vers le premier plan."
+
+msgid "The name of the map template."
+msgstr "Le nom du modèle de carte."
+
+msgid "Zoom Level at startup"
+msgstr "Le niveau de zoom au démarrage"
+
+msgid "The zoom level of the map at startup."
+msgstr "Le niveau de zoom de la carte au démarrage."
+
+msgid "Center"
+msgstr "Centre"
+
+msgid "The center of the map at startup."
+msgstr "Le centre de la carte au démarrage."
+
+msgid "Enable Layer Control"
+msgstr "Activer le contrôle des couches"
+
+msgid "Whether the layer control should be enabled."
+msgstr "Indique si le contrôle des couches doit être activé."
+
+msgid "Enable Zoom Control"
+msgstr "Activer le contrôle du zoom"
+
+msgid "Whether the zoom control should be enabled."
+msgstr "Indique si le contrôle du zoom doit être activé."
+
+msgid "Tiles"
+msgstr "Tuiles"
+
+msgid "The tiles to load on the map."
+msgstr "Les tuiles à charger sur la carte."
+
+msgid "ID of the task generating the map render."
+msgstr "ID de la tâche générant le rendu de la carte."
+
+msgid "Task Status"
+msgstr "Statut de la tâche"
+
+msgid "Status of the task generating the map render."
+msgstr "Statut de la tâche générant le rendu de la carte."
+
+msgid "Whether the map render should be regenerated."
+msgstr "Indique si le rendu de la carte doit être régénéré."
+
+msgid "Map Template"
+msgstr "Modèle de carte"
+
+#, python-brace-format
+msgid ""
+"Expected 'dash_array' to be a list of comma and/or white space separated "
+"<length>s and <percentage>s, not '{value}'"
+msgstr ""
+"‘Pointillé’ doit être une liste de longueurs ou pourcentages, séparés par "
+"des virgules ou des espaces, et non ‘{value}’"
+
+msgid ""
+"\n"
+"                Hmm, it seems that this page doesn't exist... The way you "
+"got here is a mystery.<br>\n"
+"                But don't worry, you can return to the homepage by clicking "
+"the button below.\n"
+"            "
+msgstr ""
+"\n"
+"                Hmm, il semblerait que cette page n’éxiste pas… La manière "
+"dont vous êtes arrivé ici est un mystère.<br>\n"
+"                Mais pas d’inquiétude, vous pouvez retourner vers la page "
+"d’acceuil en cliquant sur le bouton ci-dessous.\n"
+"            "
+
+msgid "Go to Homepage"
+msgstr "Aller vers la page d'accueil"
+
+msgid "Internal Server Error"
+msgstr "Erreur interne du serveur"
+
+msgid ""
+"\n"
+"                    Oops, something went wrong...\n"
+"                    Our administrators have been notified and are working to "
+"fix the problem.\n"
+"                    You can return to the home page by clicking the button "
+"below.\n"
+"                "
+msgstr ""
+"\n"
+"                    Oups, un erreur est survenue…\n"
+"                    Nos administrateurs ont été notifié du problème, et "
+"travails pour le résoudre.\n"
+"                    Vous pouvez retourner vers la page d’acceuil en cliquant "
+"sur le bouton ci-dessous.\n"
+"                "
+
+msgid "Return to Homepage"
+msgstr "Retourner vers la page d'accueil"
+
+msgid "Published on"
+msgstr "Publié"
+
+msgid "Articles Search"
+msgstr "Recherche d'articles"
+
+msgid "Theme"
+msgstr "Thème"
+
+msgid "All themes"
+msgstr "Tous les thèmes"
+
+msgid "Search for an article"
+msgstr "Chercher un article"
+
+msgid "Search for an article by title, author, ..."
+msgstr "Chercher un article par titre, auteur, ..."
+
+msgid "No articles found"
+msgstr "Aucun article trouvé"
+
+msgid "Contact Form"
+msgstr "Formulaire de contact"
+
+msgid "Contact us !"
+msgstr "Contactez-nous !"
+
+msgid ""
+"There was an error with your submission. Please correct the errors below."
+msgstr "Le formulaire est erroné. Merci de corriger les erreurs ci-dessous."
+
+#, python-format
+msgid ""
+"\n"
+"                    Fields marked with <span style='color: red;'>*</span> "
+"are mandatory.<br>\n"
+"                    You have the right to access, rectify, delete and port "
+"your data,\n"
+"                    as well as to object to and limit the processing of your "
+"data.\n"
+"                    You can exercise these rights by contacting us at the\n"
+"                    address given in the <a "
+"href=\"%(privacy_policy_url)s\">privacy policy</a>\n"
+"                    or via this contact form.\n"
+"                "
+msgstr ""
+"\n"
+"                    Les champs marqués d'un <span style='color: red;'>*</"
+"span> sont obligatoires.<br>\n"
+"                    Vous avez le droit d'accéder, de rectifier, de supprimer "
+"et transférer vos données,\n"
+"                    ainsi que de vous opposer et de limiter le traitement de "
+"vos données.\n"
+"                    Vous pouvez exercer ces droits en nous contactant "
+"à                     l'adresse indiquée dans la <a "
+"href=\"%(privacy_policy_url)s\">politique de confidentialité</a>\n"
+"                    ou via ce formulaire de contact.\n"
+"                "
+
+msgid "Thank you for your message !"
+msgstr "Merci pour votre message !"
+
+msgid ""
+"\n"
+"        We sent you a confirmation email, have you received it?<br>\n"
+"        Think about checking your spam folder ! If you don't find it, don't "
+"hesitate to contact us again.<br>\n"
+"        We will get back to you as soon as possible.\n"
+"        "
+msgstr ""
+"\n"
+"        Nous vous avons envoyé un email de confirmation, l'avez-vous reçu ?"
+"<br>\n"
+"        Pensez à vérifier votre dossier spam ! Si vous ne le trouvez pas, "
+"n'hésitez pas à nous contacter à nouveau.<br>\n"
+"        Nous vous répondrons dès que possible.\n"
+"        "
+
+msgid "Back to home"
+msgstr "Retourner sur la page d'accueil"
+
+msgid "Privacy policy"
+msgstr "Politique de confidentialité"
+
+msgid "Terms of use"
+msgstr "Conditions d'utilisation"
+
+msgid "Legal notice"
+msgstr "Mentions légales"
+
+msgid "Follow us !"
+msgstr "Suivez-nous !"
+
+msgid "An activist mapping project"
+msgstr "Un projet de cartographie militante"
+
+msgid ""
+"\n"
+"                            An activist mapping project to highlight "
+"environmental and social struggles in the\n"
+"                            Grand Est region of France.\n"
+"                        "
+msgstr ""
+"\n"
+"                            Un projet de cartographie militante pour mettre "
+"en lumière les luttes environnementales et sociales\n"
+"                            dans la région Grand Est de la France.\n"
+"                        "
+
+msgid ""
+"\n"
+"                            As environmental and social struggles are often "
+"invisible and hard to locate, this project\n"
+"                            aims to make them more visible and accessible to "
+"the public.<br>\n"
+"                            It gathers summarizes in the form of maps and "
+"articles data gathered by activists and\n"
+"                            researchers on the ground regarding various "
+"struggles and alternatives in the region.\n"
+"                        "
+msgstr ""
+"\n"
+"                            Les luttes environnementales et sociales étant "
+"souvent invisibles et difficiles à localiser, ce projet\n"
+"                            vise à les rendre plus visibles et accessibles "
+"au grand public.<br>\n"
+"                            Il rassemble sous forme de cartes et d'articles "
+"les données collectées par des activistes et\n"
+"                            des chercheurs sur le terrain concernant "
+"diverses luttes et alternatives dans la région.\n"
+"                        "
+
+msgid "Explore the maps"
+msgstr "Explorer les cartes"
+
+msgid "Organisations list"
+msgstr "Liste des organisations"
+
+msgid "List of the organizations who participated in the project"
+msgstr "Liste des organisations ayant participé au projet"
+
+msgid ""
+"\n"
+"                                The interactive maps and articles presented "
+"on this site are the result of a collaboration\n"
+"                                between various associations, collectives "
+"and political parties focused on environmental\n"
+"                                protection.<br>\n"
+"                                Together, we worked to gather and map "
+"various actions, projects, initiatives, events, and\n"
+"                                compile various resources that aim to raise "
+"awareness, educate and act for a more sustainable\n"
+"                                future for our territories and communities."
+"<br>\n"
+"                                Below, you will find a list of the "
+"organizations that participated in this initiative and are\n"
+"                                committed to protecting our environment.\n"
+"                            "
+msgstr ""
+"\n"
+"                                Les cartes interactives et articles "
+"présentés sur ce site sont le résultat de collaborations\n"
+"                                entre diverses associations, collectifs et "
+"parti politique se agissant pour la protection\n"
+"                                de l’environnement.<br>\n"
+"                                Ensemble, nous avons rassemblé et "
+"cartographier diverses actions, projets, initiatives, évènements, et\n"
+"                                compiler diverses ressources, afin de "
+"sensibiliser, éduquer et agir pour un futur plus soutenable\n"
+"                                et écologique pour nos territoires et "
+"communautés.<br>\n"
+"                                Ci-dessous, vous trouverez une liste des "
+"organisations s’engagant à protéger notre environnement\n"
+"                                ayant participé à cette initiative.\n"
+"                            "
+
+msgid "Organisation"
+msgstr "Organisation"
+
+msgid "Maps"
+msgstr "Cartes"
+
+msgid "Thematic"
+msgstr "Thématique"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Dataset List"
+msgstr "Liste des jeux de données"
+
+msgid "Category"
+msgstr "Catégories"
+
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+msgid "Search for a dataset"
+msgstr "Rechercher un jeu de données"
+
+msgid "No dataset found"
+msgstr "Aucun jeu de donné trouvé"
+
+msgid "Created on"
+msgstr "Créé le"
+
+msgid "Last modified on"
+msgstr "Dernière modification le"
+
+msgid "Introduction"
+msgstr "Introduction"
+
+msgid "Open the map in full screen"
+msgstr "Ouvrir la carte en plein écran"
+
+msgid "Additional information"
+msgstr "Informations complémentaires"
+
+msgid "Map List"
+msgstr "Liste des cartes"
+
+msgid "Search for a map"
+msgstr "Rechercher une carte"
+
+msgid "Search for a map by title, author, ..."
+msgstr "Rechercher une carte par titre, auteur, ..."
+
+msgid "No maps found"
+msgstr "Aucune carte trouvée"
+
+msgid "See the <b>maps</b> on this theme"
+msgstr "Voir les <b>cartes</b> sur ce thème"
+
+msgid "go to interactive maps list"
+msgstr "aller à la liste des cartes interactives"
+
+msgid "See the <b>articles</b> on this theme"
+msgstr "Voir les <b>articles</b> sur ce thème"
+
+msgid "go to the articles list"
+msgstr "aller à la liste des articles"
+
+msgid "Search for a theme"
+msgstr "Rechercher un thème"
+
+msgid "No themes found"
+msgstr "Aucun thème trouvé"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Slug of the theme, used in urls."
+msgstr "Slug du thème, utilisé dans les urls."
+
+msgid "Name of the theme."
+msgstr "Nom du thème."
+
+msgid "Short name"
+msgstr "Nom court"
+
+msgid "Short name of the theme, used for tags."
+msgstr "Nom court du thème, utilisé pour les tags."
+
+msgid "Summary"
+msgstr "Résumé"
+
+msgid "Short description of the theme, displayed on the theme index page."
+msgstr "Description courte du thème, affichée sur la page d'index des thèmes."
+
+msgid ""
+"Long description of the theme, displayed on the theme page as an article."
+msgstr ""
+"Description complète du thème, affichée sur la page du thème comme un "
+"article."
+
+msgid "Cover image"
+msgstr "Image de couverture"
+
+msgid "Image displayed on the theme page."
+msgstr "Image affichée sur la page du thème."
+
+msgid "Color used to represent the theme."
+msgstr "Couleur utilisée pour représenter le thème."
