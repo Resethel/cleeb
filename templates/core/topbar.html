@@ -23,21 +23,6 @@
             <span>{% trans "Datasets" %}</span>
             <img src="{% static 'assets/icons/dataset_black_24dp.svg' %}" alt="dataset-catalog">
         </a>
-        <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ redirect_to }}">
-            <label for="language-switcher">{% trans "Language" %}</label>
-            <select name="language" onchange="this.form.submit()" id="language-switcher">
-                {% get_current_language as LANGUAGE_CODE %}
-                {% get_available_languages as LANGUAGES %}
-                {% get_language_info_list for LANGUAGES as languages %}
-                {% for language in languages %}
-                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                    {{ language.name_local|title }} ({{ language.code }})
-                </option>
-            {% endfor %}
-        </select>
-        </form>
     </div>
 </header>
 <header class="hamburger">
