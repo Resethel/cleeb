@@ -13,7 +13,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from django.apps import apps
-from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.gdal import DataSource, GDALException
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.files import File
 from django.db.models import FileField
@@ -71,7 +71,13 @@ def generate_features(dataset_version_id: int) -> None:
                     # This is necessary because the encoding of the shapefile is not always correct
                     feature._layer._ds.encoding = dataset_layer.dataset.encoding
                     # Convert the feature's geometry to a GEOSGeometry instance
-                    geometry = GEOSGeometry(feature.geom.wkt, srid = dataset_layer.srid)
+                    try:
+                        geometry = GEOSGeometry(feature.geom.wkt, srid = dataset_layer.srid)
+                    except GDALException as e:
+                        logger.error(f"Error converting geometry to GEOSGeometry: {e}")
+                        logger.error(f"Feature: {feature}")
+                        logger.warning(f"The feature might be `null` or invalid. Skipping it.")
+                        continue
 
                     fields = {}
                     for field in feature.fields:
