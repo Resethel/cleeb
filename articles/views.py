@@ -10,7 +10,8 @@ from django.views.generic import DetailView, ListView
 
 from common.choices import PublicationStatus
 from thematic.models import Theme
-from .models import Article, AttachmentType, Attachment
+from .models import Article
+from files.models import AttachmentType, Attachment
 
 
 # ======================================================================================================================

@@ -3,7 +3,8 @@
 Admin for the `article` application.
 """
 from django.contrib import admin
-from .models import Article, Attachment
+from .models import Article
+from files.models import Attachment
 from django.utils.translation import gettext_lazy as _
 
 # ======================================================================================================================
