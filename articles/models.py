@@ -136,14 +136,3 @@ class Article(models.Model):
         return reverse('article', args=[self.slug])
     # End def get_absolute_url
 # End class Article
-
-# ======================================================================================================================
-# Attachment
-# ======================================================================================================================
-
-def get_attachment_upload_path(instance, filename):
-    # Get the extension of the file
-    extension = filename.split('.')[-1]
-    # Return the path
-    return f"articles/{instance.article.slug}/attachments/{instance.slug}.{extension}"
-

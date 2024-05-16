@@ -7,9 +7,23 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from articles.models import Article, get_attachment_upload_path
+from articles.models import Article
 from common.utils import files as file_utils
 
+# ======================================================================================================================
+# Utility Functions
+# ======================================================================================================================
+
+def get_attachment_upload_path(instance, filename):
+    # Get the extension of the file
+    extension = filename.split('.')[-1]
+    # Return the path
+    return f"articles/{instance.article.slug}/attachments/{instance.slug}.{extension}"
+# get_attachment_upload_path
+
+# ======================================================================================================================
+# Enums
+# ======================================================================================================================
 
 class AttachmentType(models.TextChoices):
     """Choices for the `Attachment` model."""
@@ -18,6 +32,11 @@ class AttachmentType(models.TextChoices):
     IMAGE = "image", _("Image") # Image files can be embedded in the article
     VIDEO = "video", _("Video") # Video files can be embedded in the article
     AUDIO = "audio", _("Audio") # Audio files can be embedded in the article
+# End class AttachmentType
+
+# ======================================================================================================================
+# Main Class
+# ======================================================================================================================
 
 class Attachment(models.Model):
     """Represent an attachment of an article (i.e. a file, an image, a video, etc.)."""
@@ -125,3 +144,4 @@ class Attachment(models.Model):
                 raise ValidationError(_("The file is not a valid image file."))
         # TODO: Add validation for other filetypes
     # End def clean
+# End class Attachment
