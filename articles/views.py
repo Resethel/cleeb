@@ -4,13 +4,13 @@ Views for the `article` application.
 """
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import FileResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 
 from common.choices import PublicationStatus
 from thematic.models import Theme
-from .models import Article, AttachmentType, Attachment
+from .models import Article
+from files.models import FileType
 
 
 # ======================================================================================================================
@@ -79,7 +79,7 @@ class ArticleView(DetailView):
 
         # Add the downloadable attachments (pdf or file)
         context['attachments'] = None
-        attachments = self.object.attachments.filter(type__in=[AttachmentType.PDF, AttachmentType.FILE]).order_by('slug')
+        attachments = self.object.attachments.filter(type__in=[FileType.PDF, FileType.FILE]).order_by('slug')
         if attachments.exists():
             context['attachments'] = attachments.all()
 
@@ -92,19 +92,3 @@ class DraftArticleView(ArticleView):
     """View for the `Article` model."""
     queryset = Article.objects.filter(status=PublicationStatus.DRAFT)
 # End class ArticleDraftView
-
-# ======================================================================================================================
-# Attachment download view
-# ======================================================================================================================
-
-def download_attachment_view(request, article_slug, attachment_slug):
-    """View for downloading an attachment."""
-    attachment = Attachment.objects.get(slug=attachment_slug, article__slug=article_slug)
-    if not attachment:
-        raise Http404
-    file = attachment.file
-    response = FileResponse(file)
-    file_name = f"{attachment.slug}.{file.name.split('.')[-1]}".replace('-', '_')
-    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-    return response
-# End def download_attachment

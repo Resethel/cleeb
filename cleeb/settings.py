@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     "datasets.apps.DatasetsConfig",
     "map_templates.apps.MapTemplatesConfig",
     "articles.apps.ArticleConfig",
-    "contact.apps.ContactConfig"
+    "contact.apps.ContactConfig",
+    "files.apps.FilesConfig"
 ]
 SITE_ID = 1
 

@@ -8,6 +8,32 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import Map, MapRender
 
+# ======================================================================================================================
+# AttachmentInline
+# ======================================================================================================================
+
+class AttachmentInline(admin.TabularInline):
+    """Inline for the `File` model."""
+    model = Map.attachments.through
+    extra = 0
+
+    def slug(self, obj):
+        return obj.file.slug
+    slug.short_description = _("Slug of the attachment")
+
+    def description(self, obj):
+        return obj.file.short_description
+    description.verbose_name = _("Description")
+    description.short_description = _("Description of the attachment")
+
+    def download_url(self, obj):
+        return obj.file.download_url
+    download_url.verbose_name = _("Download URL")
+    download_url.short_description = _("URL to download the attachment")
+
+    def get_readonly_fields(self, request, obj=None):
+        return list(super().get_readonly_fields(request, obj)) + ["slug", "description", "download_url"]
+# End class AttachmentInline
 
 # ======================================================================================================================
 # Admin classes for the MapRender model
@@ -77,6 +103,7 @@ class MapAdmin(admin.ModelAdmin):
     radio_fields = {'publication_status': admin.HORIZONTAL}
 
     readonly_fields = ('id', 'slug', 'created_at', 'last_modified')
+    inlines = (AttachmentInline,)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldset

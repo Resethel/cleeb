@@ -245,6 +245,14 @@ class Map(models.Model):
         help_text=_("The body of the interactive map. Formatted in HTML.")
     )
 
+    attachments = models.ManyToManyField(
+        "files.File",
+        verbose_name=_("Attached files"),
+        related_name="interactive_maps",
+        help_text=_("Files attached to the interactive map."),
+        blank=True,
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------

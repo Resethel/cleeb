@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-03 15:24+0000\n"
+"POT-Creation-Date: 2024-05-17 13:33+0000\n"
 "PO-Revision-Date: 2024-05-03 17:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,6 +17,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 3.4.2\n"
+
+msgid "Slug of the attachment"
+msgstr "Slug de la pièce jointe"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Description of the attachment"
+msgstr "Description de la pièce jointe"
+
+msgid "Download URL"
+msgstr "URL de téléchargement"
+
+msgid "URL to download the attachment"
+msgstr "URL pour télécharger la pièce jointe"
 
 msgid "ID"
 msgstr "ID"
@@ -30,26 +45,8 @@ msgstr "Statut de publication"
 msgid "Article"
 msgstr "Article"
 
-msgid "Attachment"
-msgstr "Piéce jointe"
-
 msgid "Articles"
 msgstr "Articles"
-
-msgid "File"
-msgstr "Fichier"
-
-msgid "PDF"
-msgstr "PDF"
-
-msgid "Image"
-msgstr "Image"
-
-msgid "Video"
-msgstr "Vidéo"
-
-msgid "Audio"
-msgstr "Audio"
 
 msgid "Article ID"
 msgstr "ID de l'article"
@@ -102,41 +99,11 @@ msgstr "Corps de l'article"
 msgid "The body of the article."
 msgstr "Le corps de l'article."
 
-msgid "Attachment ID"
-msgstr "ID de la pièce jointe"
+msgid "Attached files"
+msgstr "Fichiers joint"
 
-msgid "Article to which the attachment belongs to"
-msgstr "Article auquel la pièce jointe appartient"
-
-msgid "Name"
-msgstr "Nom"
-
-msgid "Attachment's Name"
-msgstr "Nom de la pièce jointe"
-
-msgid "Short Description"
-msgstr "Description courte"
-
-msgid "Attachment's (very) short description (max 50 characters)"
-msgstr "Description (très) courte de la pièce jointe (max 50 caractères)"
-
-msgid "Type"
-msgstr "Type"
-
-msgid "Attachment's Type"
-msgstr "Type de la pièce jointe"
-
-msgid "Attachment's File"
-msgstr "Fichier de la pièce jointe"
-
-msgid "Attachments"
-msgstr "Pièces jointes"
-
-msgid "The file is not a valid PDF file."
-msgstr "Le fichier n'est pas un PDF valide."
-
-msgid "The file is not a valid image file."
-msgstr "Le fichier n'est pas une image valide."
+msgid "Files attached to the article."
+msgstr "Les fichiers joints à l'article."
 
 msgid "English"
 msgstr "Anglais"
@@ -158,6 +125,9 @@ msgstr "Actions d'amdinistration"
 
 msgid "Contact form submissions"
 msgstr "Formulaires de contact soumis"
+
+msgid "Name"
+msgstr "Nom"
 
 msgid "How you want to be referred as"
 msgstr "Par quel nom souhaitez-vous être appelé.e"
@@ -241,9 +211,6 @@ msgstr "Possède une image"
 
 msgid "Logo and other images"
 msgstr "Logo et autres images"
-
-msgid "Description"
-msgstr "Description"
 
 msgid "Core"
 msgstr "Application Principale"
@@ -388,6 +355,9 @@ msgstr "Couches des jeux de données"
 
 msgid "Date of the version of the dataset."
 msgstr "Date d’ajout de cette version du jeu de donnée."
+
+msgid "File"
+msgstr "Fichier"
 
 msgid "File containing the dataset."
 msgstr "Fichier contenant le jeu de données."
@@ -550,6 +520,50 @@ msgstr "Aucune version de jeu de donnée fournie"
 msgid "Dataset \"{name}\" (version {version}) does not exist"
 msgstr "Le jeu de donnée “{name}” (version {version}) n’existe pas"
 
+msgid "Files"
+msgstr "Fichiers"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Video"
+msgstr "Vidéo"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "File's ID"
+msgstr "ID du fichier"
+
+msgid "Verbose name of the file"
+msgstr "Nom “verbeux” de du fichier"
+
+msgid "Short Description"
+msgstr "Description courte"
+
+msgid "A (very) short description of the file (max 50 characters, optional)"
+msgstr ""
+"Description (très) courte de la pièce jointe (max 50 caractères, optionnel)"
+
+msgid "Type"
+msgstr "Type"
+
+msgid ""
+"The type of file attached. Will be calculated automatically if left empty."
+msgstr ""
+
+msgid "The file to upload to the website."
+msgstr "Le fichier à publier sur le site web."
+
+msgid "The uploaded file is not a valid PDF file."
+msgstr "Le fichier à publier n'est pas un PDF valide."
+
+msgid "The uploaded file is not a valid image file."
+msgstr "Le fichier à publier n’est pas une image valide."
+
 msgid "Map Render"
 msgstr "Rendu de carte"
 
@@ -656,6 +670,9 @@ msgstr "Corps du texte"
 
 msgid "The body of the interactive map. Formatted in HTML."
 msgstr "Le corps du texte décrivant la carte interactive. Formaté en HTML."
+
+msgid "Files attached to the interactive map."
+msgstr "Fichiers attachés à la carte interactive."
 
 msgid "Interactive Map"
 msgstr "Carte interactive"
@@ -1294,6 +1311,9 @@ msgstr "Retourner vers la page d'accueil"
 
 msgid "Published on"
 msgstr "Publié"
+
+msgid "Attachments"
+msgstr "Pièces jointes"
 
 msgid "Articles Search"
 msgstr "Recherche d'articles"
