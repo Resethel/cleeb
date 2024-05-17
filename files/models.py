@@ -14,31 +14,53 @@ from common.utils import files as file_utils
 # Utility Functions
 # ======================================================================================================================
 
-def get_attachment_upload_path(instance, filename):
+def get_upload_path(instance, filename):
+    """Returns the path at which the file should be uploaded"""
     # Get the extension of the file
     extension = filename.split('.')[-1]
     # Return the path
-    return f"articles/{instance.article.slug}/attachments/{instance.slug}.{extension}"
-# get_attachment_upload_path
+    return f"files/{instance.slug}.{extension}"
+# get_upload_path
+
+def slugify_file_name(file_name : str) -> str:
+    """Slugify the name of the file and avoid duplicates"""
+    # Get the basic slug of the file
+    slug = slugify(file_name)
+
+    # Ensure that no other file as the same slug
+    try:
+        File.objects.get(slug=slug)
+    # Case 1: There are no other files with the same slug
+    except File.DoesNotExist:
+        return slug
+
+    # Case 2: There is already a file with the same slug.
+    #         In that case, append the number of files with the same slug
+    n = File.objects.filter(slug__contains=slug).count()
+    return f"{slug}-{n:03d}"
+# End def slugify_file_name
+
+
+
 
 # ======================================================================================================================
 # Enums
 # ======================================================================================================================
 
-class AttachmentType(models.TextChoices):
-    """Choices for the `Attachment` model."""
-    FILE  = "file", _("File")   # Default, any kind of file
-    PDF   = "pdf", _("PDF")     # PDF files
+class FileType(models.TextChoices):
+    """Choices for the `File` model."""
+    FILE  = "file" , _("File")  # Default, any kind of file
+    PDF   = "pdf"  , _("PDF")   # PDF files
     IMAGE = "image", _("Image") # Image files can be embedded in the article
     VIDEO = "video", _("Video") # Video files can be embedded in the article
     AUDIO = "audio", _("Audio") # Audio files can be embedded in the article
-# End class AttachmentType
+# End class FileType
 
 # ======================================================================================================================
 # Main Class
 # ======================================================================================================================
 
-class Attachment(models.Model):
+class File(models.Model):
     """Represent an attachment of an article (i.e. a file, an image, a video, etc.)."""
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -48,7 +70,7 @@ class Attachment(models.Model):
     id = models.AutoField(
         primary_key=True,
         verbose_name=_("ID"),
-        help_text=_("Attachment ID")
+        help_text=_("File's ID")
     )
 
     slug = models.SlugField()
@@ -62,7 +84,7 @@ class Attachment(models.Model):
         related_name="attachments",
         on_delete=models.CASCADE,
         verbose_name=_("Article"),
-        help_text=_("Article to which the attachment belongs to")
+        help_text=_("Article to which the file belongs to")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -72,13 +94,13 @@ class Attachment(models.Model):
     name = models.CharField(
         max_length=100,
         verbose_name=_("Name"),
-        help_text=_("Attachment's Name")
+        help_text=_("Verbose name of the file")
     )
 
     short_description = models.CharField(
         max_length=50,
         verbose_name=_("Short Description"),
-        help_text=_("Attachment's (very) short description (max 50 characters)"),
+        help_text=_("A (very) short description of the file (max 50 characters, optional)"),
         blank=True,
         null=True,
     )
@@ -86,18 +108,18 @@ class Attachment(models.Model):
     # The type of file is enforced during upload.
     type = models.CharField(
         max_length=10,
-        choices=AttachmentType.choices,
+        choices=FileType.choices,
         verbose_name=_("Type"),
-        help_text=_("Attachment's Type"),
+        help_text=_("The type of file attached. Will be calculated automatically if left empty."),
         default=None,
         null=True,
     )
 
     file = models.FileField(
         max_length=500,
-        upload_to=get_attachment_upload_path,
+        upload_to=get_upload_path,
         verbose_name=_("File"),
-        help_text=_("Attachment's File")
+        help_text=_("The file to upload to the website.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
@@ -105,8 +127,8 @@ class Attachment(models.Model):
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
-        verbose_name = _("Attachment")
-        verbose_name_plural = _("Attachments")
+        verbose_name = _("File")
+        verbose_name_plural = _("Files")
         unique_together = ["article", "slug"]
     # End class Meta
 
@@ -120,28 +142,28 @@ class Attachment(models.Model):
 
     def clean(self):
         super().clean()
-        self.slug = slugify(self.name)
+        self.slug = slugify_file_name(self.name)
 
         # If the type is `None`, infer the type of the file
         if self.type is None:
             if file_utils.is_pdf(self.file):
-                self.type = AttachmentType.PDF
+                self.type = FileType.PDF
             elif file_utils.is_image(self.file):
-                self.type = AttachmentType.IMAGE
+                self.type = FileType.IMAGE
             elif file_utils.is_video(self.file):
-                self.type = AttachmentType.VIDEO
+                self.type = FileType.VIDEO
             elif file_utils.is_audio(self.file):
-                self.type = AttachmentType.AUDIO
+                self.type = FileType.AUDIO
             else:
-                self.type = AttachmentType.FILE
+                self.type = FileType.FILE
 
         # Validate the file according to its type
-        if self.type == AttachmentType.PDF:
+        if self.type == FileType.PDF:
             if not file_utils.is_valid_pdf(self.file):
-                raise ValidationError(_("The file is not a valid PDF file."))
-        elif self.type == AttachmentType.IMAGE:
+                raise ValidationError(_("The uploaded file is not a valid PDF file."))
+        elif self.type == FileType.IMAGE:
             if not file_utils.is_valid_image(self.file):
-                raise ValidationError(_("The file is not a valid image file."))
+                raise ValidationError(_("The uploaded file is not a valid image file."))
         # TODO: Add validation for other filetypes
     # End def clean
-# End class Attachment
+# End class File

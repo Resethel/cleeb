@@ -3,7 +3,7 @@
 try:
     from articles.models import get_attachment_upload_path
 except ImportError:
-    from files.models import get_attachment_upload_path
+    from files.models import get_upload_path as get_attachment_upload_path
 import django.db.models.deletion
 from django.db import migrations, models
 

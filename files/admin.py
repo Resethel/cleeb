@@ -1,31 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-Admin for the `article` application.
+Admin for the `files` application.
 """
 from django.contrib import admin
-
-from files.admin import FileInline
-from .models import Article
 from django.utils.translation import gettext_lazy as _
 
+from files.models import File
+
 # ======================================================================================================================
-# Article
+# AttachmentAdmin
 # ======================================================================================================================
 
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
-    """Admin for the `article` model."""
+@admin.register(File)
+class FileAdmin(admin.ModelAdmin):
+    """Admin for the `File` model."""
 
     # ------------------------------------------------------------------------------------------------------------------
     # Configuration
     # ------------------------------------------------------------------------------------------------------------------
 
-    list_display = ("id", "title", "created_at", "last_modified_at")
-    search_fields = ("id", "title")
-    list_display_links = ("id", "title")
-    readonly_fields = ("id", "slug", "created_at", "last_modified_at")
-    radio_fields = {'status': admin.HORIZONTAL}
-    inlines = (FileInline,)
+    list_display = ("id", "name", "article", "short_description", "type")
+    search_fields = ("id", "name", "article")
+    list_display_links = ("id", "name")
+    readonly_fields = ("id", "slug")
+    list_filter = ('type', 'article')
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets
@@ -34,24 +32,22 @@ class ArticleAdmin(admin.ModelAdmin):
     fieldsets = (
         (_("ID"), {
             "classes": ("collapse",),
-            "fields": (("id", "slug"),),
+            "fields": (("id", "slug"),)
         }),
-        (_("Metadata"), {
-            "classes": ("collapse",),
-            "fields": (("created_at", "last_modified_at"),),
-        }),
-        (_("Publication Status"), {
-            "classes": ("wide",),
-            "fields": ("status",),
-        }),
-        (_("Article"), {
+        (_("File"), {
             "fields": (
-                "title",
-                "authors",
-                "themes",
-                "cover_image",
-                "body",
+                ("name", "type",),
+                "short_description",
+                "article",
+                "file"
             ),
         }),
     )
-# End class ArticleAdmin
+# End class FileAdmin
+
+
+class FileInline(admin.TabularInline):
+    """Inline for the `File` model."""
+    model = File
+    extra = 0
+    exclude = ('slug', 'type')
