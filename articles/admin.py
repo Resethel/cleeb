@@ -4,9 +4,35 @@ Admin for the `article` application.
 """
 from django.contrib import admin
 
-from files.admin import FileInline
 from .models import Article
 from django.utils.translation import gettext_lazy as _
+
+# ======================================================================================================================
+# AttachmentInline
+# ======================================================================================================================
+
+class AttachmentInline(admin.TabularInline):
+    """Inline for the `File` model."""
+    model = Article.attachments.through
+    extra = 0
+
+    def slug(self, obj):
+        return obj.file.slug
+    slug.short_description = _("Slug of the attachment")
+
+    def description(self, obj):
+        return obj.file.short_description
+    description.verbose_name = _("Description")
+    description.short_description = _("Description of the attachment")
+
+    def download_url(self, obj):
+        return obj.file.download_url
+    download_url.verbose_name = _("Download URL")
+    download_url.short_description = _("URL to download the attachment")
+
+    def get_readonly_fields(self, request, obj=None):
+        return list(super().get_readonly_fields(request, obj)) + ["slug", "description", "download_url"]
+# End class AttachmentInline
 
 # ======================================================================================================================
 # Article
@@ -25,7 +51,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display_links = ("id", "title")
     readonly_fields = ("id", "slug", "created_at", "last_modified_at")
     radio_fields = {'status': admin.HORIZONTAL}
-    inlines = (FileInline,)
+    inlines = (AttachmentInline,)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets

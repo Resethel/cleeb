@@ -19,11 +19,11 @@ class FileAdmin(admin.ModelAdmin):
     # Configuration
     # ------------------------------------------------------------------------------------------------------------------
 
-    list_display = ("id", "name", "article", "short_description", "type")
-    search_fields = ("id", "name", "article")
+    list_display = ("id", "name", "short_description", "type")
+    search_fields = ("id", "name")
     list_display_links = ("id", "name")
     readonly_fields = ("id", "slug")
-    list_filter = ('type', 'article')
+    list_filter = ('type',)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Fieldsets
@@ -38,16 +38,8 @@ class FileAdmin(admin.ModelAdmin):
             "fields": (
                 ("name", "type",),
                 "short_description",
-                "article",
                 "file"
             ),
         }),
     )
 # End class FileAdmin
-
-
-class FileInline(admin.TabularInline):
-    """Inline for the `File` model."""
-    model = File
-    extra = 0
-    exclude = ('slug', 'type')

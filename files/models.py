@@ -2,6 +2,8 @@
 """
 Models for the `files` application.
 """
+from django import urls
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
@@ -40,9 +42,6 @@ def slugify_file_name(file_name : str) -> str:
     return f"{slug}-{n:03d}"
 # End def slugify_file_name
 
-
-
-
 # ======================================================================================================================
 # Enums
 # ======================================================================================================================
@@ -73,19 +72,7 @@ class File(models.Model):
         help_text=_("File's ID")
     )
 
-    slug = models.SlugField()
-
-    # ------------------------------------------------------------------------------------------------------------------
-    # Parent article
-    # ------------------------------------------------------------------------------------------------------------------
-
-    article = models.ForeignKey(
-        Article,
-        related_name="attachments",
-        on_delete=models.CASCADE,
-        verbose_name=_("Article"),
-        help_text=_("Article to which the file belongs to")
-    )
+    slug = models.SlugField(unique=True)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Data
@@ -123,13 +110,22 @@ class File(models.Model):
     )
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Non-persistent fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    def download_url(self):
+        """Return the URL to download the file."""
+        return urls.reverse("files:download", kwargs={"slug": self.slug})
+    # End def download_url
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
 
     class Meta:
         verbose_name = _("File")
         verbose_name_plural = _("Files")
-        unique_together = ["article", "slug"]
     # End class Meta
 
     # ------------------------------------------------------------------------------------------------------------------

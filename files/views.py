@@ -25,6 +25,7 @@ def download_file_view(request, slug):
     file = file_object.file
     response = FileResponse(file)
     file_name = f"{file_object.slug}.{file.name.split('.')[-1]}".replace('-', '_')
-    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+    response['Content-Disposition'] = f'inline; filename="{file_name}"'
     return response
 # End def download_file_view

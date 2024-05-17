@@ -38,6 +38,7 @@ urlpatterns = [
 
     # Apps
     path('', include('articles.urls')),
+    path('', include('files.urls')),
     path('', include('contact.urls')),
     path('', include('core.urls')),
     path('', include('datasets.urls')),

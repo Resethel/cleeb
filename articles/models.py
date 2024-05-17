@@ -107,6 +107,14 @@ class Article(models.Model):
         help_text=_("The body of the article."),
     )
 
+    attachments = models.ManyToManyField(
+        "files.File",
+        verbose_name=_("Attached files"),
+        related_name="articles", # This is the name of the reverse relation from the related object back to this one.
+        help_text=_("Files attached to the article."),
+        blank=True,
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Meta
     # ------------------------------------------------------------------------------------------------------------------
