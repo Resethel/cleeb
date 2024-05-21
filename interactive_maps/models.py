@@ -118,11 +118,6 @@ class MapRender(models.Model):
     def clean(self, exclude=None):
         super().clean()
         self.slug = slugify(self.name)
-
-        # Clean the license and attributions if there is no thumbnail
-        if self.thumbnail is None:
-            self.thumbnail_license = None
-            self.thumbnail_attributions = None
     # End def clean_fields
 
     def get_absolute_url(self):
@@ -248,18 +243,21 @@ class Map(models.Model):
 
     thumbnail_license = models.CharField(
         choices=License.choices,
+        default=License.UNKNOWN,
         verbose_name=_("Thumbnail's license"),
         help_text=_("The license of the thumbnail."),
-        null=True,
-        default=None,
+        null=False,
+        blank=False,
     )
 
     thumbnail_attributions = models.TextField(
         name="thumbnail_attributions",
         verbose_name=_("Thumbnail's attributions"),
         help_text=_(
-            "The attributions to be given to the thumbnail. May include the author, the source, etc. Formatted in HTML."),
+            "The attributions to be given to the thumbnail. May include the author, the source, etc. Formatted in HTML."
+        ),
         null=True,
+        blank=True,
         default=None,
     )
 
@@ -268,6 +266,7 @@ class Map(models.Model):
         verbose_name=_("Thumbnail's source"),
         help_text=_("The source of the thumbnail."),
         null=True,
+        blank=True,
         default=None,
     )
 
@@ -327,6 +326,12 @@ class Map(models.Model):
     def clean(self, exclude=None):
         super().clean()
         self.slug = slugify(self.title)
+
+        # Clean license fields if the thumbnail is not provided
+        if self.thumbnail is None:
+            self.thumbnail_license = None
+            self.thumbnail_attributions = None
+            self.thumbnail_source = None
     # End def clean_fields
 
     def get_absolute_url(self):

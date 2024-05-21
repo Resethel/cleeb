@@ -107,11 +107,17 @@ class MapDetailView(DetailView):
         context['map_fs_link']   = map_fs_link
 
         context['thumbnail']     = None
+
+        # Get the license of the thumbnail
+        license_ = next((l[1] for l in License.choices if l[0] == self.object.thumbnail_license), None)
+        if license_ in [License.UNKNOWN.label, License.NO_COPYRIGHT.label]:
+            license_ = None
+
         if self.object.thumbnail is not None:
             context['thumbnail'] = {
                 'attributions' : self.object.thumbnail_attributions,
                 'source_url'   : self.object.thumbnail_source,
-                'license'      : next((l[1] for l in License.choices if l[0] == self.object.thumbnail_license), None),
+                'license'      : license_,
                 'license_url'  : get_license_url(self.object.thumbnail_license),
             }
         return context
