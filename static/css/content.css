@@ -741,6 +741,21 @@
     flex-direction: row;
 }
 
+.content-section__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+}
+
+.content-section__footer p {
+    color: gray;
+    margin: 0;
+    font-size: var(--fs-tiny);
+    font-weight: 400;
+    text-align: right;
+}
+
 /* ================================================================================================================== */
 /* Content Attachment
 /* ================================================================================================================== */

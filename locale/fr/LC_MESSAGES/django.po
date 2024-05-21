@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-17 13:33+0000\n"
+"POT-Creation-Date: 2024-05-21 13:47+0000\n"
 "PO-Revision-Date: 2024-05-03 17:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -117,11 +117,23 @@ msgstr "Brouillon"
 msgid "Published"
 msgstr "Publié"
 
+msgid "All rights reserved"
+msgstr "Tous droits réservés"
+
+msgid "Public domain"
+msgstr "Domaine public"
+
+msgid "Unknown"
+msgstr "Inconnu"
+
+msgid "No copyright"
+msgstr "Aucun droit d’auteur"
+
 msgid "Contact"
 msgstr "Contact"
 
 msgid "Admin actions"
-msgstr "Actions d'amdinistration"
+msgstr "Actions d'administration"
 
 msgid "Contact form submissions"
 msgstr "Formulaires de contact soumis"
@@ -579,6 +591,9 @@ msgstr "possède un HTML embarquable ?"
 msgid "Render"
 msgstr "Rendu"
 
+msgid "Thumbnail"
+msgstr "Vignette"
+
 msgid "Content"
 msgstr "Contenu"
 
@@ -651,6 +666,31 @@ msgstr "Le statut de publication de la carte."
 
 msgid "The render of the map."
 msgstr "Le rendu de la carte."
+
+msgid "The thumbnail to be displayed on the map card."
+msgstr "La vignette à afficher sur lors de la sélection de carte."
+
+msgid "Thumbnail's license"
+msgstr "Licence de la vignette"
+
+msgid "The license of the thumbnail."
+msgstr "La licence de la vignette."
+
+msgid "Thumbnail's attributions"
+msgstr "Attributions de la vignette"
+
+msgid ""
+"The attributions to be given to the thumbnail. May include the author, the "
+"source, etc. Formatted in HTML."
+msgstr ""
+"Les attributions à donner à la vignette. Peut inclure l’auteur, la source, "
+"etc. Formaté en HTML."
+
+msgid "Thumbnail's source"
+msgstr "Lien vers la source de la vignette"
+
+msgid "The source of the thumbnail."
+msgstr "La source de la vignette."
 
 msgid "Introduction text"
 msgstr "Texte d’introduction"
@@ -1050,9 +1090,6 @@ msgstr ""
 
 msgid "Highlight"
 msgstr "Surbrillance"
-
-msgid "Unknown"
-msgstr "Inconnu"
 
 msgid "Owner"
 msgstr "Propriétaire"
@@ -1532,6 +1569,9 @@ msgstr "Ouvrir la carte en plein écran"
 
 msgid "Additional information"
 msgstr "Informations complémentaires"
+
+msgid "Thumbnail image"
+msgstr "Image de vignette"
 
 msgid "Map List"
 msgstr "Liste des cartes"

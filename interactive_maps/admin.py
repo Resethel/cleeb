@@ -128,6 +128,12 @@ class MapAdmin(admin.ModelAdmin):
         (_('Render'), {
             'fields': ('render',),
         }),
+        (_('Thumbnail'), {
+            'fields': (
+                ('thumbnail', 'thumbnail_source'),
+                ('thumbnail_license', 'thumbnail_attributions')
+            )
+        }),
         (_('Content'), {
             'fields': ('introduction', 'body'),
         })

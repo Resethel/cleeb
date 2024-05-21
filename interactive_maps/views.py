@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 
-from common.choices import PublicationStatus
+from common.choices import PublicationStatus, get_license_url, License
 from core.models import Person
 from interactive_maps.models import Map
 from thematic.models import Theme
@@ -106,6 +106,14 @@ class MapDetailView(DetailView):
         context['map_embed']     = map_embed_html
         context['map_fs_link']   = map_fs_link
 
+        context['thumbnail']     = None
+        if self.object.thumbnail is not None:
+            context['thumbnail'] = {
+                'attributions' : self.object.thumbnail_attributions,
+                'source_url'   : self.object.thumbnail_source,
+                'license'      : next((l[1] for l in License.choices if l[0] == self.object.thumbnail_license), None),
+                'license_url'  : get_license_url(self.object.thumbnail_license),
+            }
         return context
     # End def get_context_data
 

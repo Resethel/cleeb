@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 from tinymce import models as tinymce_models
 
-from common.choices import PublicationStatus
+from common.choices import PublicationStatus, License
 from core.models import Organization
 from thematic.models import Theme
 
@@ -118,6 +118,11 @@ class MapRender(models.Model):
     def clean(self, exclude=None):
         super().clean()
         self.slug = slugify(self.name)
+
+        # Clean the license and attributions if there is no thumbnail
+        if self.thumbnail is None:
+            self.thumbnail_license = None
+            self.thumbnail_attributions = None
     # End def clean_fields
 
     def get_absolute_url(self):
@@ -141,6 +146,13 @@ class MapRender(models.Model):
 # ======================================================================================================================
 # Interactive Map
 # ======================================================================================================================
+
+def thumbnail_path(instance, filename):
+    # Get the extension of the file
+    extension = filename.split('.')[-1]
+    # Return the path
+    return f"maps/{instance.slug}/thumbnail.{extension}"
+# End def thumbnail_path
 
 class Map(models.Model):
 
@@ -219,6 +231,44 @@ class Map(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True
+    )
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Thumbnail
+    # ------------------------------------------------------------------------------------------------------------------
+
+    thumbnail = models.ImageField(
+        name="thumbnail",
+        verbose_name=_("Thumbnail"),
+        help_text=_("The thumbnail to be displayed on the map card."),
+        upload_to=thumbnail_path,
+        null=True,
+        default=None,
+    )
+
+    thumbnail_license = models.CharField(
+        choices=License.choices,
+        verbose_name=_("Thumbnail's license"),
+        help_text=_("The license of the thumbnail."),
+        null=True,
+        default=None,
+    )
+
+    thumbnail_attributions = models.TextField(
+        name="thumbnail_attributions",
+        verbose_name=_("Thumbnail's attributions"),
+        help_text=_(
+            "The attributions to be given to the thumbnail. May include the author, the source, etc. Formatted in HTML."),
+        null=True,
+        default=None,
+    )
+
+    thumbnail_source = models.URLField(
+        max_length=255,
+        verbose_name=_("Thumbnail's source"),
+        help_text=_("The source of the thumbnail."),
+        null=True,
+        default=None,
     )
 
     # ------------------------------------------------------------------------------------------------------------------
