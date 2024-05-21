@@ -29,7 +29,7 @@
                 <div class="search-header__form__select">
                     <label for="theme" class="--hidden">Theme</label>
                     <select name="theme" id="theme">
-                        <option value="">{% trans 'All themes' %}</option></option>
+                        <option value="">{% trans 'All themes' %}</option>
                         {% for theme in themes %}
                             {% if theme == selected_theme %}
                                 <option value="{{ theme.slug }}" selected>{{ theme.short_name }}</option>

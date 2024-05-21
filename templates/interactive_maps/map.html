@@ -16,69 +16,91 @@
 
 </head>
 <body class="page">
-    <!-- Header Section -->
-    {% include 'core/topbar.html' %}
-
-    <!-- Main Section -->
-    <main class="main">
-        <div class="content">
-            <div class="content-title">
-                {{ title }}
+<!-- Header Section -->
+{% include 'core/topbar.html' %}
+<!-- Main Section -->
+<main class="main">
+    <div class="content">
+        <div class="content-title">
+            {{ title }}
+        </div>
+        <div class="content-metadata">
+            <div class="content-metadata__dates">
+                <span>{% trans "Created on" %} {{ created_at }}</span>
+                <span>{% trans "Last modified on" %} {{ last_modified }}</span>
             </div>
-            <div class="content-metadata">
-                <div class="content-metadata__dates">
-                    <span>{% trans "Created on" %} {{ created_at }}</span>
-                    <span>{% trans "Last modified on" %} {{ last_modified }}</span>
-                </div>
-                <div class="content-metadata__authors">
-                    {% for author in authors %}
-                        <a class="" href="{{ author.url }}">
-                            <span>{{ author.display_name }}</span>
-                            {% if author.picture %}
-                                <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
-                            {% else %}
-                                <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
-                            {% endif %}
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="content-tags">
-                {% for theme in themes %}
-                    <a href="{% url 'theme' theme.slug %}">
-                        <span>{{ theme.short_name }}</span>
+            <div class="content-metadata__authors">
+                {% for author in authors %}
+                    <a class="" href="{{ author.url }}">
+                        <span>{{ author.display_name }}</span>
+                        {% if author.picture %}
+                            <img src="{{ author.picture.url }}" style="width: 24px; height: 24px" alt="">
+                        {% else %}
+                            <img src="{% static 'assets/icons/person.svg' %}" style="width: 24px; height: 24px" alt="">
+                        {% endif %}
                     </a>
                 {% endfor %}
             </div>
-            <article class="content-section">
-                {% if introduction %}
-                    <section class="content-section__intro">
-                        <h3>{% trans "Introduction" %}</h3>
-                        <div class="introduction-text">{{ introduction | safe }}</div>
-                    </section>
-                {% endif %}
-                <section class="content-section__map">
-                    <h3>{% trans "Interactive Map" %}</h3>
-                    {% if map_embed %}
-                        <div class="map-render">{{ map_embed | safe }}</div>
-                        <a class="fullscreen-link" href="{{ map_fs_link }}">{% trans "Open the map in full screen" %}&gt;</a>
-                    {% else %}
-                        <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
-                    {%  endif %}
-                </section>
-                {% if text %}
-                    <section class="content-section__text">
-                        <h3>{% trans "Additional information" %}</h3>
-                        <article class="section-article">
-                            {{ text | safe }}
-                        </article>
-                    </section>
-                {% endif %}
-            </article>
         </div>
-    </main>
-    <!-- Footer Section -->
-    {% include 'core/footer.html' %}
-
+        <div class="content-tags">
+            {% for theme in themes %}
+                <a href="{% url 'theme' theme.slug %}">
+                    <span>{{ theme.short_name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+        <article class="content-section">
+            {% if introduction %}
+                <section class="content-section__intro">
+                    <h3>{% trans "Introduction" %}</h3>
+                    <div class="introduction-text">{{ introduction | safe }}</div>
+                </section>
+            {% endif %}
+            <section class="content-section__map">
+                <h3>{% trans "Interactive Map" %}</h3>
+                {% if map_embed %}
+                    <div class="map-render">{{ map_embed | safe }}</div>
+                    <a class="fullscreen-link" href="{{ map_fs_link }}">{% trans "Open the map in full screen" %}&gt;</a>
+                {% else %}
+                    <img class="placeholder" src="https://placehold.jp/2560x1440.png" alt="Placeholder">
+                {%  endif %}
+            </section>
+            {% if text %}
+                <section class="content-section__text">
+                    <h3>{% trans "Additional information" %}</h3>
+                    <article class="section-article">
+                        {{ text | safe }}
+                    </article>
+                </section>
+            {% endif %}
+            {% if thumbnail %}
+                {% if thumbnail.license or thumbnail.attributions %}
+                    <footer class="content-section__footer">
+                        <p>
+                            {% trans "Thumbnail image" %}:
+                            {% if thumbnail.attributions %}
+                                {% if thumbnail.source_url %}
+                                    <a href="{{ thumbnail.source_url }}" target="_blank" rel="noopener noreferrer">{{ thumbnail.attributions|safe }}</a>
+                                {% else %}
+                                    {{ thumbnail.attributions|safe }}
+                                {% endif %}
+                            {% endif  %}
+                            {% if thumbnail.attributions and thumbnail.license %} - {% endif %}
+                            {% if thumbnail.license %}
+                                {% if thumbnail.license_url %}
+                                    <a href="{{ thumbnail.license_url }}" target="_blank" rel="noopener noreferrer">{{ thumbnail.license|default_if_none:''|safe }}</a>
+                                {% else %}
+                                    {{ thumbnail.license|safe }}
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                    </footer>
+                {% endif %}
+            {% endif %}
+        </article>
+    </div>
+</main>
+<!-- Footer Section -->
+{% include 'core/footer.html' %}
 </body>
 </html>
