@@ -6,6 +6,8 @@ from django import urls
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
@@ -29,17 +31,21 @@ def slugify_file_name(file_name : str) -> str:
     # Get the basic slug of the file
     slug = slugify(file_name)
 
-    # Ensure that no other file as the same slug
-    try:
-        File.objects.get(slug=slug)
-    # Case 1: There are no other files with the same slug
-    except File.DoesNotExist:
+    existing_files = File.objects.filter(slug__startswith=slug)
+
+    # If there are no other files with the same slug, return the slug
+    if not existing_files.exists():
         return slug
 
-    # Case 2: There is already a file with the same slug.
-    #         In that case, append the number of files with the same slug
-    n = File.objects.filter(slug__contains=slug).count()
-    return f"{slug}-{n:03d}"
+    # Get the highest suffix among the existing files
+    suffixes = [file.slug.split('-')[-1] for file in existing_files if '-' in file.slug]
+    # Remove the suffixes that are not integers
+    suffixes = [int(suffix) for suffix in suffixes if suffix.isdigit()]
+    # Get the highest suffix
+    highest_suffix = max(suffixes) if suffixes else 0
+
+    # Generate a new slug with a suffix that is one greater than the highest existing suffix
+    return f"{slug}-{highest_suffix + 1:03d}"
 # End def slugify_file_name
 
 # ======================================================================================================================
@@ -138,7 +144,6 @@ class File(models.Model):
 
     def clean(self):
         super().clean()
-        self.slug = slugify_file_name(self.name)
 
         # If the type is `None`, infer the type of the file
         if self.type is None:
@@ -163,3 +168,16 @@ class File(models.Model):
         # TODO: Add validation for other filetypes
     # End def clean
 # End class File
+
+@receiver(pre_save, sender=File)
+def update_slug(sender, instance, **kwargs):
+    # If the instance is not saved yet, then it is a new instance
+    if instance.pk is None:
+        instance.slug = slugify_file_name(instance.name)
+    else:
+        # If the instance is already saved,  get its current state in the database
+        old_instance = File.objects.get(pk=instance.pk)
+        # If the name has changed, update the slug
+        if old_instance.name != instance.name:
+            instance.slug = slugify_file_name(instance.name)
+# End def update_slug
