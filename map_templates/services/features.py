@@ -218,7 +218,8 @@ class Layer(Feature):
             style : Style | None = None,
             highlight : Style | None = None,
             filters : Filter | Collection[Filter] | Iterable[Filter] | None = None,
-            show_on_startup : bool = True
+            show_on_startup : bool = True,
+            display : bool = True
 
     ) -> None:
         super().__init__(name, FeatureType.LAYER, z_index=z_index)
@@ -230,6 +231,7 @@ class Layer(Feature):
         self.style            : Style | None        = style
         self.highlight        : Style | None        = highlight
         self.show_on_startup  : bool                = show_on_startup
+        self.display          : bool                = display
 
         # Ensure that the dataset layer exists
         if not DatasetLayer.objects.filter(id=dataset_layer_id).exists():
@@ -335,7 +337,8 @@ class Layer(Feature):
             style=Style.from_model(layer.style) if layer.style else None,
             highlight=Style.from_model(layer.highlight) if layer.highlight else None,
             filters=[Filter(key=f.key, operator=f.operator, value=f.value) for f in layer.filters.all()],
-            show_on_startup=layer.show
+            show_on_startup=layer.show,
+            display=layer.display
         )
 
     def to_model(self) -> models.Layer:
@@ -381,7 +384,8 @@ class Layer(Feature):
             "style"            : self.style.serialize('dict') if self.style else None,
             "highlight"        : self.highlight.serialize('dict') if self.highlight else None,
             "filters"          : [f.serialize('dict') for f in self.filters],
-            "show"             : self.show_on_startup
+            "show"             : self.show_on_startup,
+            "display"          : self.display
         }
     # End def to_dict
 
@@ -397,7 +401,8 @@ class Layer(Feature):
             style=Style.deserialize(data["style"], 'dict') if data["style"] else None,
             highlight=Style.deserialize(data["highlight"], 'dict') if data["highlight"] else None,
             filters=[Filter.deserialize(f, 'dict') for f in data["filters"]],
-            show_on_startup=data["show"]
+            show_on_startup=data["show"],
+            display=data["display"] if "display" in data else True
         )
     # End def from_dict
 # End class Layer
@@ -416,11 +421,13 @@ class FeatureGroup(MutableSet, Feature):
             show_on_startup : bool = True,
             *,
             z_index : int = 0,
-            features : Collection[Feature] | Iterable[Feature] | None = None
+            features : Collection[Feature] | Iterable[Feature] | None = None,
+            display : bool = True
     ) -> None:
         super().__init__(name, FeatureType.FEATURE_GROUP, z_index=z_index)
         self.name : str | None = name
         self.show_on_startup : bool = show_on_startup
+        self.display : bool = display
         self.__features : set[Feature] = set()
 
         if features is None:
@@ -521,7 +528,8 @@ class FeatureGroup(MutableSet, Feature):
             name=feature_group.name,
             z_index=feature_group.z_index,
             show_on_startup=feature_group.show_on_startup,
-            features=[Layer.from_model(layer) for layer in feature_group.layers.all()]
+            features=[Layer.from_model(layer) for layer in feature_group.layers.all()],
+            display=feature_group.display
         )
     # End def from_model
 
@@ -562,7 +570,8 @@ class FeatureGroup(MutableSet, Feature):
             "name" : self.name,
             "z_index" : self.z_index,
             "show_on_startup" : self.show_on_startup,
-            "features" : [feature.serialize('dict') for feature in self.__features]
+            "features" : [feature.serialize('dict') for feature in self.__features],
+            "display" : self.display
         }
     # End def to_dict
 
@@ -585,7 +594,8 @@ class FeatureGroup(MutableSet, Feature):
             name=data["name"],
             z_index=data["z_index"],
             show_on_startup=data["show_on_startup"],
-            features=features
+            features=features,
+            display=data["display"] if "display" in data else True
         )
     # End def from_dict
 # End class FeatureGroup

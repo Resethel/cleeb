@@ -89,6 +89,12 @@ class Layer(models.Model):
         ]
     )
 
+    display = models.BooleanField(
+        default=True,
+        verbose_name=_("Display"),
+        help_text=_("Whether the layer is displayed. If not displayed, the layer is ignored during rendering.")
+    )
+
     # ------------------------------------------------------------------------------------------------------------------
     # Dataset relations Fields
     # ------------------------------------------------------------------------------------------------------------------
@@ -234,6 +240,12 @@ class FeatureGroup(models.Model):
         validators=[
             MinValueValidator(0)
         ]
+    )
+
+    display = models.BooleanField(
+        default=True,
+        verbose_name=_("Display"),
+        help_text=_("Whether the feature group is displayed. If not displayed, the feature group is ignored during rendering.")
     )
 
     # ------------------------------------------------------------------------------------------------------------------
