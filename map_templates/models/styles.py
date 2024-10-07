@@ -9,6 +9,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from map_templates.models import Layer
 from map_templates.validators import validate_dash_array
 
 
