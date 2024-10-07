@@ -123,6 +123,9 @@ class TemplateProcessor:
         for feature in sorted_features:
             # 2.2.1. If the feature is a layer, add it to the map
             if isinstance(feature, LayerObject):
+                if feature.display is False:
+                    logger.debug(f"Skipping layer '{feature.name}' as it is not displayed.")
+                    continue
                 logger.debug(f"Adding layer '{feature.name}' to the map...")
                 legend_entries.append((feature.name, feature.style))
                 feature = self.__generate_layer(feature)
@@ -132,6 +135,13 @@ class TemplateProcessor:
             # 2.2.2. If the feature is a feature group, process its sub-features
             elif isinstance(feature, FeatureGroupObject):
                 # 2.2.2.1. Create a feature group
+                if feature.display is False:
+                    logger.debug(f"Skipping feature group '{feature.name}' as it is not displayed.")
+                    continue
+                # Check also if all sub-features are not displayed
+                if not any(sub_feature.display for sub_feature in feature):
+                    logger.debug(f"Skipping feature group '{feature.name}' as all sub-features are not displayed.")
+                    continue
                 logger.debug(f"Adding feature group '{feature.name}' to the map...")
                 feature_group = folium.FeatureGroup(
                     name=feature.name,
@@ -141,6 +151,9 @@ class TemplateProcessor:
                 # 2.2.2.2. Process the sub-features by their z-index
                 sorted_sub_features = sorted(feature, key=lambda f: f.z_index)
                 for sub_feature in sorted_sub_features:
+                    if sub_feature.display is False:
+                        logger.debug(f"Skipping sub-feature '{sub_feature.name}' as it is not displayed.")
+                        continue
                     legend_entries.append((sub_feature.name, sub_feature.style))
                     sub_feature = self.__generate_layer(sub_feature)
                     keep_in_front.append(sub_feature)
